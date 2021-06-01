@@ -1,6 +1,7 @@
 # fail2ban-proxmox-backup-server
 
 Fail2Ban for Proxmox Backup Server (PBS)
+https://github.com/inettgmbh/fail2ban-proxmox-backup-server
 
 filter and jail for fail2ban protecting a Proxmox Backup Server (PBS) from brute force attacks to the API/WebGUI
 
