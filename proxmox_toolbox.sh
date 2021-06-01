@@ -16,9 +16,17 @@
 # You can run this scritp directly using:
 # wget https://raw.githubusercontent.com/Tontonjo/proxmox/master/ez_proxmox_mail_configurator.sh
 
+# SOURCES:
+# https://pve.proxmox.com/wiki/Fail2ban
+# https://github.com/inettgmbh/fail2ban-proxmox-backup-server
+# https://forum.proxmox.com/threads/how-do-i-set-the-mail-server-to-be-used-in-proxmox.23669/
+# https://linuxscriptshub.com/configure-smtp-with-gmail-using-postfix/
+# https://suoption_pickedpport.google.com/accounts/answer/6010255
+# https://www.howtoforge.com/community/threads/solved-problem-with-outgoing-mail-from-server.53920/
+# http://mhawthorne.net/posts/2011-postfix-configuring-gmail-as-relay/
 
 varversion=1.0
-#V1.0: Initial Release - proof of concept
+#V1.0: Initial Release
 
 
 # -----------------ENVIRONNEMENT VARIABLES----------------------
@@ -26,51 +34,52 @@ pve_log_folder="/var/log/pve/tasks/"
 distribution=$(. /etc/*-release;echo $VERSION_CODENAME)
 # ---------------END OF ENVIRONNEMENT VARIABLES-----------------
 
-HEIGHT=15
-WIDTH=60
-CHOICE_HEIGHT=5
-BACKTITLE="Tonton Jo - 2021 - https://www.youtube.com/c/tontonjo"
-TITLE="Proxmox Toolbox"
-MENU="Choose one of the following options: "
-
-OPTIONS=(1 "Install usefull libraries"
-         2 "Hide enterprise sources"
-         3 "Mail configurator"
-         4 "Restore original conf"
-         0 "Exit")
-      while [ "$CHOICE -ne 4" ]; do
-CHOICE=$(dialog --clear \
-                --backtitle "$BACKTITLE" \
-                --title "$TITLE" \
-                --menu "$MENU" \
-                $HEIGHT $WIDTH $CHOICE_HEIGHT \
-                "${OPTIONS[@]}" \
-                2>&1 >/dev/tty)
-
-clear
-	case $CHOICE in
-      1)
-			read -p "This will install thoses libraries if missing: libsasl2-modules ifupdown2 fail2ban. Press y to install" -n 1 -r
+show_menu(){
+    NORMAL=`echo "\033[m"`
+    MENU=`echo "\033[36m"` #Blue
+    NUMBER=`echo "\033[33m"` #yellow
+    FGRED=`echo "\033[41m"`
+    RED_TEXT=`echo "\033[31m"`
+    ENTER_LINE=`echo "\033[33m"`
+    echo -e "${MENU}**************************** Proxmox Toolbox *******************${NORMAL}"
+    echo -e "${MENU}*************************** Tonton Jo - 2020 - Version $varversion ********************************${NORMAL}"
+    echo -e "${MENU}**************** https://www.youtube.com/c/tontonjo ******************${NORMAL}"
+    echo " "
+    echo -e "${MENU}**${NUMBER} 1)${MENU} Install usefull dependencies ${NORMAL}"
+    echo -e "${MENU}**${NUMBER} 2)${MENU} Sources Configuration ${NORMAL}"
+    echo -e "${MENU}**${NUMBER} 3)${MENU} Email configuration ${NORMAL}"
+	echo -e "${MENU}**${NUMBER} 4)${MENU} fail2ban settings ${NORMAL}"
+    echo -e "${MENU}**${NUMBER} 0)${MENU} Exit ${NORMAL}"
+    echo " "
+    echo -e "${MENU}*********************************************${NORMAL}"
+    echo -e "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
+    read -rsn1 opt
+	while [ opt != '' ]
+  do
+    if [[ $opt = "" ]]; then
+      exit;
+    else
+      case $opt in
+      1) clear;
+			read -p "This will install thoses libraries if missing: "ifupdown2 - git" Press y to install: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
-				if [ $(dpkg-query -W -f='${Status}' libsasl2-modules 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y libsasl2-modules;
-				else
-					echo "- libsasl2-modules already installed"
-				fi
 				if [ $(dpkg-query -W -f='${Status}' ifupdown2 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 					apt-get install -y ifupdown2;
 				else
 					echo "- ifupdown2 already installed"
 				fi
-				if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y fail2ban;
+				if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+					apt-get install -y git;
 				else
-					echo "- fail2ban already installed"
+					echo "- git already installed"
 				fi
+			else
+			clear
+			show_menu
 			fi
       ;;
 
-     2)
+     2) clear;
 		if [ -d "$pve_log_folder" ]; then
 			echo "- Server is a PVE host"
 			echo "- Checking Sources list"
@@ -105,7 +114,210 @@ clear
 				fi
 		fi
       ;;
-	        3)
+	    3) clear;
+		mail_menu
+      ;;
+      4) clear;
+		read -p "This will install and set a default configuration for fail2ban - Press y to continue: " -n 1 -r
+			if [[ $REPLY =~ ^[Yy]$ ]]; then
+				if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+					apt-get install -y fail2ban;
+				else
+					echo "- fail2ban already installed"
+				fi
+				git clone -q https://github.com/Tontonjo/proxmox_toolbox.git
+					if [ -d "$pve_log_folder" ]; then
+						echo "- Host is a PVE Host"	
+						# Put filter.d/proxmox-backup-server.conf contents to /etc/fail2ban/filter.d/proxmox-backup-server.conf
+						cp -f proxmox_toolbox/pve/filter.d/proxmox-virtual-environement.conf /etc/fail2ban/filter.d/proxmox-virtual-environement.conf
+						# Put jail.d/proxmox-backup-server.conf to /etc/fail2ban/jail.d/proxmox-backup-server.conf
+						cp -f proxmox_toolbox/pve/jail.d/proxmox-virtual-environement.conf /etc/fail2ban/jail.d/proxmox-virtual-environement.conf
+					else
+						echo "- Host is a PBS Host"
+						# Put filter.d/proxmox-backup-server.conf contents to /etc/fail2ban/filter.d/proxmox-backup-server.conf
+						cp -f proxmox_toolbox/pbs/filter.d/proxmox-backup-server.conf /etc/fail2ban/filter.d/proxmox-backup-server.conf
+						# Put jail.d/proxmox-backup-server.conf to /etc/fail2ban/jail.d/proxmox-backup-server.conf
+						cp -f proxmox_toolbox/pbs/jail.d/proxmox-backup-server.conf /etc/fail2ban/jail.d/proxmox-backup-server.conf
+					fi
+			# Restart Fail2Ban Service
+			systemctl restart fail2ban.service
+			fi
+			show_menu
+	     ;;
+      0)
+	  clear
+      exit
+      ;;
+      esac
+    fi
+  done
+}
+
+mail_menu(){
+			if [ $(dpkg-query -W -f='${Status}' libsasl2-modules 2>/dev/null | grep -c "ok installed") -eq 0 ];
+			then
+			  apt-get install -y libsasl2-modules;
+			fi
+
+			# Backuping files before anything
+
+			ALIASESBCK=/etc/aliases.BCK
+			if test -f "$ALIASESBCK"; then
+				echo "$ALIASESBCK Already exist - Skipping"
+				else
+				cp -n /etc/aliases /etc/aliases.BCK
+				echo "backuped "$ALIASESBCK""
+			fi
+			MAINCFBCK=/etc/postfix/main.cf.BCK
+			if test -f "$MAINCFBCK"; then
+				echo "$MAINCFBCK Already exist - Skipping"
+				else
+				cp -n /etc/postfix/main.cf /etc/postfix/main.cf.BCK
+				echo "backuped "$MAINCFBCK""
+			fi
+			NORMAL=`echo "\033[m"`
+			MENU=`echo "\033[36m"` #Blue
+			NUMBER=`echo "\033[33m"` #yellow
+			FGRED=`echo "\033[41m"`
+			RED_TEXT=`echo "\033[31m"`
+			ENTER_LINE=`echo "\033[33m"`
+			echo -e "${MENU}**************************** Email configuration *********************************${NORMAL}"
+			echo -e "${MENU}*************************** Tonton Jo - 2021 ********************************${NORMAL}"
+			echo -e "${MENU}************************** https://www.youtube.com/c/tontonjo ******************************${NORMAL}"
+			echo " "
+			echo -e "${MENU}**${NUMBER} 1)${MENU} Configure ${NORMAL}"
+			echo -e "${MENU}**${NUMBER} 2)${MENU} Test ${NORMAL}"
+			echo -e "${MENU}**${NUMBER} 3)${MENU} Check logs for known errors - attempt to correct ${NORMAL}"
+			echo -e "${MENU}**${NUMBER} 4)${MENU} Restore original conf ${NORMAL}"
+			echo -e "${MENU}**${NUMBER} 0)${MENU} Back ${NORMAL}"
+			echo " "
+			echo -e "${MENU}*********************************************${NORMAL}"
+			echo -e "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
+			read -rsn1 opt
+			while [ opt != '' ]
+		  do
+			if [[ $opt = "" ]]; then
+			  exit;
+			else
+			  case $opt in
+			  1) clear;
+					echo "System destination mail address (user@domain.tld) (root alias): "
+					read 'varrootmail'
+					echo "What is the mail server hostname? (smtp.gmail.com): "
+					read 'varmailserver'
+					echo "What is the mail server port? (Usually 587 - can be 25 (no tls)): "
+					read 'varmailport'
+					echo "What is the AUTHENTIFICATION USERNAME? (user@domain.tld or username): "
+					read 'varmailusername'
+					echo "What is the AUTHENTIFICATION PASSWORD?: "
+					read 'varmailpassword'
+					read -p  "Is the SENDER mail address the same as the AUTHENTIFICATION USERNAME? y to use $varmailusername enter to set something else: " -n 1 -r 
+					if [[ $REPLY =~ ^[Yy]$ ]]; then
+					varsenderaddress=$varmailusername
+					else
+					echo "What is the sender address?: "
+					read 'varsenderaddress'
+					fi
+					echo " "
+					read -p  "Use TLS?: y = yes / anything=no: " -n 1 -r 
+					if [[ $REPLY =~ ^[Yy]$ ]]; then
+					vartls=yes
+					else
+					vartls=no
+					fi
+							
+					
+				echo "- Working on it!"
+				echo " "
+				echo "- Setting Aliases"
+				if grep "root:" /etc/aliases
+					then
+					echo "- Aliases entry was found: editing for $varrootmail"
+					sed -i "s/^root:.*$/root: $varrootmail/" /etc/aliases
+				else
+					echo "- No root alias found: Adding"
+					echo "root: $varrootmail" >> /etc/aliases
+					
+				fi
+				
+				#Setting canonical file for sender - :
+				echo "root $varsenderaddress" > /etc/postfix/canonical
+				chmod 600 /etc/postfix/canonical
+				
+				# Preparing for password hash
+				echo [$varmailserver]:$varmailport $varmailusername:$varmailpassword > /etc/postfix/sasl_passwd
+				chmod 600 /etc/postfix/sasl_passwd 
+				
+				# Add mailserver in main.cf
+				sed -i "/#/!s/\(relayhost[[:space:]]*=[[:space:]]*\)\(.*\)/\1"[$varmailserver]:"$varmailport""/"  /etc/postfix/main.cf
+				
+				# Checking TLS settings
+				echo "- Setting correct TLS Settings: $vartls"
+				postconf smtp_use_tls=$vartls
+				
+				# Checking for password hash entry
+					if grep "smtp_sasl_password_maps" /etc/postfix/main.cf
+					then
+					echo "- Password hash already setted-up"
+				else
+					echo "- Adding password hash entry"
+					postconf smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd
+				fi
+				#checking for certificate
+				if grep "smtp_tls_CAfile" /etc/postfix/main.cf
+					then
+					echo "- TLS CA File looks setted-up"
+					else
+					postconf smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt
+				fi
+				# Adding sasl security options
+				# eliminates default security options which are imcompatible with gmail
+				if grep "smtp_sasl_security_options" /etc/postfix/main.cf
+					then
+					echo "- Google smtp_sasl_security_options setted-up"
+					else
+					postconf smtp_sasl_security_options=noanonymous
+				fi
+				if grep "smtp_sasl_auth_enable" /etc/postfix/main.cf
+					then
+					echo "- Authentification already enabled"
+					else
+					postconf smtp_sasl_auth_enable=yes
+				fi 
+				if grep "sender_canonical_maps" /etc/postfix/main.cf
+					then
+					echo "- Canonical entry already existing"
+					else
+					postconf sender_canonical_maps=hash:/etc/postfix/canonical
+				fi 
+				
+				echo "- Encrypting password and canonical entry"
+				postmap /etc/postfix/sasl_passwd
+				postmap /etc/postfix/canonical
+				echo "- Restarting postfix and enable automatic startup"
+				systemctl restart postfix && systemctl enable postfix
+				echo "- Cleaning file used to generate password hash"
+				rm -rf "/etc/postfix/sasl_passwd"
+				echo "- Files cleaned"
+				
+			  mail_menu;
+      ;;
+
+     2) clear;
+		echo "Destination mail address? :"
+		read vardestaddress
+		echo "- An email will be sent to: $vardestaddress"
+		echo "Enter Email subject: "
+		read "varsubject"
+		echo "- Enter the body of your test message then press ctrl-d"
+		echo "- When asked for CC - press enter again"
+		echo "  --------- Enter mail body ----------------"
+		mail -s "$varsubject" "$vardestaddress"
+		echo "- Email should have been sent - If none received, you may want to check for errors in menu 3"
+	  
+	  mail_menu;	
+      ;;
+	        3) clear;
 			echo "- Checking for known errors that may be found in logs"
 			if grep "SMTPUTF8 is required" "/var/log/mail.log"
 			then
@@ -123,11 +335,27 @@ clear
 					postfix reload
 				  fi 
 				fi
-		        else
+			elif grep "Network is unreachable" "/var/log/mail.log"
+			then
+				read -p "Are you on IPv4 AND your host can resolve and access public adresses? y = yes / anything=no: " -n 1 -r
+				if [[ $REPLY =~ ^[Yy]$ ]]
+				then
+					if grep "inet_protocols = ipv4" /etc/postfix/main.cf
+					then
+					echo "- Fix looks already applied!"
+					else
+					echo " "
+					echo "- Setting "inet_protocols = ipv4 " to correct ""Network is unreachable" caused by ipv6 resolution""
+					postconf inet_protocols=ipv4
+					postfix reload
+					fi
+				fi	
+		    else
 			echo "- No configured error found - nothing to do!"
-			fi	
+			fi
+	  mail_menu;	
       ;;
-      4)
+      4) clear;
 		read -p "Do you really want to restore: y=yes - Anything=no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]
 				then
@@ -139,9 +367,26 @@ clear
 					systemctl restart postfix
 					echo "- Restoration done"
 			fi
+	  mail_menu;
 	     ;;
-      0)
-      exit
+
+      0) clear;
+      show_menu;
+      ;;
+
+      x)exit;
+      ;;
+
+      \n)exit;
+      ;;
+
+      *)clear;
+      show_menu;
       ;;
       esac
-	  done
+    fi
+  done
+}
+
+clear
+show_menu
