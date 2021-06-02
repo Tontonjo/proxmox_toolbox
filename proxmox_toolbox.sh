@@ -46,9 +46,10 @@ show_menu(){
     echo -e "${MENU}**************** https://www.youtube.com/c/tontonjo ******************${NORMAL}"
     echo " "
     echo -e "${MENU}**${NUMBER} 1)${MENU} Install usefull dependencies ${NORMAL}"
-    echo -e "${MENU}**${NUMBER} 2)${MENU} Sources Configuration ${NORMAL}"
+    echo -e "${MENU}**${NUMBER} 2)${MENU} No-subscription Sources Configuration ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 3)${MENU} Email configuration ${NORMAL}"
-	echo -e "${MENU}**${NUMBER} 4)${MENU} fail2ban settings ${NORMAL}"
+	echo -e "${MENU}**${NUMBER} 4)${MENU} Security settings ${NORMAL}"
+	echo -e "${MENU}**${NUMBER} 5)${MENU} Update host ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 0)${MENU} Exit ${NORMAL}"
     echo " "
     echo -e "${MENU}*********************************************${NORMAL}"
@@ -61,8 +62,9 @@ show_menu(){
     else
       case $opt in
       1) clear;
-			read -p "This will install thoses libraries if missing: "ifupdown2 - git" Press y to install: " -n 1 -r
+			read -p "This will install thoses libraries if missing: ifupdown2 - git - sudo Press y to install: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
+				echo " "
 				if [ $(dpkg-query -W -f='${Status}' ifupdown2 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 					apt-get install -y ifupdown2;
 				else
@@ -73,52 +75,66 @@ show_menu(){
 				else
 					echo "- git already installed"
 				fi
+				if [ $(dpkg-query -W -f='${Status}' sudo 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+					apt-get install -y sudo;
+				else
+					echo "- sudo already installed"
+				fi
 			else
 			clear
 			show_menu
 			fi
+		show_menu
       ;;
-
      2) clear;
-		if [ -d "$pve_log_folder" ]; then
-			echo "- Server is a PVE host"
-			echo "- Checking Sources list"
-			if grep -Fxq "deb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list; then
-				echo "-- Source looks alredy configured - Skipping"
-			else
-				echo "-- Adding new entry to sources.list"
-				sed -i "\$adeb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
+		read -p "This will configure sources for no-enterprise repository - Press y to continue: " -n 1 -r
+			if [[ $REPLY =~ ^[Yy]$ ]]; then
+				if [ -d "$pve_log_folder" ]; then
+					  echo "- Server is a PVE host"
+					#2: Edit sources list:
+					  echo "- Checking Sources list"
+						if grep -Fxq "deb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
+						 then
+						  echo "-- Source looks alredy configured - Skipping"
+						else
+						  echo "-- Adding new entry to sources.list"
+						  sed -i "\$adeb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
+						fi
+					  echo "- Checking Enterprise Source list"
+						if grep -Fxq "#deb https://enterprise.proxmox.com/debian/pve $distribution pve-enterprise" /etc/apt/sources.list.d/pve-enterprise.list
+						then
+						 echo "-- Entreprise repo looks already commented - Skipping"
+						else
+						 echo "-- Hiding Enterprise sources list"
+						 sed -i 's/^/#/' /etc/apt/sources.list.d/pve-enterprise.list
+					   fi
+					else
+					  echo "- Server is a PBS host"
+					  echo "- Checking Sources list"
+						if grep -Fxq "deb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
+						then
+						  echo "-- Source looks alredy configured - Skipping"
+						else
+						 echo "-- Adding new entry to sources.list"
+						  sed -i "\$adeb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
+						fi
+					  echo "- Checking Enterprise Source list"
+						if grep -Fxq "#deb https://enterprise.proxmox.com/debian/pbs $distribution pbs-enterprise" /etc/apt/sources.list.d/pbs-enterprise.list
+						  then
+						  echo "-- Entreprise repo looks already commented - Skipping"
+						else
+						  echo "-- Hiding Enterprise sources list"
+						  sed -i 's/^/#/' /etc/apt/sources.list.d/pbs-enterprise.list
+						fi
+					fi
 			fi
-			echo "- Checking Enterprise Source list"
-			if grep -Fxq "#deb https://enterprise.proxmox.com/debian/pve $distribution pve-enterprise" /etc/apt/sources.list.d/pve-enterprise.list; then
-				echo "-- Entreprise repo looks already commented - Skipping"
-			else
-				echo "-- Hiding Enterprise sources list"
-				sed -i 's/^/#/' /etc/apt/sources.list.d/pve-enterprise.list
-			fi
-		else
-			echo "- Server is a PBS host"
-			echo "- Checking Sources list"
-			if grep -Fxq "deb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list; then
-				echo "-- Source looks alredy configured - Skipping"
-			else
-				echo "-- Adding new entry to sources.list"
-			sed -i "\$adeb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
-			fi
-			echo "- Checking Enterprise Source list"
-			if grep -Fxq "#deb https://enterprise.proxmox.com/debian/pbs $distribution pbs-enterprise" /etc/apt/sources.list.d/pbs-enterprise.list; then
-				echo "-- Entreprise repo looks already commented - Skipping"
-			else
-				echo "-- Hiding Enterprise sources list"
-				sed -i 's/^/#/' /etc/apt/sources.list.d/pbs-enterprise.list
-				fi
-		fi
+		show_menu
       ;;
-	    3) clear;
+	 3) clear;
 		mail_menu
       ;;
       4) clear;
-		read -p "This will install and set a default configuration for fail2ban - Press y to continue: " -n 1 -r
+		read -p "Do you want to enable fail2ban? - Press y to continue: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 					apt-get install -y fail2ban;
@@ -142,8 +158,49 @@ show_menu(){
 			# Restart Fail2Ban Service
 			systemctl restart fail2ban.service
 			fi
-			show_menu
-	     ;;
+		clear
+		read -p "Do you want to use another user than root? This will guide you to create another user, add it as a sudo user and allow sudo users to connect trough ssh - Press y to continue: " -n 1 -r
+			if [[ $REPLY =~ ^[Yy]$ ]]; then
+				clear
+				if [ $(dpkg-query -W -f='${Status}' sudo 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+					apt-get install -y sudo;
+				else
+					echo "- sudo already installed"
+				fi
+				echo "What is the new username: "
+				read 'username'
+				clear
+				echo "What is the new user password: "
+				read 'password'
+				useradd -m -p $password $username
+				mkdir /home/$username/.ssh/
+				ssh-keygen -t rsa -b 4096 -f /home/$username/.ssh/id_rsa -q -N ""
+				cp /home/$username/.ssh/id_rsa.pub /home/$username/.ssh/authorized_keys
+				chmod 700 /home/$username/.ssh/
+				echo "- New user $username created with password $password"
+				echo "- Adding user to sudo users"
+				adduser $username sudo
+				echo "AllowGroups sudo root" >> "/etc/ssh/sshd_config"
+				read -p "Do you want to deny root ssh login?: " -n 1 -r
+					if [[ $REPLY =~ ^[Yy]$ ]]; then
+						if grep -qF "PermitRootLogin yes" /etc/ssh/sshd_config; then
+							sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
+						else
+						
+						clear
+						show_menu
+						fi
+				service ssh restart && service sshd restart
+				fi
+			fi
+		show_menu
+	   ;;
+	  5) clear;
+		echo "- Updating System"
+		apt-get update -y -qq
+		apt-get upgrade -y -qq
+		apt-get dist-upgrade -y -qq
+      ;;
       0)
 	  clear
       exit
