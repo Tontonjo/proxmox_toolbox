@@ -24,6 +24,7 @@
 # https://suoption_pickedpport.google.com/accounts/answer/6010255
 # https://www.howtoforge.com/community/threads/solved-problem-with-outgoing-mail-from-server.53920/
 # http://mhawthorne.net/posts/2011-postfix-configuring-gmail-as-relay/
+# https://docs.oracle.com/en/cloud/cloud-at-customer/occ-get-started/add-ssh-enabled-user.html
 
 varversion=1.0
 #V1.0: Initial Release
@@ -168,16 +169,15 @@ show_menu(){
 					echo "- sudo already installed"
 				fi
 				echo "What is the new username: "
-				read 'username'
+				read username
 				clear
-				echo "What is the new user password: "
-				read 'password'
-				useradd -m -p $password $username
+				useradd -m $username
+				passwd $username
 				mkdir /home/$username/.ssh/
 				ssh-keygen -t rsa -b 4096 -f /home/$username/.ssh/id_rsa -q -N ""
 				cp /home/$username/.ssh/id_rsa.pub /home/$username/.ssh/authorized_keys
-				chmod 700 /home/$username/.ssh/
-				echo "- New user $username created with password $password"
+				chown -R $username:users /home/$username/.ssh/
+				echo "- New user $username created"
 				echo "- Adding user to sudo users"
 				adduser $username sudo
 				echo "AllowGroups sudo root" >> "/etc/ssh/sshd_config"
