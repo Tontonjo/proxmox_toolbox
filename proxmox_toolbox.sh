@@ -13,8 +13,12 @@
 # There will be bugs or things i did not thinked about - sorry - if so, try to solve-it yourself, let me kindly know and PR:-)
 
 # USAGE
-# You can run this scritp directly using:
-# wget https://raw.githubusercontent.com/Tontonjo/proxmox/master/ez_proxmox_mail_configurator.sh
+# You can use this tool either with:
+# git clone https://github.com/Tontonjo/proxmox_toolbox.git
+# bash proxmox_toolbox/proxmox_toolbox/main/proxmox_toolbox.sh
+# OR
+# wget https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh
+# bash proxmox_toolbox/main/proxmox_toolbox.sh
 
 # SOURCES:
 # https://pve.proxmox.com/wiki/Fail2ban
