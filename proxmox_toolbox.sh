@@ -239,13 +239,15 @@ show_menu(){
 		apt-get dist-upgrade -y -qq
 		if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
 			if grep -Ewqi "void" $proxmoxlib; then
-				if [ -d "$pve_log_folder" ]; then
-					echo "- Removing No Valid Subscription Message for PVE"
-					sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" $proxmoxlib && systemctl restart pveproxy.service
-				else 
-					echo "- Removing No Valid Subscription Message for PBS"
-					sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" $proxmoxlib && systemctl restart proxmox-backup-proxy.service
-				fi
+					echo "- Subscription Message already removed - Skipping"
+				else
+					if [ -d "$pve_log_folder" ]; then
+						echo "- Removing No Valid Subscription Message for PVE"
+						sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" $proxmoxlib && systemctl restart pveproxy.service
+					else 
+						echo "- Removing No Valid Subscription Message for PBS"
+						sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" $proxmoxlib && systemctl restart proxmox-backup-proxy.service
+					fi
 			fi
 		fi
 		show_menu
