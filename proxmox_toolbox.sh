@@ -180,19 +180,45 @@ show_menu(){
 				echo "- New user $username created"
 				echo "- Adding user to sudo users"
 				adduser $username sudo
-				echo "AllowGroups sudo root" >> "/etc/ssh/sshd_config"
+				echo "AllowGroups sudo" >> "/etc/ssh/sshd_config"
 				read -p "Do you want to deny root ssh login?: " -n 1 -r
 					if [[ $REPLY =~ ^[Yy]$ ]]; then
 						if grep -qF "PermitRootLogin yes" /etc/ssh/sshd_config; then
 							sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
 						else
-						
-						clear
+							clear
 						show_menu
 						fi
 				service ssh restart && service sshd restart
+					fi
+				clear
+				if [ -d "$pve_log_folder" ]; then
+					read -p "Create a pve admin group, user and disable "root@pam"?: " -n 1 -r
+						if [[ $REPLY =~ ^[Yy]$ ]]; then
+							clear
+							echo "What is the new pve username: "
+							read pveusername
+							clear
+							echo "What is the new admin group name: "
+							read admingroup	
+							clear
+							echo "- Creating PVE user $pveusername"
+							pveum user add $pveusername@pve
+							pveum passwd $pveusername@pve
+							echo "- Creating PVE admin group $admingroup"
+							pveum group add $admingroup -comment "System Administrators"
+							echo "- Defining administrators right"
+							pveum acl modify / -group $admingroup -role Administrator
+							echo "- adding $pveusername to $admingroup"
+							pveum user modify $pveusername@pve -group $admingroup
+							echo "- Removing root user from PVE"
+							pveum user modify root@pam -enable 0
+						fi
+				else
+					echo "- Host is a PBS host - user management not implemented ATM"
 				fi
 			fi
+		clear
 		show_menu
 	   ;;
 	  5) clear;
