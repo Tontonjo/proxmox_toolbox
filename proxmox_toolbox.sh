@@ -299,7 +299,7 @@ mail_menu(){
 			then
 			  apt-get install -y libsasl2-modules;
 			fi
-
+			clear
 			# Backuping files before anything
 
 			ALIASESBCK=/etc/aliases.BCK
