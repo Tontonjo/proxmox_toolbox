@@ -43,9 +43,9 @@ show_menu(){
     FGRED=`echo "\033[41m"`
     RED_TEXT=`echo "\033[31m"`
     ENTER_LINE=`echo "\033[33m"`
-    echo -e "${MENU}**************************** Proxmox Toolbox *******************${NORMAL}"
-    echo -e "${MENU}*************************** Tonton Jo - 2021 - Version $varversion ********************************${NORMAL}"
-    echo -e "${MENU}**************** https://www.youtube.com/c/tontonjo ******************${NORMAL}"
+    echo -e "${MENU}*********************************** Proxmox Toolbox **********************${NORMAL}"
+    echo -e "${MENU}********************** Tonton Jo - 2021 - Version $varversion ************${NORMAL}"
+    echo -e "${MENU}************************ https://www.youtube.com/c/tontonjo **************${NORMAL}"
     echo " "
     echo -e "${MENU}**${NUMBER} 1)${MENU} Install usefull dependencies ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 2)${MENU} No-subscription Sources Configuration ${NORMAL}"
@@ -282,9 +282,9 @@ mail_menu(){
 			FGRED=`echo "\033[41m"`
 			RED_TEXT=`echo "\033[31m"`
 			ENTER_LINE=`echo "\033[33m"`
-			echo -e "${MENU}**************************** Email configuration *********************************${NORMAL}"
-			echo -e "${MENU}*************************** Tonton Jo - 2021 ********************************${NORMAL}"
-			echo -e "${MENU}************************** https://www.youtube.com/c/tontonjo ******************************${NORMAL}"
+			echo -e "${MENU}************************* Proxmox Email Configuration *****************${NORMAL}"
+			echo -e "${MENU}******************* Tonton Jo - 2021 - Version $varversion ************${NORMAL}"
+			echo -e "${MENU}********************* https://www.youtube.com/c/tontonjo **************${NORMAL}"
 			echo " "
 			echo -e "${MENU}**${NUMBER} 1)${MENU} Configure ${NORMAL}"
 			echo -e "${MENU}**${NUMBER} 2)${MENU} Test ${NORMAL}"
