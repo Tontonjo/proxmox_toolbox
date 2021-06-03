@@ -237,7 +237,7 @@ show_menu(){
 		apt-get update -y -qq
 		apt-get upgrade -y -qq
 		apt-get dist-upgrade -y -qq
-		if grep -Fxq "no-subscription" /etc/apt/sources.list; then
+		if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
 			if grep -Ewqi "void" $proxmoxlib; then
 				if [ -d "$pve_log_folder" ]; then
 					echo "- Removing No Valid Subscription Message for PVE"
