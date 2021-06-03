@@ -32,6 +32,7 @@ varversion=1.0
 
 # -----------------ENVIRONNEMENT VARIABLES----------------------
 pve_log_folder="/var/log/pve/tasks/"
+proxmoxlib="/usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js"
 distribution=$(. /etc/*-release;echo $VERSION_CODENAME)
 # ---------------END OF ENVIRONNEMENT VARIABLES-----------------
 
@@ -43,7 +44,7 @@ show_menu(){
     RED_TEXT=`echo "\033[31m"`
     ENTER_LINE=`echo "\033[33m"`
     echo -e "${MENU}**************************** Proxmox Toolbox *******************${NORMAL}"
-    echo -e "${MENU}*************************** Tonton Jo - 2020 - Version $varversion ********************************${NORMAL}"
+    echo -e "${MENU}*************************** Tonton Jo - 2021 - Version $varversion ********************************${NORMAL}"
     echo -e "${MENU}**************** https://www.youtube.com/c/tontonjo ******************${NORMAL}"
     echo " "
     echo -e "${MENU}**${NUMBER} 1)${MENU} Install usefull dependencies ${NORMAL}"
@@ -157,10 +158,11 @@ show_menu(){
 						# Put jail.d/proxmox-backup-server.conf to /etc/fail2ban/jail.d/proxmox-backup-server.conf
 						cp -f proxmox_toolbox/pbs/jail.d/proxmox-backup-server.conf /etc/fail2ban/jail.d/proxmox-backup-server.conf
 					fi
+			clear
 			# Restart Fail2Ban Service
 			systemctl restart fail2ban.service
 			fi
-		clear
+			clear
 		read -p "Do you want to use another user than root? This will guide you to create another user, add it as a sudo user and allow sudo users to connect trough ssh - Press y to continue: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				clear
@@ -194,6 +196,7 @@ show_menu(){
 					fi
 				clear
 			fi
+			clear
 			if [ -d "$pve_log_folder" ]; then
 					read -p "Create a pve admin group, user and disable "root@pam"?: " -n 1 -r
 						if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -248,6 +251,7 @@ show_menu(){
       esac
     fi
   done
+  show_menu
 }
 
 mail_menu(){
