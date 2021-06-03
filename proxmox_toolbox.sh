@@ -1,10 +1,9 @@
 #!/bin/bash
 
 # Tonton Jo - 2020
-# Join me on Youtube: https://www.youtube.com/channel/UCnED3K6K5FDUp-x_8rwpsZw
+# Join me on Youtube: https://www.youtube.com/c/tontonjo
 
-# Script for easy setup of Proxomox email settings.
-# Tested working with gmail and infomaniak mail servers using TLS
+# This little tool is aimed to set some default configurations up and running in not time
 
 # DISCLAIMER
 # I assume you know what you are doing have a backup and have a default configuration.
