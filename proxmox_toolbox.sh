@@ -129,6 +129,7 @@ show_menu(){
 						fi
 					fi
 			fi
+		clear
 		show_menu
       ;;
 	 3) clear;
@@ -192,7 +193,8 @@ show_menu(){
 				service ssh restart && service sshd restart
 					fi
 				clear
-				if [ -d "$pve_log_folder" ]; then
+			fi
+			if [ -d "$pve_log_folder" ]; then
 					read -p "Create a pve admin group, user and disable "root@pam"?: " -n 1 -r
 						if [[ $REPLY =~ ^[Yy]$ ]]; then
 							clear
@@ -216,17 +218,29 @@ show_menu(){
 						fi
 				else
 					echo "- Host is a PBS host - user management not implemented ATM"
-				fi
 			fi
 		clear
 		show_menu
 	   ;;
 	  5) clear;
+	  
 		echo "- Updating System"
 		apt-get update -y -qq
 		apt-get upgrade -y -qq
 		apt-get dist-upgrade -y -qq
-      ;;
+		if grep -Fxq "deb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list; then
+			if grep -Ewqi "void" $proxmoxlib; then
+				if [ -d "$pve_log_folder" ]; then
+					echo "- Removing No Valid Subscription Message for PVE"
+					sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" $proxmoxlib && systemctl restart pveproxy.service
+				else 
+					echo "- Removing No Valid Subscription Message for PBS"
+					sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" $proxmoxlib && systemctl restart proxmox-backup-proxy.service
+				fi
+			fi
+		fi
+		show_menu
+	   ;;
       0)
 	  clear
       exit
