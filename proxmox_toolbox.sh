@@ -275,6 +275,7 @@ show_menu(){
 					cp -f proxmox_toolbox/snmp/snmpd.conf /etc/snmp/snmpd.conf
 					echo "- Encryption will be MD5 and DES"
 					service snmpd stop
+					echo "!! min 8 charachters password !!"
 					net-snmp-config --create-snmpv3-user -ro -a MD5 -x DES
 					
 				fi
