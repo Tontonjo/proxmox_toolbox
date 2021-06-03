@@ -25,6 +25,7 @@
 # https://www.howtoforge.com/community/threads/solved-problem-with-outgoing-mail-from-server.53920/
 # http://mhawthorne.net/posts/2011-postfix-configuring-gmail-as-relay/
 # https://docs.oracle.com/en/cloud/cloud-at-customer/occ-get-started/add-ssh-enabled-user.html
+# https://www.noobunbox.net/serveur/monitoring/configurer-snmp-v3-sous-debian
 
 varversion=1.0
 #V1.0: Initial Release
@@ -52,6 +53,7 @@ show_menu(){
     echo -e "${MENU}**${NUMBER} 3)${MENU} Email configuration ${NORMAL}"
 	echo -e "${MENU}**${NUMBER} 4)${MENU} Security settings ${NORMAL}"
 	echo -e "${MENU}**${NUMBER} 5)${MENU} Update host ${NORMAL}"
+	echo -e "${MENU}**${NUMBER} 6)${MENU} SNMP settings ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 0)${MENU} Exit ${NORMAL}"
     echo " "
     echo -e "${MENU}*********************************************${NORMAL}"
@@ -162,7 +164,7 @@ show_menu(){
 			# Restart Fail2Ban Service
 			systemctl restart fail2ban.service
 			fi
-			clear
+		clear
 		read -p "Do you want to use another user than root? This will guide you to create another user, add it as a sudo user and allow sudo users to connect trough ssh - Press y to continue: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				clear
@@ -242,6 +244,39 @@ show_menu(){
 				fi
 			fi
 		fi
+		show_menu
+	   ;;
+	   6) clear;
+		read -p "Install and configure SNMP?: " -n 1 -r
+			if [[ $REPLY =~ ^[Yy]$ ]]; then
+				echo " "
+				git clone -q https://github.com/Tontonjo/proxmox_toolbox.git
+				if [ $(dpkg-query -W -f='${Status}' snmpd 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+					apt-get install -y snmpd libsnmp-dev;
+				else
+					echo "- snmpd already installed"
+				fi
+				clear
+				read -p "Press y for snmpv2 or anything for SNMP V3: " -n 1 -r
+				if [[ $REPLY =~ ^[Yy]$ ]]; then
+					echo "Read only community name? (ex: ro_tontonjo): "
+					read rocommunity
+					echo "Allowed subnet? (x.x.x.x/xx): "
+					read allowedsubnet
+					cp /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
+					cp -f proxmox_toolbox/snmp/snmpd.conf /etc/snmp/snmpd.conf
+					echo "rocommunity $rocommunity $allowedsubnet" >> /etc/snmp/snmpd.conf
+				else
+					cp /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
+					cp -f proxmox_toolbox/snmp/snmpd.conf /etc/snmp/snmpd.conf
+					echo "- Encryption will be MD5 and DES"
+					service snmpd stop
+					net-snmp-config --create-snmpv3-user -ro -a MD5 -x DES
+					
+				fi
+			service snmpd restart
+			fi
+				
 		show_menu
 	   ;;
       0)
