@@ -36,3 +36,15 @@ wget https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_too
 ```shell
 bash proxmox_toolbox.sh
 ```
+
+## SOURCES:
+https://pve.proxmox.com/wiki/Fail2ban  
+https://github.com/inettgmbh/fail2ban-proxmox-backup-server  
+https://forum.proxmox.com/threads/how-do-i-set-the-mail-server-to-be-used-in-proxmox.23669/
+https://linuxscriptshub.com/configure-smtp-with-gmail-using-postfix/
+https://suoption_pickedpport.google.com/accounts/answer/6010255
+https://www.howtoforge.com/community/threads/solved-problem-with-outgoing-mail-from-server.53920/
+http://mhawthorne.net/posts/2011-postfix-configuring-gmail-as-relay/
+https://docs.oracle.com/en/cloud/cloud-at-customer/occ-get-started/add-ssh-enabled-user.html
+https://www.noobunbox.net/serveur/monitoring/configurer-snmp-v3-sous-debian
+https://github.com/DeadlockState/Proxmox-prepare
