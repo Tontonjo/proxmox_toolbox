@@ -14,7 +14,7 @@ Features are:
 - Hide enterprise repo and set no-subscription repository
 - Configure email service to send system and proxmox notifications (postfix)
 - Enhance security a bit with the following:
-- - Enable fail 2 ban with default configuration for sshd, proxmox virtual environement and backup server (credits to [inettgmbh](https://github.com/inettgmbh/fail2ban-proxmox-backup-server)
+- - Enable fail 2 ban with default configuration for sshd, proxmox virtual environement and backup server (credits to [inettgmbh](https://github.com/inettgmbh/fail2ban-proxmox-backup-server))
 - - Create another user with sudo rights
 - - Disable root ssh login
 - - Create another Proxmox administrator and disabling Root user
