@@ -10,7 +10,7 @@ This little tool aim to get smalls one-time configurations for Proxmox Virtual e
 
 ![screenshot](https://i.ibb.co/xYfyt3f/Screenshot-2021-06-04-095759.png)  
 ## Features are:
-- Install usefulle dependencies: ifupdown2, git, sudo
+- Install usefull dependencies: ifupdown2, git, sudo
 - Hide enterprise repo and set no-subscription repository
 - Configure email service to send system and proxmox notifications (postfix)
 - Enhance security a bit with the following:
