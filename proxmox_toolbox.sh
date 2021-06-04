@@ -17,7 +17,7 @@
 # bash proxmox_toolbox/proxmox_toolbox.sh
 # OR
 # wget https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh
-# bash proxmox_toolbox/main/proxmox_toolbox.sh
+# bash proxmox_toolbox.sh
 
 # SOURCES:
 # https://pve.proxmox.com/wiki/Fail2ban
