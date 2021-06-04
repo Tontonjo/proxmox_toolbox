@@ -8,6 +8,7 @@ and to [Subscribe to my youtube channel](http://youtube.com/channel/UCnED3K6K5FD
 
 This little tool aim to get smalls one-time configurations for Proxmox Virtual environement and backup server hosts in no time.
 
+![screenshot](https://i.ibb.co/xYfyt3f/Screenshot-2021-06-04-095759.png)
 Features are:
 - Install usefulle dependencies: ifupdown2, git, sudo
 - Hide enterprise repo and set no-subscription repository
@@ -17,6 +18,8 @@ Features are:
 - - Create another user with sudo rights
 - - Disable root ssh login
 - - Create another Proxmox administrator and disabling Root user
+- Update host, and when no-enterprise source is set - disable no-subscription message
+- Enable SNMP V2 or v3 - you choose - with a default working configuration
 
 ## USAGE
 You can use this tool either with:
