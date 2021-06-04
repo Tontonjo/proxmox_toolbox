@@ -262,7 +262,7 @@ show_menu(){
 					echo "- snmpd already installed"
 				fi
 				clear
-				read -p "Press y for snmpv2 or anything for SNMP V3: " -n 1 -r
+				read -p "Press y for snmpv2 or anything for SNMP V3 (ReadOnly): " -n 1 -r
 				if [[ $REPLY =~ ^[Yy]$ ]]; then
 					clear
 					echo "Read only community name? (ex: ro_tontonjo): "
