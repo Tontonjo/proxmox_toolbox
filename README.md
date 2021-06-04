@@ -34,5 +34,5 @@ OR
 wget https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh
 ```
 ```shell
-bash proxmox_toolbox/main/proxmox_toolbox.sh
+bash proxmox_toolbox.sh
 ```
