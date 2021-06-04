@@ -284,7 +284,7 @@ show_menu(){
 				fi
 			service snmpd restart
 			fi
-				
+		clear		
 		show_menu
 	   ;;
       0)
