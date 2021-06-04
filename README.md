@@ -25,6 +25,8 @@ This little tool aim to get smalls one-time configurations for Proxmox Virtual e
 You can use this tool either with:
 ```shell
 git clone https://github.com/Tontonjo/proxmox_toolbox.git
+```
+```shell
 bash proxmox_toolbox/proxmox_toolbox.sh
 ```
 OR
