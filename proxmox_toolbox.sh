@@ -264,6 +264,7 @@ show_menu(){
 				clear
 				read -p "Press y for snmpv2 or anything for SNMP V3: " -n 1 -r
 				if [[ $REPLY =~ ^[Yy]$ ]]; then
+					clear
 					echo "Read only community name? (ex: ro_tontonjo): "
 					read rocommunity
 					echo "Allowed subnet? (x.x.x.x/xx): "
@@ -272,6 +273,7 @@ show_menu(){
 					cp -f proxmox_toolbox/snmp/snmpd.conf /etc/snmp/snmpd.conf
 					echo "rocommunity $rocommunity $allowedsubnet" >> /etc/snmp/snmpd.conf
 				else
+					clear
 					cp /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
 					cp -f proxmox_toolbox/snmp/snmpd.conf /etc/snmp/snmpd.conf
 					echo "- Encryption will be MD5 and DES"
