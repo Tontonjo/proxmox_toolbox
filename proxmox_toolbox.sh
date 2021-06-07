@@ -38,6 +38,7 @@ varversion=1.0
 pve_log_folder="/var/log/pve/tasks/"
 proxmoxlib="/usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js"
 distribution=$(. /etc/*-release;echo $VERSION_CODENAME)
+execdir=$(dirname $0)
 # ---------------END OF ENVIRONNEMENT VARIABLES-----------------
 
 show_menu(){
