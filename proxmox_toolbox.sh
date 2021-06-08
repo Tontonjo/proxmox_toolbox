@@ -268,7 +268,7 @@ show_menu(){
 					clear
 					echo "Read only community name? (ex: ro_tontonjo): "
 					read rocommunity
-					echo "Allowed subnet? (x.x.x.x/xx): "
+					echo "Allowed subnet? enter for none (x.x.x.x/xx): "
 					read allowedsubnet
 					cp /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
 					cp -f proxmox_toolbox/snmp/snmpd.conf /etc/snmp/snmpd.conf
