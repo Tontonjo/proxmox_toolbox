@@ -272,16 +272,24 @@ show_menu(){
 					read allowedsubnet
 					cp /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
 					cp -f proxmox_toolbox/snmp/snmpd.conf /etc/snmp/snmpd.conf
-					echo "rocommunity $rocommunity $allowedsubnet" >> /etc/snmp/snmpd.conf
+						if grep "rocommunity:" /etc/snmp/snmpd.conf; then
+							echo "- rocommunity found - editing"
+							sed -i "s/^rocommunity.*$/rocommunity $rocommunity $allowedsubnet/" /etc/aliases
+						else
+							echo "- No rocommunity found - adding"
+							echo "rocommunity $rocommunity $allowedsubnet" >> /etc/snmp/snmpd.conf
+						fi
 				else
 					clear
 					cp /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
 					cp -f proxmox_toolbox/snmp/snmpd.conf /etc/snmp/snmpd.conf
 					echo "- Encryption will be MD5 and DES"
 					service snmpd stop
+					echo "- Deleting old SNMPv3 users in /usr/share/snmp/snmpd.conf"
+					rm -f /usr/share/snmp/snmpd.conf
 					echo "!! min 8 charachters password !!"
+
 					net-snmp-config --create-snmpv3-user -ro -a MD5 -x DES
-					
 				fi
 			service snmpd restart
 			fi
