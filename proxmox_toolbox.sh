@@ -192,7 +192,7 @@ show_menu(){
 				echo "- Adding user to sudo users"
 				adduser $username sudo
 				echo "AllowGroups sudo" >> "/etc/ssh/sshd_config"
-				read -p "Do you want to deny root ssh login?: " -n 1 -r
+				read -p "Do you want to deny root ssh login? - Press y to continue: " -n 1 -r
 					if [[ $REPLY =~ ^[Yy]$ ]]; then
 						if grep -qF "PermitRootLogin yes" /etc/ssh/sshd_config; then
 							sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
@@ -208,7 +208,7 @@ show_menu(){
 			if [ -d "$pve_log_folder" ]; then
 					echo "Do you want to create an alternate PVE admin user and disable root user?"
 					echo "This will create a PVE user, a PVE group, set group admin permissions, add user to group and disable root@pam"
-					read -p "Create a pve admin group, user and disable "root@pam"?: " -n 1 -r
+					read -p "Create a pve admin group, user and disable "root@pam"? - Press y to continue:: " -n 1 -r
 						if [[ $REPLY =~ ^[Yy]$ ]]; then
 							clear
 							echo "What is the new pve username: "
