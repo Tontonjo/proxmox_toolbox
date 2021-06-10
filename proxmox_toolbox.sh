@@ -341,6 +341,7 @@ show_menu(){
 					fi
 			fi
 		fi
+		clear
 		show_menu
 	   ;;
       0)
