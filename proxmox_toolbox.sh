@@ -192,6 +192,7 @@ show_menu(){
 				else
 					echo "- Host is a PBS host - user management not implemented ATM"
 			fi
+		sleep 3	
 		clear
 		show_menu
 	   ;;
@@ -210,6 +211,7 @@ show_menu(){
 				swapoff -a
 				swapon -a
 			fi
+		sleep 3	
 		clear
 		show_menu
       ;;
@@ -271,6 +273,7 @@ show_menu(){
 				fi
 			service snmpd restart
 			fi
+		sleep 3	
 		clear		
 		show_menu
 	   ;;
@@ -339,6 +342,7 @@ show_menu(){
 					fi
 			fi
 		fi
+		sleep 3
 		clear
 		show_menu
 	   ;;
