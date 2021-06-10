@@ -29,6 +29,14 @@
 # http://mhawthorne.net/posts/2011-postfix-configuring-gmail-as-relay/
 # https://docs.oracle.com/en/cloud/cloud-at-customer/occ-get-started/add-ssh-enabled-user.html
 # https://www.noobunbox.net/serveur/monitoring/configurer-snmp-v3-sous-debian
+# https://blog.lbdg.me/proxmox-best-performance-disable-swappiness/
+
+# TODO:
+# settings for zram -> https://pve.proxmox.com/wiki/Zram
+# user creation fro PBS
+# make things stupid-proof (deny characters when numbers expected ans so on)
+# add "sleep" when needed to read output
+# Cosmetic corrections
 
 varversion=1.0
 #V1.0: Initial Release
@@ -53,11 +61,13 @@ show_menu(){
     echo -e "${MENU}************************ https://www.youtube.com/c/tontonjo **************${NORMAL}"
     echo " "
     echo -e "${MENU}**${NUMBER} 1)${MENU} Install usefull dependencies ${NORMAL}"
-    echo -e "${MENU}**${NUMBER} 2)${MENU} No-subscription Sources Configuration ${NORMAL}"
-    echo -e "${MENU}**${NUMBER} 3)${MENU} Email configuration ${NORMAL}"
-    echo -e "${MENU}**${NUMBER} 4)${MENU} Security settings ${NORMAL}"
-    echo -e "${MENU}**${NUMBER} 5)${MENU} Update host ${NORMAL}"
+    echo -e "${MENU}**${NUMBER} 2)${MENU} Security settings (fail2ban & users)${NORMAL}"
+    echo -e "${MENU}**${NUMBER} 3)${MENU} SWAP Settings ${NORMAL}"
+	echo -e "${MENU}**${NUMBER} 4)${MENU} Enable S.M.A.R.T setlf-tests ${NORMAL}"
+    echo -e "${MENU}**${NUMBER} 5)${MENU} Email configuration ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 6)${MENU} SNMP settings ${NORMAL}"
+    echo -e "${MENU}**${NUMBER} 7)${MENU} No-subscription Sources Configuration ${NORMAL}"
+	echo -e "${MENU}**${NUMBER} 8)${MENU} Update host ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 0)${MENU} Exit ${NORMAL}"
     echo " "
     echo -e "${MENU}*********************************************${NORMAL}"
@@ -94,55 +104,7 @@ show_menu(){
 			fi
 		show_menu
       ;;
-     2) clear;
-		read -p "This will configure sources for no-enterprise repository - Press y to continue: " -n 1 -r
-			if [[ $REPLY =~ ^[Yy]$ ]]; then
-				if [ -d "$pve_log_folder" ]; then
-					  echo "- Server is a PVE host"
-					#2: Edit sources list:
-					  echo "- Checking Sources list"
-						if grep -Fxq "deb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
-						 then
-						  echo "-- Source looks alredy configured - Skipping"
-						else
-						  echo "-- Adding new entry to sources.list"
-						  sed -i "\$adeb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
-						fi
-					  echo "- Checking Enterprise Source list"
-						if grep -Fxq "#deb https://enterprise.proxmox.com/debian/pve $distribution pve-enterprise" /etc/apt/sources.list.d/pve-enterprise.list
-						then
-						 echo "-- Entreprise repo looks already commented - Skipping"
-						else
-						 echo "-- Hiding Enterprise sources list"
-						 sed -i 's/^/#/' /etc/apt/sources.list.d/pve-enterprise.list
-					   fi
-					else
-					  echo "- Server is a PBS host"
-					  echo "- Checking Sources list"
-						if grep -Fxq "deb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
-						then
-						  echo "-- Source looks alredy configured - Skipping"
-						else
-						 echo "-- Adding new entry to sources.list"
-						  sed -i "\$adeb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
-						fi
-					  echo "- Checking Enterprise Source list"
-						if grep -Fxq "#deb https://enterprise.proxmox.com/debian/pbs $distribution pbs-enterprise" /etc/apt/sources.list.d/pbs-enterprise.list
-						  then
-						  echo "-- Entreprise repo looks already commented - Skipping"
-						else
-						  echo "-- Hiding Enterprise sources list"
-						  sed -i 's/^/#/' /etc/apt/sources.list.d/pbs-enterprise.list
-						fi
-					fi
-			fi
-		clear
-		show_menu
-      ;;
-	 3) clear;
-		mail_menu
-      ;;
-      4) clear;
+	2) clear;
 		read -p "Do you want to enable fail2ban? - Press y to continue: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
@@ -235,27 +197,44 @@ show_menu(){
 		clear
 		show_menu
 	   ;;
-	  5) clear;
-	  
-		echo "- Updating System"
-		apt-get update -y -qq
-		apt-get upgrade -y -qq
-		apt-get dist-upgrade -y -qq
-		if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
-			if grep -Ewqi "void" $proxmoxlib; then
-					echo "- Subscription Message already removed - Skipping"
-				else
-					if [ -d "$pve_log_folder" ]; then
-						echo "- Removing No Valid Subscription Message for PVE"
-						sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" $proxmoxlib && systemctl restart pveproxy.service
-					else 
-						echo "- Removing No Valid Subscription Message for PBS"
-						sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" $proxmoxlib && systemctl restart proxmox-backup-proxy.service
-					fi
+	   3) clear;
+		read -p "Do you want to edit swappiness value or disable SWAP? - Y to continue: " -n 1 -r
+			if [[ $REPLY =~ ^[Yy]$ ]]; then
+				swapvalue=$(cat /proc/sys/vm/swappiness)
+				echo ""
+				echo "- SWAP is actually set on $swapvalue"
+				echo "What is the new swapiness value? 0 to 100 - 0 to disable SWAP"
+				echo "This may take some times to apply"
+				echo "The lower the value - the less SWAP will be used"
+				read newswapvalue
+				echo "- Setting swapiness to $newswapvalue"
+				sysctl vm.swappiness=$newswapvalue
+				swapoff -a
+				swapon -a
 			fi
-		fi
+		clear
 		show_menu
-	   ;;
+      ;;
+	   4) clear;
+	   	read -p "Do you want to enable short and long S.M.A.R.T self-tests?: " -n 1 -r
+		echo "- Short smart test will occure every sunday at 22H and long smart tests every 1 of month at 22H"
+			if [[ $REPLY =~ ^[Yy]$ ]]; then
+				if grep -Ewqi "(S/../../7/22|L/../01/./22)" /etc/smartd.conf; then
+					echo "- Self tests looks already configured"
+				else
+					echo "- Enabling short and long self-tests"
+					echo "DEVICESCAN -d auto -n never -a -s (S/../../7/22|L/../01/./22) -m root -M exec /usr/share/smartmontools/smartd-runner" >> "/etc/smartd.conf"
+				fi
+			fi
+		sleep 3
+		clear
+		show_menu
+      ;;
+	 5) clear;
+		mail_menu
+      ;;
+      
+	  
 	   6) clear;
 		read -p "Install and configure SNMP?: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -292,6 +271,72 @@ show_menu(){
 			service snmpd restart
 			fi
 		clear		
+		show_menu
+	   ;;
+	     7) clear;
+		read -p "This will configure sources for no-enterprise repository - Press y to continue: " -n 1 -r
+			if [[ $REPLY =~ ^[Yy]$ ]]; then
+				if [ -d "$pve_log_folder" ]; then
+					  echo "- Server is a PVE host"
+					#2: Edit sources list:
+					  echo "- Checking Sources list"
+						if grep -Fxq "deb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
+						 then
+						  echo "-- Source looks alredy configured - Skipping"
+						else
+						  echo "-- Adding new entry to sources.list"
+						  sed -i "\$adeb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
+						fi
+					  echo "- Checking Enterprise Source list"
+						if grep -Fxq "#deb https://enterprise.proxmox.com/debian/pve $distribution pve-enterprise" /etc/apt/sources.list.d/pve-enterprise.list
+						then
+						 echo "-- Entreprise repo looks already commented - Skipping"
+						else
+						 echo "-- Hiding Enterprise sources list"
+						 sed -i 's/^/#/' /etc/apt/sources.list.d/pve-enterprise.list
+					   fi
+					else
+					  echo "- Server is a PBS host"
+					  echo "- Checking Sources list"
+						if grep -Fxq "deb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
+						then
+						  echo "-- Source looks alredy configured - Skipping"
+						else
+						 echo "-- Adding new entry to sources.list"
+						  sed -i "\$adeb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
+						fi
+					  echo "- Checking Enterprise Source list"
+						if grep -Fxq "#deb https://enterprise.proxmox.com/debian/pbs $distribution pbs-enterprise" /etc/apt/sources.list.d/pbs-enterprise.list
+						  then
+						  echo "-- Entreprise repo looks already commented - Skipping"
+						else
+						  echo "-- Hiding Enterprise sources list"
+						  sed -i 's/^/#/' /etc/apt/sources.list.d/pbs-enterprise.list
+						fi
+					fi
+			fi
+		clear
+		show_menu
+      ;;
+	  8) clear;
+	  
+		echo "- Updating System"
+		apt-get update -y -qq
+		apt-get upgrade -y -qq
+		apt-get dist-upgrade -y -qq
+		if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
+			if grep -Ewqi "void" $proxmoxlib; then
+					echo "- Subscription Message already removed - Skipping"
+				else
+					if [ -d "$pve_log_folder" ]; then
+						echo "- Removing No Valid Subscription Message for PVE"
+						sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" $proxmoxlib && systemctl restart pveproxy.service
+					else 
+						echo "- Removing No Valid Subscription Message for PBS"
+						sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" $proxmoxlib && systemctl restart proxmox-backup-proxy.service
+					fi
+			fi
+		fi
 		show_menu
 	   ;;
       0)
