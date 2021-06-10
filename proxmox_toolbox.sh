@@ -63,7 +63,7 @@ show_menu(){
     echo -e "${MENU}**${NUMBER} 1)${MENU} Install usefull dependencies ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 2)${MENU} Security settings (fail2ban & users)${NORMAL}"
     echo -e "${MENU}**${NUMBER} 3)${MENU} SWAP Settings ${NORMAL}"
-	echo -e "${MENU}**${NUMBER} 4)${MENU} Enable S.M.A.R.T setlf-tests ${NORMAL}"
+	echo -e "${MENU}**${NUMBER} 4)${MENU} Enable S.M.A.R.T self-tests ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 5)${MENU} Email configuration ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 6)${MENU} SNMP settings ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 7)${MENU} No-subscription Sources Configuration ${NORMAL}"
