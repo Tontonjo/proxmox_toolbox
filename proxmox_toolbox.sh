@@ -98,6 +98,7 @@ show_menu(){
 				else
 					echo "- sudo already installed"
 				fi
+			fi
 		sleep 3
 		clear		
 		show_menu
