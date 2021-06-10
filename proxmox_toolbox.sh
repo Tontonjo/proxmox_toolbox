@@ -222,6 +222,7 @@ show_menu(){
 				if grep -Ewqi "(S/../../7/22|L/../01/./22)" /etc/smartd.conf; then
 					echo "- Self tests looks already configured"
 				else
+					cp /etc/smartd.conf /etc/smartd.conf.BCK
 					echo "- Enabling short and long self-tests"
 					echo "DEVICESCAN -d auto -n never -a -s (S/../../7/22|L/../01/./22) -m root -M exec /usr/share/smartmontools/smartd-runner" >> "/etc/smartd.conf"
 				fi
