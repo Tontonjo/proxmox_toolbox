@@ -8,18 +8,22 @@ and to [Subscribe to my youtube channel](http://youtube.com/channel/UCnED3K6K5FD
 
 This little tool aim to get smalls one-time configurations for Proxmox Virtual environement and backup server hosts in no time.
 
-![screenshot](https://i.ibb.co/xYfyt3f/Screenshot-2021-06-04-095759.png)  
+![screenshot](https://i.ibb.co/r4BSgLS/Screenshot-2021-06-10-091628.png)  
 ## Features are:
 - Install usefull dependencies: ifupdown2, git, sudo
-- Hide enterprise repo and set no-subscription repository
-- Configure email service to send system and proxmox notifications (postfix)
 - Enhance security a bit with the following:
 - - Enable fail 2 ban with default configuration for sshd, proxmox virtual environement and backup server (credits to [inettgmbh](https://github.com/inettgmbh/fail2ban-proxmox-backup-server))
 - - Create another user with sudo rights
 - - Disable root ssh login
-- - Create another Proxmox administrator and disabling Root user
-- Update host, and when no-enterprise source is set - disable no-subscription message
+- - Create another Proxmox administrator and disabling pve@root user
+- Change swappiness value or disable SWAP
+- Enable S.M.A.R.T self-tests on all supported drives
+- - short: every sunday@22 - Long: every 1st of month @22
+- Configure email service to send system and proxmox notifications (postfix)
 - Enable SNMP V2 or v3 - you choose - with a default working configuration
+- Hide enterprise repo and set no-subscription repository
+- Update host, and when no-enterprise source is set - disable no-subscription message
+
 
 ## USAGE
 You can use this tool either with:
