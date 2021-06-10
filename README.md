@@ -55,8 +55,8 @@ https://github.com/DeadlockState/Proxmox-prepare
 
 
 ## TODO:
-settings for zram -> https://pve.proxmox.com/wiki/Zram
-user creation fro PBS
-make things stupid-proof (deny characters when numbers expected ans so on)
-add "sleep" when needed to read output
-Cosmetic corrections
+settings for zram -> https://pve.proxmox.com/wiki/Zram  
+user creation fro PBS  
+make things stupid-proof (deny characters when numbers expected ans so on)  
+add "sleep" when needed to read output  
+Cosmetic corrections  
