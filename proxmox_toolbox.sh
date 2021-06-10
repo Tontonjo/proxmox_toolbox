@@ -225,7 +225,7 @@ show_menu(){
 				else
 					cp /etc/smartd.conf /etc/smartd.conf.BCK
 					echo "- Enabling short and long self-tests"
-					echo "DEVICESCAN -d auto -n never -a -s (S/../../7/22|L/../01/./22) -m root -M exec /usr/share/smartmontools/smartd-runner" >> "/etc/smartd.conf"
+					echo "DEVICESCAN -d auto -n never -a -s (S/../../7/22|L/../01/./22) -m root -M exec /usr/share/smartmontools/smartd-runner" > "/etc/smartd.conf"
 				fi
 			fi
 		sleep 3
