@@ -218,13 +218,14 @@ show_menu(){
 	   4) clear;
 	   	read -p "Do you want to enable short and long S.M.A.R.T self-tests?: " -n 1 -r
 		clear
-		echo "- Short smart test will occure every sunday at 22H and long smart tests every 1 of month at 22H"
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				if grep -Ewqi "(S/../../7/22|L/../01/./22)" /etc/smartd.conf; then
 					echo "- Self tests looks already configured"
+					echo "- Short smart test will occure every sunday at 22H and long smart tests every 1 of month at 22H"
 				else
 					cp /etc/smartd.conf /etc/smartd.conf.BCK
 					echo "- Enabling short and long self-tests"
+					echo "- Short smart test will occure every sunday at 22H and long smart tests every 1 of month at 22H"
 					echo "DEVICESCAN -d auto -n never -a -s (S/../../7/22|L/../01/./22) -m root -M exec /usr/share/smartmontools/smartd-runner" > "/etc/smartd.conf"
 				fi
 			fi
@@ -317,6 +318,7 @@ show_menu(){
 						fi
 					fi
 			fi
+		sleep 3
 		clear
 		show_menu
       ;;
