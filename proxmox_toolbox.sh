@@ -98,8 +98,8 @@ show_menu(){
 				else
 					echo "- sudo already installed"
 				fi
+			sleep 3
 			fi
-		sleep 3
 		clear		
 		show_menu
       ;;
@@ -193,7 +193,6 @@ show_menu(){
 				else
 					echo "- Host is a PBS host - user management not implemented ATM"
 			fi
-		sleep 3	
 		clear
 		show_menu
 	   ;;
@@ -211,8 +210,8 @@ show_menu(){
 				sysctl vm.swappiness=$newswapvalue
 				swapoff -a
 				swapon -a
+				sleep 3	
 			fi
-		sleep 3	
 		clear
 		show_menu
       ;;
@@ -229,8 +228,8 @@ show_menu(){
 					echo "- Short smart test will occure every sunday at 22H and long smart tests every 1 of month at 22H"
 					echo "DEVICESCAN -d auto -n never -a -s (S/../../7/22|L/../01/./22) -m root -M exec /usr/share/smartmontools/smartd-runner" > "/etc/smartd.conf"
 				fi
+			sleep 3	
 			fi
-		sleep 3
 		clear
 		show_menu
       ;;
@@ -273,8 +272,8 @@ show_menu(){
 					net-snmp-config --create-snmpv3-user -ro -a MD5 -x DES
 				fi
 			service snmpd restart
+			sleep 3	
 			fi
-		sleep 3	
 		clear		
 		show_menu
 	   ;;
@@ -318,9 +317,9 @@ show_menu(){
 						  echo "-- Hiding Enterprise sources list"
 						  sed -i 's/^/#/' /etc/apt/sources.list.d/pbs-enterprise.list
 						fi
-					fi
+				fi
+			sleep 3
 			fi
-		sleep 3
 		clear
 		show_menu
       ;;
@@ -342,8 +341,8 @@ show_menu(){
 						sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" $proxmoxlib && systemctl restart proxmox-backup-proxy.service
 					fi
 			fi
-		fi
 		sleep 3
+		fi
 		clear
 		show_menu
 	   ;;
