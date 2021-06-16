@@ -58,9 +58,9 @@ show_menu(){
     FGRED=`echo "\033[41m"`
     RED_TEXT=`echo "\033[31m"`
     ENTER_LINE=`echo "\033[33m"`
-    echo -e "${MENU}************************ Proxmox Toolbox **********************${NORMAL}"
-    echo -e "${MENU}************ Tonton Jo - 2021 - Version $version ************${NORMAL}"
-    echo -e "${MENU}************** https://www.youtube.com/c/tontonjo **************${NORMAL}"
+    echo -e "${MENU}****************** Proxmox Toolbox **********************${NORMAL}"
+    echo -e "${MENU}*********** Tonton Jo - 2021 - Version $version ************${NORMAL}"
+    echo -e "${MENU}********** https://www.youtube.com/c/tontonjo **************${NORMAL}"
     echo " "
     echo -e "${MENU}**${NUMBER} 1)${MENU} Install usefull dependencies ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 2)${MENU} Security settings (fail2ban & users)${NORMAL}"
@@ -386,9 +386,9 @@ mail_menu(){
 			FGRED=`echo "\033[41m"`
 			RED_TEXT=`echo "\033[31m"`
 			ENTER_LINE=`echo "\033[33m"`
-  			echo -e "${MENU}*************** Ez Proxmox Mail Configurator ***************${NORMAL}"
-			echo -e "${MENU}************ Tonton Jo - 2021 - Version $mailversion ************${NORMAL}"
-   			echo -e "${MENU}************** https://www.youtube.com/c/tontonjo ***********${NORMAL}"
+  			echo -e "${MENU}************* Ez Proxmox Mail Configurator ***************${NORMAL}"
+			echo -e "${MENU}********** Tonton Jo - 2021 - Version $mailversion *****${NORMAL}"
+   			echo -e "${MENU}********* https://www.youtube.com/c/tontonjo ***********${NORMAL}"
 			echo " "
 			echo -e "${MENU}**${NUMBER} 1)${MENU} Configure ${NORMAL}"
 			echo -e "${MENU}**${NUMBER} 2)${MENU} Test ${NORMAL}"
