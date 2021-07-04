@@ -5,6 +5,9 @@ Join me on Youtube: https://www.youtube.com/c/tontonjo
 
 This little tool aim to get smalls one-time configurations for Proxmox Virtual environement and backup server hosts in no time.
 
+If you find this usefull, please think about [Buying me a coffee](https://www.buymeacoffee.com/tontonjo)
+and to [Subscribe to my youtube channel](http://youtube.com/channel/UCnED3K6K5FDUp-x_8rwpsZw?sub_confirmation=1)
+
 ![screenshot](https://i.ibb.co/DMPZDjM/Screenshot-2021-06-16-084542.png)  
 ## Features are:
 - Install usefull dependencies: ifupdown2, git, sudo
