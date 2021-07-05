@@ -57,9 +57,9 @@ https://github.com/DeadlockState/Proxmox-prepare
 https://blog.lbdg.me/proxmox-best-performance-disable-swappiness/  
 
 
-## TODO:
+## TODO:  
 settings for zram -> https://pve.proxmox.com/wiki/Zram  
-user creation fro PBS when available
+user creation fro PBS when available  
 make things stupid-proof (deny characters when numbers expected ans so on)  
 add "sleep" when needed to read output  
 Cosmetic corrections  
