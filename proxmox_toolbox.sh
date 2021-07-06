@@ -332,7 +332,7 @@ show_menu(){
 		apt-get upgrade -y -qq
 		apt-get dist-upgrade -y -qq
 		if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
-			if grep -Ewqi "void" $proxmoxlib; then
+			if grep -q 'void({' $proxmoxlib; then
 					echo "- Subscription Message already removed - Skipping"
 				else
 					if [ -d "$pve_log_folder" ]; then
