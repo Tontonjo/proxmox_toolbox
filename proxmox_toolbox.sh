@@ -38,8 +38,9 @@
 # add "sleep" when needed to read output
 # Cosmetic corrections
 
-version=1.0
+version=1.1
 #V1.0: Initial Release
+#V1.1: correct detecition of subscription message removal
 mailversion=2.7
 
 
