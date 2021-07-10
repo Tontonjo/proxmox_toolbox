@@ -107,7 +107,7 @@ show_menu(){
 		show_menu
       ;;
 	2) clear;
-		read -p "Do you want to enable fail2ban? - Press y to continue: " -n 1 -r
+		read -p "- Do you want to enable fail2ban? - Press y to continue: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 					apt-get install -y fail2ban;
@@ -133,9 +133,9 @@ show_menu(){
 			systemctl restart fail2ban.service
 			fi
 		clear
-		echo "Do you want to use another user than root?"
-		echo "This will guide you to create another user, add it as a sudo user and allow sudo users to connect trough ssh"
-		read -p "Press y to continue: " -n 1 -r
+		echo "- Do you want to use another user than root?"
+		echo "- This will guide you to create another user, add it as a sudo user and allow sudo users to connect trough ssh"
+		read -p "- Press y to continue: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				clear
 				if [ $(dpkg-query -W -f='${Status}' sudo 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
@@ -175,10 +175,10 @@ show_menu(){
 					read -p "Create a pve admin group, user and disable "root@pam"? - Press y to continue:: " -n 1 -r
 						if [[ $REPLY =~ ^[Yy]$ ]]; then
 							clear
-							echo "What is the new pve username: "
+							echo "- What is the new pve username?: "
 							read pveusername
 							clear
-							echo "What is the new admin group name: "
+							echo "- What is the new admin group name?: "
 							read admingroup	
 							clear
 							echo "- Creating PVE user $pveusername"
@@ -200,14 +200,14 @@ show_menu(){
 		show_menu
 	   ;;
 	   3) clear;
-		read -p "Do you want to edit swappiness value or disable SWAP? - Y to continue: " -n 1 -r
+		read -p "- Do you want to edit swappiness value or disable SWAP? - Y to continue: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				swapvalue=$(cat /proc/sys/vm/swappiness)
 				echo ""
 				echo "- SWAP is actually set on $swapvalue"
-				echo "What is the new swapiness value? 0 to 100 - 0 to disable SWAP"
-				echo "This may take some times to apply"
-				echo "The lower the value - the less SWAP will be used"
+				echo "- What is the new swapiness value? 0 to 100 - 0 to disable SWAP"
+				echo "- This may take some times to apply"
+				echo "- The lower the value - the less SWAP will be used"
 				read newswapvalue
 				echo "- Setting swapiness to $newswapvalue"
 				sysctl vm.swappiness=$newswapvalue
@@ -255,9 +255,10 @@ show_menu(){
 				read -p "Press y for snmpv2 or anything for SNMP V3 (ReadOnly): " -n 1 -r
 				if [[ $REPLY =~ ^[Yy]$ ]]; then
 					clear
-					echo "Read only community name? (ex: ro_tontonjo): "
+					echo "- Enter the read only community name? (ex: ro_tontonjo): "
 					read rocommunity
-					echo "Allowed subnet? enter for none (x.x.x.x/xx): "
+					echo "- Enter an allowed subnet if any - press enter for none (x.x.x.x/xx)"
+					echo "- Press enter for none: "
 					read allowedsubnet
 					cp /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
 					cp -f proxmox_toolbox/snmp/snmpd.conf /etc/snmp/snmpd.conf
@@ -271,7 +272,6 @@ show_menu(){
 					echo "- Deleting old SNMPv3 users in /usr/share/snmp/snmpd.conf"
 					rm -f /usr/share/snmp/snmpd.conf
 					echo "!! min 8 charachters password !!"
-
 					net-snmp-config --create-snmpv3-user -ro -a MD5 -x DES
 				fi
 			service snmpd restart
