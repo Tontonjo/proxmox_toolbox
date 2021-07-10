@@ -83,7 +83,7 @@ show_menu(){
     else
       case $opt in
       1) clear;
-			read -p "This will install thoses libraries if missing: ifupdown2 - git - sudo Press y to install: " -n 1 -r
+			read -p "- This will install thoses libraries if missing: ifupdown2 - git - sudo Press y to install: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo " "
 				if [ $(dpkg-query -W -f='${Status}' ifupdown2 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
@@ -170,8 +170,9 @@ show_menu(){
 			fi
 			clear
 			if [ -d "$pve_log_folder" ]; then
-					echo "Do you want to create an alternate PVE admin user and disable root user?"
-					echo "This will create a PVE user, a PVE group, set group admin permissions, add user to group and disable root@pam"
+					echo "- Do you want to create an alternate PVE admin user and disable root user?"
+					echo "- This will create a PVE user, a PVE group, set group admin permissions, add user to group and disable root@pam"
+					echo "- This will create a PVE user, a PVE group, set group admin permissions, add user to group and disable root@pam"
 					read -p "Create a pve admin group, user and disable "root@pam"? - Press y to continue:: " -n 1 -r
 						if [[ $REPLY =~ ^[Yy]$ ]]; then
 							clear
