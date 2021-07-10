@@ -171,9 +171,9 @@ show_menu(){
 			clear
 			if [ -d "$pve_log_folder" ]; then
 					echo "- Do you want to create an alternate PVE admin user and disable root user?"
-					echo "- This will create a PVE user, a PVE group, set group admin permissions, add user to group and disable root@pam"
-					echo "- This will create a PVE user, a PVE group, set group admin permissions, add user to group and disable root@pam"
-					read -p "Create a pve admin group, user and disable "root@pam"? - Press y to continue:: " -n 1 -r
+					echo "- This will create a PVE user and a pve admin group"
+					echo "- add user to group and disable root@pam"
+					read -p "- Do you want to proceed? - Press y to continue:: " -n 1 -r
 						if [[ $REPLY =~ ^[Yy]$ ]]; then
 							clear
 							echo "- What is the new pve username?: "
