@@ -59,6 +59,7 @@ https://blog.lbdg.me/proxmox-best-performance-disable-swappiness/
 
 ## TODO:  
 settings for zram -> https://pve.proxmox.com/wiki/Zram  
+backup and restore Proxmox configuration
 user creation fro PBS when available  
 make things stupid-proof (deny characters when numbers expected ans so on)  
 add "sleep" when needed to read output  
