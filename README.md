@@ -72,7 +72,7 @@ The script looks for tar.gz files located in backupdir="/root/" and will list al
 In order to recover datastores residing on other storages that still live in the system, you can do the following:
 
 #### Directory:
-- find and open all .mount files in /etc/systemd/system/ and take note of all [Mount] values: Options Type What Where  
+- Once the restauration is done, find and open all .mount files in /etc/systemd/system/ and take note of all [Mount] values: Options Type What Where  
 - run the following commands with the values you just retreived
 ```shell
 mkdir -p "where"
