@@ -10,7 +10,7 @@
 # I'm responsible in no way if something get broken - even if there's likely no chance to happen:-)
 # I am no programmer - just tying to get some begginers life a bit easier
 # There will be bugs or things i did not thinked about - sorry - if so, try to solve-it yourself, let me kindly know and PR
-# Backup and restore has not been extensivly tested - Dont count on it too much
+# Backup and restore has not been extensivly tested - and has never been tested on cluster configurations - Dont count on it too much
 
 # USAGE
 # You can use this tool either with:
