@@ -44,11 +44,11 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=2.1
+version=2.2
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
 # V2.0: Add backup and restore - reworked menu order - lots of small changes
-# V2.1: add confirmation to disable root@pam which is required to update from web UI - add more choices in security settings
+# V2.2: add confirmation to disable root@pam which is required to update from web UI - add more choices in security settings
 
 # Proxmox ez mail configurator
 mailversion=2.9
