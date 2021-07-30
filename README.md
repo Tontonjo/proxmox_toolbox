@@ -8,7 +8,7 @@ This little tool aim to get smalls one-time configurations for Proxmox Virtual e
 If you find this usefull, please think about [Buying me a coffee](https://www.buymeacoffee.com/tontonjo)
 and to [Subscribe to my youtube channel](http://youtube.com/channel/UCnED3K6K5FDUp-x_8rwpsZw?sub_confirmation=1)
 
-You can see a demonstration of the tool [in this playlist](https://www.youtube.com/playlist?list=PLU73OWQhDzsTpLpVNspJ14rVrXAmo2Biu) 
+You can watch a demonstration of the tool [in this playlist](https://www.youtube.com/playlist?list=PLU73OWQhDzsTpLpVNspJ14rVrXAmo2Biu) 
 
 ![screenshot](https://i.ibb.co/nDXnvB4/image.png)  
 ## Features are:
