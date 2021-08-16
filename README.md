@@ -5,8 +5,8 @@ Join me on Youtube: https://www.youtube.com/c/tontonjo
 
 This little tool aim to get smalls one-time configurations for Proxmox Virtual environement and backup server hosts in no time.
 
-If you find this usefull, please think about ## Donate a cup of coffee
-<a href="https://www.buymeacoffee.com/tontonjo" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a> [Buying me a coffee](https://www.buymeacoffee.com/tontonjo)
+If you find this usefull, please think about
+<a href="https://www.buymeacoffee.com/tontonjo" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
 and to [Subscribe to my youtube channel](http://youtube.com/channel/UCnED3K6K5FDUp-x_8rwpsZw?sub_confirmation=1)
 
 You can watch a demonstration of the tool [in this playlist](https://www.youtube.com/playlist?list=PLU73OWQhDzsTpLpVNspJ14rVrXAmo2Biu) 
