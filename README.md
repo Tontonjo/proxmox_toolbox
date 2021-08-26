@@ -81,8 +81,6 @@ In order to recover datastores residing on other storages that still live in the
 mkdir -p "where"
 echo "what where Type Options 0 2" >> /etc/fstab  
 mount -a
-or
-reboot now
 ```  
 - Control if the drives are now correctly mounted  
 #### Zpool:  
