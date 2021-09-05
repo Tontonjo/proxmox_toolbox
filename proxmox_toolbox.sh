@@ -298,7 +298,9 @@ show_menu(){
 		show_menu
 	   ;;
 	   5) clear;
-	   	if [ $(lsblk | grep swap) -eq 0 ]; then
+		lsblk | grep -q swap
+		swapenabled=$?
+	   	if [ $swapenabled -eq 0 ]; then
 		read -p "- Do you want to edit swappiness value or disable SWAP? y = yes / anything = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				swapvalue=$(cat /proc/sys/vm/swappiness)
