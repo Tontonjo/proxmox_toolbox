@@ -44,11 +44,12 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=2.2
+version=2.3
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
 # V2.0: Add backup and restore - reworked menu order - lots of small changes
 # V2.2: add confirmation to disable root@pam which is required to update from web UI - add more choices in security settings
+# V2.3: Add check of swap existence to allow swap setting configuration
 
 # Proxmox ez mail configurator
 mailversion=2.9
@@ -297,6 +298,7 @@ show_menu(){
 		show_menu
 	   ;;
 	   5) clear;
+	   	if [ $(lsblk | grep swap) -eq 0 ]; then
 		read -p "- Do you want to edit swappiness value or disable SWAP? y = yes / anything = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				swapvalue=$(cat /proc/sys/vm/swappiness)
@@ -312,6 +314,10 @@ show_menu(){
 				swapon -a
 				sleep 3	
 			fi
+		else
+			echo " - System has no swap - Nothing to do"
+			sleep 3	
+		fi
 		show_menu
       ;;
 	   6) clear;
