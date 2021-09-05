@@ -302,7 +302,7 @@ show_menu(){
 				swapvalue=$(cat /proc/sys/vm/swappiness)
 				echo ""
 				echo "- SWAP is actually set on $swapvalue"
-				echo "- What is the new swapiness value? 0 to 100 - 0 to disable SWAP"
+				echo "- What is the new swapiness value? 0 to 100 - 0 to use SWAP only when out of memory"
 				echo "- This may take some times to apply"
 				echo "- The lower the value - the less SWAP will be used"
 				read newswapvalue
