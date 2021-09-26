@@ -44,12 +44,13 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=2.3
+version=2.4
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
 # V2.0: Add backup and restore - reworked menu order - lots of small changes
 # V2.2: add confirmation to disable root@pam which is required to update from web UI - add more choices in security settings
 # V2.3: Add check of swap existence to allow swap setting configuration
+# V2.4: Add check of root rights
 
 # Proxmox ez mail configurator
 mailversion=2.9
@@ -62,6 +63,9 @@ backupversion=2.2
 # V2.0: add support for PBS
 # V2.1: Install dependencies if config folder is existing on restoration
 # V2.2: Add restauration of fail2ban and mounts
+
+# check if root
+if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
 
 # -----------------ENVIRONNEMENT VARIABLES----------------------
 pve_log_folder="/var/log/pve/tasks/"
