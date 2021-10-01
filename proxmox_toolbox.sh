@@ -53,9 +53,10 @@ version=2.4
 # V2.4: Add check of root rights
 
 # Proxmox ez mail configurator
-mailversion=2.9
+mailversion=3.0
 # V2.8: moved SSL question in a better place
 # V2.9: add more corrections case: smtp_tls_security_level = encrypt and smtp_tls_security_level = encrypt - more corrections
+# V3.0: replace method to send test email without usless prompts
 
 # Proxmox configuration backup and restore
 backupversion=2.2
@@ -546,13 +547,9 @@ mail_menu(){
 		echo "- What is the recipient email address? :"
 		read vardestaddress
 		echo "- An email will be sent to: $vardestaddress"
-		echo "Enter Email subject: "
-		read "varsubject"
-		echo "- Enter the body of your test message then press ctrl-d"
-		echo "- When asked for CC - press enter again"
-		echo "  --------- Enter mail body ----------------"
-		mail -s "$varsubject" "$vardestaddress"
+		echo “If you reveive this, it means your email configurations looks correct. Yay!” | mail -s 'Proxmox server test mail' $vardestaddress
 		echo "- Email should have been sent - If none received, you may want to check for errors in menu 3"
+		sleep 3
 	  
 	  mail_menu;	
       ;;
