@@ -5,6 +5,7 @@
 Join me on Youtube: https://www.youtube.com/c/tontonjo
 
 This little tool aim to get smalls one-time configurations for Proxmox Virtual environement and backup server hosts in no time.
+It automatically will find if the host is a pve or a pbs host and setup accordingly.
 
 If you find this usefull, please think about
 <a href="https://www.buymeacoffee.com/tontonjo"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png"></a>
@@ -14,6 +15,7 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 
 ![screenshot](https://i.ibb.co/nDXnvB4/image.png)  
 ## Features are:
+- Automatic PVE / PBS type detecion
 - Hide enterprise repo and set no-subscription repository
 - Update host, and when no-enterprise source is set - disable no-subscription message
 - Install usefull dependencies: ifupdown2 - git - sudo - libsasl2-modules - snmp
