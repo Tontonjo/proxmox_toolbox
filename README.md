@@ -15,7 +15,7 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 
 ![screenshot](https://i.ibb.co/nDXnvB4/image.png)  
 ## Features are:
-- Automatic PVE / PBS type detecion
+- Automatic PVE / PBS host detection
 - Hide enterprise repo and set no-subscription repository
 - Update host, and when no-enterprise source is set - disable no-subscription message
 - Install usefull dependencies: ifupdown2 - git - sudo - libsasl2-modules - snmp
