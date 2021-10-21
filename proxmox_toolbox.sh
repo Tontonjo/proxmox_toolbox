@@ -44,13 +44,14 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=2.4
+version=2.5
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
 # V2.0: Add backup and restore - reworked menu order - lots of small changes
 # V2.2: add confirmation to disable root@pam which is required to update from web UI - add more choices in security settings
 # V2.3: Add check of swap existence to allow swap setting configuration
 # V2.4: Add check of root rights
+# V2.5: Ensure swap setting resist reboot
 
 # Proxmox ez mail configurator
 mailversion=3.0
@@ -317,6 +318,7 @@ show_menu(){
 				read newswapvalue
 				echo "- Setting swapiness to $newswapvalue"
 				sysctl vm.swappiness=$newswapvalue
+				echo "vm.swappiness=$newswapvalue" > /etc/sysctl.d/swappiness.conf
 				swapoff -a
 				swapon -a
 				sleep 3	
