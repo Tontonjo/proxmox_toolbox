@@ -112,7 +112,7 @@ https://blog.lbdg.me/proxmox-best-performance-disable-swappiness/
 https://gist.github.com/mrpeardotnet/6bdc4b504f43ce57fa7eaee96d376edf  
 https://github.com/DerDanilo/proxmox-stuff/blob/master/prox_config_backup.sh  
 https://pve.proxmox.com/wiki/Upgrade_from_6.x_to_7.0  
-
+https://wiki.debian.org/SSDOptimization  
 
 ## TODO:  
 settings for zram -> https://pve.proxmox.com/wiki/Zram  
