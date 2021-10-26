@@ -304,7 +304,7 @@ show_menu(){
 		show_menu
 	   ;;
 	   5) clear;
-		lsblk | grep -q swap
+		lsblk | grep -qi swap
 		swapenabled=$?
 	   	if [ $swapenabled -eq 0 ]; then
 		read -p "- Do you want to edit swappiness value or disable SWAP? y = yes / anything = no: " -n 1 -r
@@ -319,7 +319,9 @@ show_menu(){
 				echo "- Setting swapiness to $newswapvalue"
 				sysctl vm.swappiness=$newswapvalue
 				echo "vm.swappiness=$newswapvalue" > /etc/sysctl.d/swappiness.conf
+				echo "- Emptying swap - This may take some time"
 				swapoff -a
+				echo "- Re-enabling swap with $newswapvalue value"
 				swapon -a
 				sleep 3	
 			fi
