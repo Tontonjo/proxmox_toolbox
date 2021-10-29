@@ -6,10 +6,12 @@ Join me on Youtube: https://www.youtube.com/c/tontonjo
 
 If you find this usefull, please consider supporting my work:  
 <a href="https://www.buymeacoffee.com/tontonjo"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png"></a> <a href="https://www.infomaniak.com/goto/fr/home?utm_term=6151f412daf35"><img src="https://i.ibb.co/KjWSd95/banner-bleu.png"></a> </a> <a href="https://www.xvinlink.com/?a_fid=TontonJo"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/7/79/ExpressVPN-logo.svg/261px-ExpressVPN-logo.svg.png"></a>  
-You can watch a demonstration of the tool [in this playlist](https://www.youtube.com/playlist?list=PLU73OWQhDzsTpLpVNspJ14rVrXAmo2Biu) 
+
+## Informations:
 
 This little tool aim to get smalls one-time configurations for Proxmox Virtual environement and backup server hosts in no time.
-It automatically will find if the host is a pve or a pbs host and setup accordingly.
+It automatically will find if the host is a pve or a pbs host and setup accordingly.  
+You can watch a demonstration of the tool [in this playlist](https://www.youtube.com/playlist?list=PLU73OWQhDzsTpLpVNspJ14rVrXAmo2Biu) 
 
 ![screenshot](https://i.ibb.co/nDXnvB4/image.png)  
 ## Features are:
