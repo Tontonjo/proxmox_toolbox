@@ -60,7 +60,7 @@ mailversion=3.1
 # V2.8: moved SSL question in a better place
 # V2.9: add more corrections case: smtp_tls_security_level = encrypt and smtp_tls_security_level = encrypt - more corrections
 # V3.0: replace method to send test email without usless prompts
-# V3.0: Add installation for mailutils if missing when entering mail menu
+# V3.1: Add installation for mailutils if missing when entering mail menu - add hostname to test
 
 # Proxmox configuration backup and restore
 backupversion=2.2
@@ -77,6 +77,8 @@ pve_log_folder="/var/log/pve/tasks/"
 proxmoxlib="/usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js"
 distribution=$(. /etc/*-release;echo $VERSION_CODENAME)
 execdir=$(dirname $0)
+hostname=$(hostname)
+date=$(date +%Y_%m_%d-%H_%M_%S)
 backupdir="/root/" #trailing slash is mandatory
 pve_backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/system/*.mount /etc/network/interfaces /etc/sysctl.conf /etc/resolv.conf /etc/hosts /etc/hostname /etc/cron* /etc/aliases /etc/snmp/ /etc/smartd.conf /usr/share/snmp/snmpd.conf /etc/postfix/ /etc/pve/ /etc/lvm/ /etc/modprobe.d/ /var/lib/pve-firewall/ /var/lib/pve-cluster/  /etc/vzdump.conf /etc/ksmtuned.conf"
 pbs_backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/system/*.mount /etc/network/interfaces /etc/sysctl.conf /etc/resolv.conf /etc/hosts /etc/hostname /etc/cron* /etc/aliases /etc/snmp/ /etc/smartd.conf /usr/share/snmp/snmpd.conf /etc/postfix/ /etc/proxmox-backup/"
@@ -557,7 +559,7 @@ mail_menu(){
 		echo "- What is the recipient email address? :"
 		read vardestaddress
 		echo "- An email will be sent to: $vardestaddress"
-		echo “If you reveive this, it means your email configurations looks correct. Yay!” | mail -s 'Proxmox server test mail' $vardestaddress
+		echo “If you reveive this, it means your email configurations looks correct. Yay!” | mail -s '"$hostname-$date server test mail"' $vardestaddress
 		echo "- Email should have been sent - If none received, you may want to check for errors in menu 3"
 		sleep 3
 	  
