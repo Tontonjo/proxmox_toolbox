@@ -559,7 +559,7 @@ mail_menu(){
 		echo "- What is the recipient email address? :"
 		read vardestaddress
 		echo "- An email will be sent to: $vardestaddress"
-		echo “If you reveive this, it means your email configurations looks correct. Yay!” | mail -s '"$hostname-$date server test mail"' $vardestaddress
+		echo “If you reveive this, it means your email configurations looks correct. Yay!” | mail -s "$hostname-$date server test mail" $vardestaddress
 		echo "- Email should have been sent - If none received, you may want to check for errors in menu 3"
 		sleep 3
 	  
