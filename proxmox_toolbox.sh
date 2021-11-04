@@ -60,7 +60,7 @@ mailversion=3.1
 # V2.8: moved SSL question in a better place
 # V2.9: add more corrections case: smtp_tls_security_level = encrypt and smtp_tls_security_level = encrypt - more corrections
 # V3.0: replace method to send test email without usless prompts
-# V3.0: PBS: Add installation prompt for mailutils if missing
+# V3.0: Add installation for mailutils if missing when entering mail menu
 
 # Proxmox configuration backup and restore
 backupversion=2.2
