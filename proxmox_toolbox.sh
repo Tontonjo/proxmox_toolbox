@@ -408,6 +408,9 @@ mail_menu(){
 			if [ $(dpkg-query -W -f='${Status}' libsasl2-modules 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 			  apt-get install -yqq libsasl2-modules;
 			fi
+			if [ $(dpkg-query -W -f='${Status}' mailutils 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+			  apt-get install -y mailutils;
+			fi
 			clear
 			ALIASESBCK=/etc/aliases.BCK
 			if test -f "$ALIASESBCK"; then
@@ -448,21 +451,6 @@ mail_menu(){
 			else
 			  case $opt in
 			  1) clear;
-			   if [ -d "$pve_log_folder" ]; then
-			 	 continue
-			  else	
-			  	if [ $(dpkg-query -W -f='${Status}' mailutils 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					read -p  "- Lib mailutils is missing by default, wich is needed to send notifications. Install? y = yes / anything = no: " -n 1 -r 
-					if [[ $REPLY =~ ^[Yy]$ ]]; then
-					apt-get install -y mailutils;
-					else
-					mail_menu
-					fi
-				else
-					echo "- mailutils already installed"
-				fi
-			  	 echo "- Server is a PBS host wich miss some libraries to fully use email notifications"
-			 	fi
 					echo "- System administrator recipient mail address (user@domain.tld) (root alias): "
 					read 'varrootmail'
 					echo "- What is the mail server hostname? (smtp.gmail.com): "
