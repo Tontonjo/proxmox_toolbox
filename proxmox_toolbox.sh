@@ -56,17 +56,19 @@ version=2.6
 # V2.6: Much better and smarter way to remove subscription message (credits to @adrien Linuxtricks)
 
 # Proxmox ez mail configurator
-mailversion=3.0
+mailversion=3.1
 # V2.8: moved SSL question in a better place
 # V2.9: add more corrections case: smtp_tls_security_level = encrypt and smtp_tls_security_level = encrypt - more corrections
 # V3.0: replace method to send test email without usless prompts
+# V3.0: PBS: Add installation prompt for mailutils if missing
 
 # Proxmox configuration backup and restore
-backupversion=2.2
+backupversion=2.3
 # V1.0: Initial Release
 # V2.0: add support for PBS
 # V2.1: Install dependencies if config folder is existing on restoration
 # V2.2: Add restauration of fail2ban and mounts
+# V2.3: PBS: Add backup of postfix configurations as PBS now support it
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -447,6 +449,21 @@ mail_menu(){
 			else
 			  case $opt in
 			  1) clear;
+			   if [ -d "$pve_log_folder" ]; then
+			 	 continue
+			  else	
+			  	if [ $(dpkg-query -W -f='${Status}' mailutils 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+					read -p  "- Lib mailutils is missing by default, wich is needed to send notifications. Install? y = yes / anything = no: " -n 1 -r 
+					if [[ $REPLY =~ ^[Yy]$ ]]; then
+					apt-get install -y mailutils;
+					else
+					mail_menu
+					fi
+				else
+					echo "- mailutils already installed"
+				fi
+			  	 echo "- Server is a PBS host wich miss some libraries to fully use email notifications"
+			 	fi
 					echo "- System administrator recipient mail address (user@domain.tld) (root alias): "
 					read 'varrootmail'
 					echo "- What is the mail server hostname? (smtp.gmail.com): "
