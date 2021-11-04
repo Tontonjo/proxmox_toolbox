@@ -56,11 +56,12 @@ version=2.6
 # V2.6: Much better and smarter way to remove subscription message (credits to @adrien Linuxtricks)
 
 # Proxmox ez mail configurator
-mailversion=3.1
+mailversion=3.2
 # V2.8: moved SSL question in a better place
 # V2.9: add more corrections case: smtp_tls_security_level = encrypt and smtp_tls_security_level = encrypt - more corrections
 # V3.0: replace method to send test email without usless prompts
 # V3.1: Add installation for mailutils if missing when entering mail menu - add hostname to test
+# V3.2: Add hostname and date to test mail subject
 
 # Proxmox configuration backup and restore
 backupversion=2.2
@@ -559,7 +560,7 @@ mail_menu(){
 		echo "- What is the recipient email address? :"
 		read vardestaddress
 		echo "- An email will be sent to: $vardestaddress"
-		echo “If you reveive this, it means your email configurations looks correct. Yay!” | mail -s "$hostname-$date server test mail" $vardestaddress
+		echo “If you reveive this, it means your email configurations looks correct. Yay!” | mail -s "test mail - $hostname - $date" $vardestaddress
 		echo "- Email should have been sent - If none received, you may want to check for errors in menu 3"
 		sleep 3
 	  
