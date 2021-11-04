@@ -412,7 +412,7 @@ mail_menu(){
 			  apt-get install -yqq libsasl2-modules;
 			fi
 			if [ $(dpkg-query -W -f='${Status}' mailutils 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-			  apt-get install -y mailutils;
+			  apt-get install -yqq mailutils;
 			fi
 			clear
 			ALIASESBCK=/etc/aliases.BCK
