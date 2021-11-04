@@ -34,6 +34,7 @@
 # https://gist.github.com/mrpeardotnet/6bdc4b504f43ce57fa7eaee96d376edf
 # https://github.com/DerDanilo/proxmox-stuff/blob/master/prox_config_backup.sh
 # https://pve.proxmox.com/wiki/Upgrade_from_6.x_to_7.0
+# https://www.linuxtricks.fr/wiki/proxmox-quelques-infos
 
 
 # TODO:
@@ -44,7 +45,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=2.5
+version=2.6
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
 # V2.0: Add backup and restore - reworked menu order - lots of small changes
@@ -52,6 +53,7 @@ version=2.5
 # V2.3: Add check of swap existence to allow swap setting configuration
 # V2.4: Add check of root rights
 # V2.5: Ensure swap setting resist reboot
+# V2.6: Much better and smarter way to remove subscription message (credits to @adrien Linuxtricks)
 
 # Proxmox ez mail configurator
 mailversion=3.0
@@ -168,10 +170,10 @@ show_menu(){
 				else
 					if [ -d "$pve_log_folder" ]; then
 						echo "- Removing No Valid Subscription Message for PVE"
-						sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" $proxmoxlib && systemctl restart pveproxy.service
+						sed -Ezi.bak "s/!== 'active'/== 'active'/g" $proxmoxlib && systemctl restart pveproxy.service
 					else 
 						echo "- Removing No Valid Subscription Message for PBS"
-						sed -Ezi.bak "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" $proxmoxlib && systemctl restart proxmox-backup-proxy.service
+						sed -Ezi.bak "s/!== 'active'/== 'active'/g" $proxmoxlib && systemctl restart proxmox-backup-proxy.service
 					fi
 			fi
 		sleep 3
