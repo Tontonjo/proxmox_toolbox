@@ -75,7 +75,7 @@ The script looks for tar.gz files located in backupdir="/root/" and will list al
 - The restauration will override any existing file with the one in archive  
 - It will install missing dependencies for snmp and fail2ban if config were existing  
 
-## Mountpoint and zpool
+## Directory mountpoint and zpool
 
 In order to recover datastores residing on other storages that still live in the system, you can do the following:
 
