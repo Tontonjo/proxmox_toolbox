@@ -64,11 +64,12 @@ mailversion=3.2
 # V3.2: Add hostname and date to test mail subject
 
 # Proxmox configuration backup and restore
-backupversion=2.2
+backupversion=2.3
 # V1.0: Initial Release
 # V2.0: add support for PBS
 # V2.1: Install dependencies if config folder is existing on restoration
 # V2.2: Add restauration of fail2ban and mounts
+# V2.3: Assure restoration path with space works
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -701,12 +702,12 @@ backup_menu(){
 			options[i++]="$f"
 			done < <(find $backupdir -maxdepth 1 -type f -name "*.tar.gz" -print0 )
 			select opt in "${options[@]}" "- Return to backup menu"; do
-			  case $opt in 
+			  case "$opt" in 
 			  *.tar.gz)
 				  echo "- Backup $opt selected"
 				  read -p "- Proceed with the restoration?  y = yes / anything = no: " -n 1 -r
 				  if [[ $REPLY =~ ^[Yy]$ ]]; then
-					 tar -xf $opt -C /
+					 tar -xf "$opt" -C /
 					 clear
 					 echo "- File restauration done"
 					 echo "- Installing missind dependencies if missing"
