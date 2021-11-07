@@ -45,7 +45,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=2.6
+version=2.7
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
 # V2.0: Add backup and restore - reworked menu order - lots of small changes
@@ -54,6 +54,7 @@ version=2.6
 # V2.4: Add check of root rights
 # V2.5: Ensure swap setting resist reboot
 # V2.6: Much better and smarter way to remove subscription message (credits to @adrien Linuxtricks)
+# V2.7: Fix remove subscription message detection
 
 # Proxmox ez mail configurator
 mailversion=3.2
