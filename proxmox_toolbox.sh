@@ -170,12 +170,12 @@ show_menu(){
 		apt-get upgrade -y -qq
 		apt-get dist-upgrade -y -qq
 		if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
-			if grep -q "== 'active'" $proxmoxlib; then
+			if grep -q ".data.status.toLowerCase() == 'active') {" $proxmoxlib; then
 					echo "- Subscription Message already removed - Skipping"
 				else
 					if [ -d "$pve_log_folder" ]; then
 						echo "- Removing No Valid Subscription Message for PVE"
-						sed -Ezi.bak "s/!== 'active'/== 'active'/g" $proxmoxlib && systemctl restart pveproxy.service
+						sed -Ezi.bak "0./!== 'active'/== 'active'/g" $proxmoxlib && systemctl restart pveproxy.service
 					else 
 						echo "- Removing No Valid Subscription Message for PBS"
 						sed -Ezi.bak "s/!== 'active'/== 'active'/g" $proxmoxlib && systemctl restart proxmox-backup-proxy.service
