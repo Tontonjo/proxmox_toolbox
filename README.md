@@ -96,8 +96,7 @@ mount -a
 ```shell
 zpool import
 ```  
-- Take not of "pool" name  
-- run
+- Take note of the "pool" name and run
 ```shell
 zpool import -f poolname
 ```  
