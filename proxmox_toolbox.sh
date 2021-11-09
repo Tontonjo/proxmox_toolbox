@@ -57,12 +57,13 @@ version=2.7
 # V2.7: Fix remove subscription message detection
 
 # Proxmox ez mail configurator
-mailversion=3.2
+mailversion=3.3
 # V2.8: moved SSL question in a better place
 # V2.9: add more corrections case: smtp_tls_security_level = encrypt and smtp_tls_security_level = encrypt - more corrections
 # V3.0: replace method to send test email without usless prompts
 # V3.1: Add installation for mailutils if missing when entering mail menu - add hostname to test
 # V3.2: Add hostname and date to test mail subject
+# V3.3: Mail menu will not load if it fails to resolve and ping $dnstesthost
 
 # Proxmox configuration backup and restore
 backupversion=2.3
@@ -76,6 +77,7 @@ backupversion=2.3
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
 
 # -----------------ENVIRONNEMENT VARIABLES----------------------
+dnstesthost=google.ch
 pve_log_folder="/var/log/pve/tasks/"
 proxmoxlib="/usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js"
 distribution=$(. /etc/*-release;echo $VERSION_CODENAME)
@@ -87,7 +89,7 @@ pve_backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd
 pbs_backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/system/*.mount /etc/network/interfaces /etc/sysctl.conf /etc/resolv.conf /etc/hosts /etc/hostname /etc/cron* /etc/aliases /etc/snmp/ /etc/smartd.conf /usr/share/snmp/snmpd.conf /etc/postfix/ /etc/proxmox-backup/"
 # ---------------END OF ENVIRONNEMENT VARIABLES-----------------
 
-show_menu(){
+main_menu(){
     clear
     NORMAL=`echo "\033[m"`
     MENU=`echo "\033[36m"` #Blue
@@ -162,7 +164,7 @@ show_menu(){
 				fi
 			sleep 3
 			fi
-		show_menu
+		main_menu
 	   ;;
 	   	  2) clear;
 	  
@@ -184,7 +186,7 @@ show_menu(){
 			fi
 		sleep 3
 		fi
-		show_menu
+		main_menu
 	   ;;
       3) clear;
 			read -p "- This will install thoses libraries if missing: ifupdown2 - git - sudo - libsasl2-modules - Continue? y = yes / anything = no: " -n 1 -r
@@ -212,7 +214,7 @@ show_menu(){
 				fi
 			sleep 3
 			fi	
-		show_menu
+		main_menu
       ;;
 	4) clear;
 		read -p "Do you want to enable fail2ban? y = yes / anything = no: " -n 1 -r
@@ -269,7 +271,7 @@ show_menu(){
 						if grep -qF "PermitRootLogin yes" /etc/ssh/sshd_config; then
 							sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
 						else
-						show_menu
+						main_menu
 						fi
 				service ssh restart && service sshd restart
 					fi
@@ -309,7 +311,7 @@ show_menu(){
 				else
 					echo "- Host is a PBS host - user management not implemented ATM"
 			fi
-		show_menu
+		main_menu
 	   ;;
 	   5) clear;
 		lsblk | grep -qi swap
@@ -337,7 +339,7 @@ show_menu(){
 			echo " - System has no swap - Nothing to do"
 			sleep 3	
 		fi
-		show_menu
+		main_menu
       ;;
 	   6) clear;
 	   	read -p "- Do you want to enable short and long S.M.A.R.T self-tests? y = yes / anything = no: " -n 1 -r
@@ -354,7 +356,7 @@ show_menu(){
 				fi
 			sleep 3	
 			fi
-		show_menu
+		main_menu
       ;;
 	   7) clear;
 		read -p "- Install and configure SNMP? y = yes / anything = no: " -n 1 -r
@@ -391,7 +393,7 @@ show_menu(){
 			service snmpd restart
 			sleep 3	
 			fi
-		show_menu
+		main_menu
 	   ;;
 	   	 8) clear;
 		mail_menu
@@ -406,16 +408,26 @@ show_menu(){
       esac
     fi
   done
-  show_menu
+  main_menu
 }
 
 mail_menu(){
-			if [ $(dpkg-query -W -f='${Status}' libsasl2-modules 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-			  apt-get install -yqq libsasl2-modules;
-			fi
-			if [ $(dpkg-query -W -f='${Status}' mailutils 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-			  apt-get install -yqq mailutils;
-			fi
+			echo "- Installing missing libraries"
+			if ping -c 1 $dnstesthost &> /dev/null; then
+				if [ $(dpkg-query -W -f='${Status}' libsasl2-modules 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+				  apt-get install -yqq libsasl2-modules;
+				fi
+				if [ $(dpkg-query -W -f='${Status}' mailutils 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+				  apt-get install -yqq mailutils;
+				fi
+			else
+				echo "- Looks like your host cant reach test domain $dnstesthost"
+				echo "- Please control your network and DNS settings"
+				sleep 7
+				main_menu
+fi
+
+
 			clear
 			ALIASESBCK=/etc/aliases.BCK
 			if test -f "$ALIASESBCK"; then
@@ -637,7 +649,7 @@ mail_menu(){
 	     ;;
 
       0) clear;
-      show_menu;
+      main_menu;
       ;;
 
       x)exit;
@@ -647,7 +659,7 @@ mail_menu(){
       ;;
 
       *)clear;
-      show_menu;
+      main_menu;
       ;;
       esac
     fi
@@ -724,7 +736,7 @@ backup_menu(){
 					if [[ $REPLY =~ ^[Yy]$ ]]; then
 						reboot now
 					else
-						show_menu
+						main_menu
 					fi
 				  else
 					clear
@@ -741,7 +753,7 @@ backup_menu(){
 			done
 			;;
       0) clear;
-      show_menu;
+      main_menu;
       ;;
 
       x)exit;
@@ -751,11 +763,11 @@ backup_menu(){
       ;;
 
       *)clear;
-      show_menu;
+      main_menu;
       ;;
       esac
     fi
   done
 }
 
-show_menu
+main_menu
