@@ -45,7 +45,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=2.7
+version=3.0
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
 # V2.0: Add backup and restore - reworked menu order - lots of small changes
@@ -55,23 +55,7 @@ version=2.7
 # V2.5: Ensure swap setting resist reboot
 # V2.6: Much better and smarter way to remove subscription message (credits to @adrien Linuxtricks)
 # V2.7: Fix remove subscription message detection
-
-# Proxmox ez mail configurator
-mailversion=3.3
-# V2.8: moved SSL question in a better place
-# V2.9: add more corrections case: smtp_tls_security_level = encrypt and smtp_tls_security_level = encrypt - more corrections
-# V3.0: replace method to send test email without usless prompts
-# V3.1: Add installation for mailutils if missing when entering mail menu - add hostname to test
-# V3.2: Add hostname and date to test mail subject
-# V3.3: Mail menu will not load if it fails to resolve and ping $dnstesthost
-
-# Proxmox configuration backup and restore
-backupversion=2.3
-# V1.0: Initial Release
-# V2.0: add support for PBS
-# V2.1: Install dependencies if config folder is existing on restoration
-# V2.2: Add restauration of fail2ban and mounts
-# V2.3: Assure restoration path with space works
+# V3.0: Remove useless mutiple versions for better clarity
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -449,7 +433,7 @@ fi
 			RED_TEXT=`echo "\033[31m"`
 			ENTER_LINE=`echo "\033[33m"`
   			echo -e "${MENU}************* Ez Proxmox Mail Configurator ***************${NORMAL}"
-			echo -e "${MENU}********** Tonton Jo - 2021 - Version $mailversion *****${NORMAL}"
+			echo -e "${MENU}********** Tonton Jo - 2021 - Version $version *****${NORMAL}"
    			echo -e "${MENU}********* https://www.youtube.com/c/tontonjo ***********${NORMAL}"
 			echo " "
 			echo -e "${MENU}**${NUMBER} 1)${MENU} Configure ${NORMAL}"
@@ -675,7 +659,7 @@ backup_menu(){
 			RED_TEXT=`echo "\033[31m"`
 			ENTER_LINE=`echo "\033[33m"`
   			echo -e "${MENU}**************** Proxmxo backup and restore ***************${NORMAL}"
-			echo -e "${MENU}********** Tonton Jo - 2021 - Version $backupversion *****${NORMAL}"
+			echo -e "${MENU}********** Tonton Jo - 2021 - Version $version *****${NORMAL}"
    			echo -e "${MENU}********** https://www.youtube.com/c/tontonjo ***********${NORMAL}"
 			echo " "
 			echo -e "${MENU}**${NUMBER} 1)${MENU} Backup configuration ${NORMAL}"
