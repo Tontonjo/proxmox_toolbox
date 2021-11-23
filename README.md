@@ -91,6 +91,7 @@ echo "what where Type Options 0 2" >> /etc/fstab
 mount -a
 ```  
 - Control if the drives are now correctly mounted  
+- Add a new Directory storage in pve/pbs using "where" as directory path  
 #### Zpool:  
 - run 
 ```shell
@@ -100,7 +101,7 @@ zpool import
 ```shell
 zpool import -f poolname
 ```  
-
+- Add a new ZFS storage in pve/pbs  
 ## SOURCES:
 https://pve.proxmox.com/wiki/Fail2ban  
 https://github.com/inettgmbh/fail2ban-proxmox-backup-server  
