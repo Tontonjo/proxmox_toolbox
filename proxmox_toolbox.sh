@@ -56,6 +56,7 @@ version=3.0
 # V2.6: Much better and smarter way to remove subscription message (credits to @adrien Linuxtricks)
 # V2.7: Fix remove subscription message detection
 # V3.0: Remove useless mutiple versions for better clarity
+# V3.1: merge backup folder in case there's pve and pbs on the same host - useless to have 2 content list
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -69,8 +70,7 @@ execdir=$(dirname $0)
 hostname=$(hostname)
 date=$(date +%Y_%m_%d-%H_%M_%S)
 backupdir="/root/" #trailing slash is mandatory
-pve_backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/system/*.mount /etc/network/interfaces /etc/sysctl.conf /etc/resolv.conf /etc/hosts /etc/hostname /etc/cron* /etc/aliases /etc/snmp/ /etc/smartd.conf /usr/share/snmp/snmpd.conf /etc/postfix/ /etc/pve/ /etc/lvm/ /etc/modprobe.d/ /var/lib/pve-firewall/ /var/lib/pve-cluster/  /etc/vzdump.conf /etc/ksmtuned.conf"
-pbs_backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/system/*.mount /etc/network/interfaces /etc/sysctl.conf /etc/resolv.conf /etc/hosts /etc/hostname /etc/cron* /etc/aliases /etc/snmp/ /etc/smartd.conf /usr/share/snmp/snmpd.conf /etc/postfix/ /etc/proxmox-backup/"
+backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/system/*.mount /etc/network/interfaces /etc/sysctl.conf /etc/resolv.conf /etc/hosts /etc/hostname /etc/cron* /etc/aliases /etc/snmp/ /etc/smartd.conf /usr/share/snmp/snmpd.conf /etc/postfix/ /etc/pve/ /etc/lvm/ /etc/modprobe.d/ /var/lib/pve-firewall/ /var/lib/pve-cluster/  /etc/vzdump.conf /etc/ksmtuned.conf /etc/proxmox-backup/"
 # ---------------END OF ENVIRONNEMENT VARIABLES-----------------
 
 main_menu(){
@@ -679,13 +679,7 @@ backup_menu(){
 			  backupname=$(hostname)
 			  mkdir -p $backupdir
 			  echo "- Creating backup"
-			  if [ -d "$pve_log_folder" ]; then
-			 	 echo "- Server is a PVE host"
-			 	 tar -czf $backupdir$backupname-$(date +%Y_%m_%d-%H_%M_%S).tar.gz --absolute-names $pve_backup_content
-			  else
-			  	 echo "- Server is a PBS host"
-			 	 tar -czf $backupdir$backupname-$(date +%Y_%m_%d-%H_%M_%S).tar.gz --absolute-names $pbs_backup_content
-			  fi
+			 	 tar -czf $backupdir$backupname-$(date +%Y_%m_%d-%H_%M_%S).tar.gz --absolute-names $backup_content
 			  clear
 			  echo "- Backup done - please control and test it"
 			  echo "- Archive is located in $backupdir"
