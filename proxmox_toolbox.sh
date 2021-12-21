@@ -346,6 +346,11 @@ main_menu(){
 		read -p "- Install and configure SNMP? y = yes / anything = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo " "
+				if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+					apt-get install -y git;
+				else
+					echo "- git already installed"
+				fi
 				git clone -q https://github.com/Tontonjo/proxmox_toolbox.git
 				if [ $(dpkg-query -W -f='${Status}' snmpd 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 					apt-get install -y snmpd libsnmp-dev;
