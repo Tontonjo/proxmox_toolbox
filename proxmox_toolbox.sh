@@ -208,6 +208,11 @@ main_menu(){
 				else
 					echo "- fail2ban already installed"
 				fi
+				if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+					apt-get install -y git;
+				else
+					echo "- git already installed"
+				fi
 				git clone -q https://github.com/Tontonjo/proxmox_toolbox.git
 					if [ -d "$pve_log_folder" ]; then
 						echo "- Host is a PVE Host"	
