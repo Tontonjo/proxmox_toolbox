@@ -41,7 +41,6 @@
 # settings for zram -> https://pve.proxmox.com/wiki/Zram
 # PBS: add support for user creation and backup / restoration
 # make things stupid-proof (deny characters when numbers expected ans so on)
-# add "sleep" when needed to read output
 # Cosmetic corrections
 
 # Proxmox_toolbox
