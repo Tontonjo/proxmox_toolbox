@@ -724,7 +724,7 @@ backup_menu(){
 					for mount in /etc/systemd/system/*.mount; do
    						source $mount >/dev/null 2>&1
  						mkdir -p "$Where" 
- 						echo "$Where $What $Type $Options 0 2" >> /etc/fstab  
+ 						echo "$What $Where $Type $Options 0 2" >> /etc/fstab  
 					done
 					mount -a
 					for pool in $(zpool import | grep pool: | awk '{print $2}'); do
