@@ -37,6 +37,7 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 - Enable SNMP V2 or v3 - you choose - with a default working configuration
 - Configure email service to send system and proxmox notifications (postfix)
 - Backup and restore Proxmox Virtual Environment and Backup Server configuration
+- - Automatic remount of directories and zpools using previously existing configurations
 - - Please find more informations below  
 
 ## USAGE
@@ -77,10 +78,9 @@ The script looks for tar.gz files located in backupdir="/root/" and will list al
 
 ## Directory mountpoint and zpool
 
-In order to recover datastores residing on other storages that still live in the system, you can do the following:
+In case of need, here's how you can manually mount storages:
 
 #### Directory:
-- Once the restauration is done, find and open all .mount files in /etc/systemd/system/ and take note of all [Mount] values: Options Type What Where  
 - run the following commands with the values you just retreived
 ```shell
 mkdir -p "where"
