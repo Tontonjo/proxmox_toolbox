@@ -720,14 +720,16 @@ backup_menu(){
 						echo "- fail2ban config found - installing fail2ban"
 						apt-get -yqq install fail2ban
 					 fi
-					 echo "- Remounting previously existing storages if any:"
+					 echo "- Remounting previously existing storages if any"
 					for mount in /etc/systemd/system/*.mount; do
+						echo "- Remountig using configuration $mount"
    						source $mount >/dev/null 2>&1
  						mkdir -p "$Where" 
  						echo "$What $Where $Type $Options 0 2" >> /etc/fstab  
 					done
 					mount -a
 					for pool in $(zpool import | grep pool: | awk '{print $2}'); do
+						echo "- Importing pool $pool"
 						zpool import -f $pool
 					done
 					 read -p "- Do you want to reboot host now? y = yes / anything = no: " -n 1 -r
