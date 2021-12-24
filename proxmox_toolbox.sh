@@ -44,7 +44,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.0
+version=3.2
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
 # V2.0: Add backup and restore - reworked menu order - lots of small changes
@@ -55,7 +55,8 @@ version=3.0
 # V2.6: Much better and smarter way to remove subscription message (credits to @adrien Linuxtricks)
 # V2.7: Fix remove subscription message detection
 # V3.0: Remove useless mutiple versions for better clarity
-# V3.1: merge backup folder in case there's pve and pbs on the same host - useless to have 2 content list
+# V3.1: Merge backup folder in case there's pve and pbs on the same host - useless to have 2 content list
+# V3.2: Restauration now automatically remount directories and reimport existant zpools
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -719,6 +720,16 @@ backup_menu(){
 						echo "- fail2ban config found - installing fail2ban"
 						apt-get -yqq install fail2ban
 					 fi
+					 echo "- Remounting previously existing storages if any:"
+					for mount in /etc/systemd/system/*.mount; do
+   						source $mount >/dev/null 2>&1
+ 						mkdir -p "$Where" 
+ 						echo "$Where $What $Type $Options 0 2" >> /etc/fstab  
+					done
+					mount -a
+					for pool in $(zpool import | grep pool: | awk '{print $2}'); do
+						zpool import -f $pool
+					done
 					 read -p "- Do you want to reboot host now? y = yes / anything = no: " -n 1 -r
 					if [[ $REPLY =~ ^[Yy]$ ]]; then
 						reboot now
