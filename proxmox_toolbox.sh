@@ -711,7 +711,7 @@ backup_menu(){
 					 tar -xf "$opt" -C /
 					 clear
 					 echo "- File restauration done"
-					 echo "- Installing missind dependencies if missing"
+					 echo "- Installing missing dependencies if missing"
 					 if [ -d "/etc/snmp/" ]; then
 						echo "- snmp config found - installing snmpd"
 						apt-get -yqq install snmpd libsnmp-dev
