@@ -30,7 +30,7 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 - - Create another user with sudo rights
 - - Disable root ssh login
 - - Create another Proxmox administrator 
-- - Disabling root@pam user (needed to update from GUI - update can still be don trough ssh)
+- - Disabling root@pam user (needed to update from GUI - update can still be done trough SSH)
 - Change swappiness value or disable SWAP
 - Enable S.M.A.R.T self-tests on all supported drives
 - - short: every sunday@22 - Long: every 1st of month @22
