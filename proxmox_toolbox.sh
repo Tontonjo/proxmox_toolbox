@@ -44,7 +44,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.2
+version=3.3
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
 # V2.0: Add backup and restore - reworked menu order - lots of small changes
@@ -57,6 +57,7 @@ version=3.2
 # V3.0: Remove useless mutiple versions for better clarity
 # V3.1: Merge backup folder in case there's pve and pbs on the same host - useless to have 2 content list
 # V3.2: Restauration now automatically remount directories and reimport existant zpools
+# V3.3: Add echo when restarting proxy services
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -162,10 +163,10 @@ main_menu(){
 				else
 					if [ -d "$pve_log_folder" ]; then
 						echo "- Removing No Valid Subscription Message for PVE"
-						sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && systemctl restart pveproxy.service
+						sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart pveproxy.service
 					else 
 						echo "- Removing No Valid Subscription Message for PBS"
-						sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && systemctl restart proxmox-backup-proxy.service
+						sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart proxmox-backup-proxy.service
 					fi
 			fi
 		sleep 3
