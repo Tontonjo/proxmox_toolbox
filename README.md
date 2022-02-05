@@ -22,7 +22,8 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 ## Features are:
 - Automatic PVE / PBS host detection
 - Hide enterprise repo and set no-subscription repository
-- Update host, and when no-enterprise source is set - disable no-subscription message
+- Update host and create a new command "proxmox-update"
+-  -  when no-enterprise source is set, disable no-subscription message
 - Install usefull dependencies: ifupdown2 - git - sudo - libsasl2-modules - snmp
 - Enhance security a bit with the following:
 - - Enable fail 2 ban with default configuration for sshd, proxmox virtual environement and backup server  
@@ -57,6 +58,11 @@ wget -q https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_
 ```
 ```shell
 bash proxmox_toolbox.sh
+```
+## proxmox-update
+Once the tool has been used to update host, you can execute this command to fully update your host
+```shell
+proxmox-update
 ```
 
 ## Backup and Restauration:  
