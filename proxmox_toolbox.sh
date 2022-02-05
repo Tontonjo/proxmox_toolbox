@@ -171,7 +171,7 @@ proxmox-update() {
 wget -q -O - https://raw.githubusercontent.com/Tontonjo/proxmox/master/proxmox_updater.sh | bash
 }" >> /$USER/.bashrc
 echo "- Reloading bashrc - host can now be updated using command: proxmox-update"
-source ~/.bashrc
+source /$USER/.bashrc
 		fi
 			echo "- Updating System"
 			apt-get update -y -qq
