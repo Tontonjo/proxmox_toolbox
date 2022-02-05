@@ -42,7 +42,7 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 - - Please find more informations below  
 
 ## USAGE
-You can use this tool either with:
+###  Get and execute:  
 ```shell
 wget -q https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh
 ```
@@ -57,7 +57,7 @@ git clone https://github.com/Tontonjo/proxmox_toolbox.git
 bash proxmox_toolbox/proxmox_toolbox.sh
 ```
 
-## proxmox-update
+### proxmox-update:  
 Once the tool has been used to update host, you can execute this command to fully update your host
 ```shell
 proxmox-update
