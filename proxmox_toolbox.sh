@@ -44,7 +44,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.3
+version=3.4
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
 # V2.0: Add backup and restore - reworked menu order - lots of small changes
@@ -58,6 +58,7 @@ version=3.3
 # V3.1: Merge backup folder in case there's pve and pbs on the same host - useless to have 2 content list
 # V3.2: Restauration now automatically remount directories and reimport existant zpools
 # V3.3: Add echo when restarting proxy services
+# V3.4: Add proxmox bashrc command to invoke update script usinge "proxmox-update"
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -87,7 +88,7 @@ main_menu(){
     echo -e "${MENU}********** https://www.youtube.com/c/tontonjo **************${NORMAL}"
     echo " "
     echo -e "${MENU}**${NUMBER} 1)${MENU} No-subscription Sources Configuration ${NORMAL}"
-    echo -e "${MENU}**${NUMBER} 2)${MENU} Update host ${NORMAL}"
+    echo -e "${MENU}**${NUMBER} 2)${MENU} Update host & Create bash.rc command${NORMAL}"
     echo -e "${MENU}**${NUMBER} 3)${MENU} Install usefull dependencies ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 4)${MENU} Security settings (fail2ban & users)${NORMAL}"
     echo -e "${MENU}**${NUMBER} 5)${MENU} SWAP Settings ${NORMAL}"
@@ -152,23 +153,42 @@ main_menu(){
 		main_menu
 	   ;;
 	   	  2) clear;
-	  
-		echo "- Updating System"
-		apt-get update -y -qq
-		apt-get upgrade -y -qq
-		apt-get dist-upgrade -y -qq
-		if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
-			if grep -q ".data.status.toLowerCase() == 'active') {" $proxmoxlib; then
-					echo "- Subscription Message already removed - Skipping"
-				else
-					if [ -d "$pve_log_folder" ]; then
-						echo "- Removing No Valid Subscription Message for PVE"
-						sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart pveproxy.service
-					else 
-						echo "- Removing No Valid Subscription Message for PBS"
-						sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart proxmox-backup-proxy.service
-					fi
+		# Check if the bashrc entry for update is already created
+	  	if grep -Ewqi "proxmox-update" /$USER/.bashrc; then
+		echo ""
+		else
+		# Test if bashrc file backup exist to ensure we're not overwriting the orgiginal - no matter what.
+			if test -f "/$USER/.bashrc.BCK"; then
+				echo "- Backup already exist"
+			else
+				echo "- Creating Backup"
+				cp -n /$USER/.bashrc /$USER/.bashrc.BCK
 			fi
+			echo "- Adding command proxmox-update"
+			echo "
+# Tonton Jo - Proxmox toolbox - used to update proxmox hosts
+proxmox-update() {
+wget -q -O - https://raw.githubusercontent.com/Tontonjo/proxmox/master/proxmox_updater.sh | bash
+}" >> /$USER/.bashrc
+echo "- Reloading bashrc - host can now be updated using command: proxmox-update"
+source ~/.bashrc
+		fi
+			echo "- Updating System"
+			apt-get update -y -qq
+			apt-get upgrade -y -qq
+			apt-get dist-upgrade -y -qq
+			if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
+				if grep -q ".data.status.toLowerCase() == 'active') {" $proxmoxlib; then
+						echo "- Subscription Message already removed - Skipping"
+					else
+						if [ -d "$pve_log_folder" ]; then
+							echo "- Removing No Valid Subscription Message for PVE"
+							sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart pveproxy.service
+						else 
+							echo "- Removing No Valid Subscription Message for PBS"
+							sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart proxmox-backup-proxy.service
+						fi
+				fi
 		sleep 3
 		fi
 		main_menu
