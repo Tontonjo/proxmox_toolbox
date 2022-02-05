@@ -44,7 +44,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.4.1
+version=3.4
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
 # V2.0: Add backup and restore - reworked menu order - lots of small changes
@@ -59,7 +59,7 @@ version=3.4.1
 # V3.2: Restauration now automatically remount directories and reimport existant zpools
 # V3.3: Add echo when restarting proxy services
 # V3.4: Add proxmox bashrc command to invoke update script usinge "proxmox-update"
-# V3.4.1: Fix bashrc source
+# V3.4.1: reverted.
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -172,7 +172,7 @@ proxmox-update() {
 wget -q -O - https://raw.githubusercontent.com/Tontonjo/proxmox/master/proxmox_updater.sh | bash
 }" >> /$USER/.bashrc
 echo "- Reloading bashrc - host can now be updated using command: proxmox-update"
-exec bash
+source ~/.bashrc
 		fi
 			echo "- Updating System"
 			apt-get update -y -qq
