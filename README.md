@@ -44,21 +44,19 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 ## USAGE
 You can use this tool either with:
 ```shell
-apt-get install git
-```  
+wget -q https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh
+```
+```shell
+bash proxmox_toolbox.sh
+```
+Or using git:
 ```shell
 git clone https://github.com/Tontonjo/proxmox_toolbox.git
 ```
 ```shell
 bash proxmox_toolbox/proxmox_toolbox.sh
 ```
-OR
-```shell
-wget -q https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh
-```
-```shell
-bash proxmox_toolbox.sh
-```
+
 ## proxmox-update
 Once the tool has been used to update host, you can execute this command to fully update your host
 ```shell
