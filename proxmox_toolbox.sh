@@ -157,7 +157,7 @@ main_menu(){
 	  	if grep -Ewqi "proxmox-update" /$USER/.bashrc; then
 		echo ""
 		else
-		# Test if bashrc file backup exist to ensure we're not overwriting the orgiginal - no matter what.
+		# Test if bashrc file backup exist to ensure we're not overwriting the original one - no matter what.
 			if test -f "/$USER/.bashrc.BCK"; then
 				echo "- Backup already exist"
 			else
