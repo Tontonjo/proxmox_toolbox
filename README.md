@@ -58,6 +58,10 @@ bash proxmox_toolbox/proxmox_toolbox.sh
 ```
 
 ### proxmox-update:  
+To start an update only, without menu or prompt:
+```shell
+bash proxmox_toolbox/proxmox_toolbox.sh -u
+```
 Once the tool has been used to update host, you can execute this command to fully update your host
 ```shell
 proxmox-update
