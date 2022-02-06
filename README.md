@@ -57,7 +57,7 @@ git clone https://github.com/Tontonjo/proxmox_toolbox.git
 bash proxmox_toolbox/proxmox_toolbox.sh
 ```
 
-### proxmox-update:  
+### Updating host: 
 To start an update only, without menu or prompt:
 ```shell
 bash proxmox_toolbox/proxmox_toolbox.sh -u
