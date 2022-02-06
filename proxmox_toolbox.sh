@@ -88,7 +88,7 @@ update () {
 				echo "- Backup already exist"
 				# Replace old value from V 3.4 if found.
 				if grep -Ewqi "proxmox_updater.sh" /$USER/.bashrc; then
-				sed -i '/proxmox_updater.sh/c\wget -q -O - https://github.com/Tontonjo/proxmox_toolbox/raw/main/proxmox_toolbox.sh | bash -s -u' /$USER/.bashrc
+				sed -i '/proxmox_updater.sh/c\wget -qO - https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh | bash /dev/stdin -u' /$USER/.bashrc
 				fi
 			else
 				echo "- Creating Backup"
