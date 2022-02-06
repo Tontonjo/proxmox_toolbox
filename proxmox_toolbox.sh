@@ -44,7 +44,8 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.4
+version=3.5
+
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
 # V2.0: Add backup and restore - reworked menu order - lots of small changes
@@ -60,6 +61,7 @@ version=3.4
 # V3.3: Add echo when restarting proxy services
 # V3.4: Add proxmox bashrc command to invoke update script usinge "proxmox-update"
 # V3.4.1: reverted.
+# V3.5: In order to have 1 tool and be able to simply update with ease, now it can be triggered using the -u flag
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -76,6 +78,57 @@ backupdir="/root/" #trailing slash is mandatory
 backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/system/*.mount /etc/network/interfaces /etc/sysctl.conf /etc/resolv.conf /etc/hosts /etc/hostname /etc/cron* /etc/aliases /etc/snmp/ /etc/smartd.conf /usr/share/snmp/snmpd.conf /etc/postfix/ /etc/pve/ /etc/lvm/ /etc/modprobe.d/ /var/lib/pve-firewall/ /var/lib/pve-cluster/  /etc/vzdump.conf /etc/ksmtuned.conf /etc/proxmox-backup/"
 # ---------------END OF ENVIRONNEMENT VARIABLES-----------------
 
+update () {
+		# Check if the bashrc entry for update is already created
+	  	if grep -Ewqi "proxmox-update" /$USER/.bashrc; then
+		echo ""
+		else
+		# Test if bashrc file backup exist to ensure we're not overwriting the original one - no matter what.
+			if test -f "/$USER/.bashrc.BCK"; then
+				echo "- Backup already exist"
+				# Replace old value from V 3.4 if found.
+				if grep -Ewqi "proxmox_updater.sh" /$USER/.bashrc; then
+				sed -i '/proxmox_updater.sh/c\wget -q -O - https://github.com/Tontonjo/proxmox_toolbox/raw/main/proxmox_toolbox.sh | bash -s -u' /$USER/.bashrc
+				fi
+			else
+				echo "- Creating Backup"
+				cp -n /$USER/.bashrc /$USER/.bashrc.BCK
+			fi
+			echo "- Adding command proxmox-update"
+			echo "
+# Tonton Jo - Proxmox toolbox - used to update proxmox hosts
+proxmox-update() {
+wget -q -O - https://github.com/Tontonjo/proxmox_toolbox/raw/main/proxmox_toolbox.sh | bash -s -u
+}" >> /$USER/.bashrc
+echo "- Reloading bashrc - need a new ssh session"
+source ~/.bashrc
+		fi
+			echo "- Updating System"
+			apt-get update -y -qq
+			apt-get upgrade -y -qq
+			apt-get dist-upgrade -y -qq
+			if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
+				if grep -q ".data.status.toLowerCase() == 'active') {" $proxmoxlib; then
+						echo "- Subscription Message already removed - Skipping"
+					else
+						if [ -d "$pve_log_folder" ]; then
+							echo "- Removing No Valid Subscription Message for PVE"
+							sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart pveproxy.service
+						else 
+							echo "- Removing No Valid Subscription Message for PBS"
+							sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart proxmox-backup-proxy.service
+						fi
+				fi
+		sleep 3
+		fi
+}
+
+	if  [[ $1 = "-u" ]]; then
+	update
+	exit
+	fi
+	
+	
 main_menu(){
     clear
     NORMAL=`echo "\033[m"`
@@ -108,6 +161,7 @@ main_menu(){
       exit;
     else
       case $opt in
+
 	  	  1) clear;
 		read -p "This will configure sources for no-enterprise repository - Continue? y = yes / anything = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -154,44 +208,7 @@ main_menu(){
 		main_menu
 	   ;;
 	   	  2) clear;
-		# Check if the bashrc entry for update is already created
-	  	if grep -Ewqi "proxmox-update" /$USER/.bashrc; then
-		echo ""
-		else
-		# Test if bashrc file backup exist to ensure we're not overwriting the original one - no matter what.
-			if test -f "/$USER/.bashrc.BCK"; then
-				echo "- Backup already exist"
-			else
-				echo "- Creating Backup"
-				cp -n /$USER/.bashrc /$USER/.bashrc.BCK
-			fi
-			echo "- Adding command proxmox-update"
-			echo "
-# Tonton Jo - Proxmox toolbox - used to update proxmox hosts
-proxmox-update() {
-wget -q -O - https://raw.githubusercontent.com/Tontonjo/proxmox/master/proxmox_updater.sh | bash
-}" >> /$USER/.bashrc
-echo "- Reloading bashrc - need a new ssh session"
-source ~/.bashrc
-		fi
-			echo "- Updating System"
-			apt-get update -y -qq
-			apt-get upgrade -y -qq
-			apt-get dist-upgrade -y -qq
-			if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
-				if grep -q ".data.status.toLowerCase() == 'active') {" $proxmoxlib; then
-						echo "- Subscription Message already removed - Skipping"
-					else
-						if [ -d "$pve_log_folder" ]; then
-							echo "- Removing No Valid Subscription Message for PVE"
-							sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart pveproxy.service
-						else 
-							echo "- Removing No Valid Subscription Message for PBS"
-							sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart proxmox-backup-proxy.service
-						fi
-				fi
-		sleep 3
-		fi
+		update
 		main_menu
 	   ;;
       3) clear;
@@ -793,3 +810,4 @@ backup_menu(){
 }
 
 main_menu
+
