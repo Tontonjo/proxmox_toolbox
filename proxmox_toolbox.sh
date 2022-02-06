@@ -81,15 +81,11 @@ backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/sys
 update () {
 		# Check if the bashrc entry for update is already created
 	  	if grep -Ewqi "proxmox-update" /$USER/.bashrc; then
-		echo ""
+		sed -i '/proxmox_updater.sh/c\wget -qO - https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh | bash /dev/stdin -u' /$USER/.bashrc
 		else
 		# Test if bashrc file backup exist to ensure we're not overwriting the original one - no matter what.
 			if test -f "/$USER/.bashrc.BCK"; then
 				echo "- Backup already exist"
-				# Replace old value from V 3.4 if found.
-				if grep -Ewqi "proxmox_updater.sh" /$USER/.bashrc; then
-				sed -i '/proxmox_updater.sh/c\wget -qO - https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh | bash /dev/stdin -u' /$USER/.bashrc
-				fi
 			else
 				echo "- Creating Backup"
 				cp -n /$USER/.bashrc /$USER/.bashrc.BCK
