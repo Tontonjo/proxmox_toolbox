@@ -87,7 +87,7 @@ update () {
 			if test -f "/$USER/.bashrc.BCK"; then
 				echo "- Backup already exist"
 			else
-				echo "- Creating Backup"
+				echo "- Creating /$USER/.bashrc Backup at /$USER/.bashrc.BCK"
 				cp -n /$USER/.bashrc /$USER/.bashrc.BCK
 			fi
 			echo "- Adding command proxmox-update"
