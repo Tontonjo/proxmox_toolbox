@@ -129,8 +129,6 @@ https://www.linuxtricks.fr/wiki/proxmox-quelques-infos
 settings for zram -> https://pve.proxmox.com/wiki/Zram  
 PBS: add support for user creation and backup / restoration
 user creation fro PBS when available  
-make things stupid-proof (deny characters when numbers expected ans so on)  
-add "sleep" when needed to read output  
-Cosmetic corrections 
+make things stupid-proof (deny characters when numbers expected and so on)  
 
-Tontonjo - 2021
+Tonton Jo - 2022
