@@ -44,7 +44,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.5
+version=3.6
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -62,6 +62,7 @@ version=3.5
 # V3.4: Add proxmox bashrc command to invoke update script usinge "proxmox-update"
 # V3.4.1: reverted.
 # V3.5: In order to have 1 tool and be able to simply update with ease, now it can be triggered using the -u flag
+# V3.6: reworked a bit the snmp menu for better clarity & use systemctl everywhere
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -297,7 +298,7 @@ main_menu(){
 						else
 						main_menu
 						fi
-				service ssh restart && service sshd restart
+				systemctl restart ssh sshd
 					fi
 				clear
 			fi
@@ -398,28 +399,35 @@ main_menu(){
 					echo "- snmpd already installed"
 				fi
 				clear
-				read -p "- Press y for snmpv2 or anything for SNMP V3 (ReadOnly): " -n 1 -r
-				if [[ $REPLY =~ ^[Yy]$ ]]; then
+				read -p "- Press 2 for snmpv2 or 3 for SNMP V3 (ReadOnly) or anything to return to menu: " -n 1 -r
+				if [[ $REPLY =~ ^[2]$ ]]; then
 					clear
 					echo "- Read only community name? (ex: ro_tontonjo): "
 					read rocommunity
 					echo "- Allowed subnet? Enter for none (x.x.x.x/xx): "
+					echo "- Setting allowed subnet"
 					read allowedsubnet
-					cp /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
+					echo "- Setting SNMP"
+					cp -n /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
 					cp -f proxmox_toolbox/snmp/snmpd.conf /etc/snmp/snmpd.conf
 					echo "rocommunity $rocommunity $allowedsubnet" >> /etc/snmp/snmpd.conf
-				else
+				elif [[ $REPLY =~ ^[3]$ ]]; then
 					clear
-					cp /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
+					cp -n /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
 					cp -f proxmox_toolbox/snmp/snmpd.conf /etc/snmp/snmpd.conf
 					echo "- Encryption will be MD5 and DES"
-					service snmpd stop
+					systemctl stop snmpd
 					echo "- Deleting old SNMPv3 users in /usr/share/snmp/snmpd.conf"
 					rm -f /usr/share/snmp/snmpd.conf
 					echo "!! min 8 charachters password !!"
 					net-snmp-config --create-snmpv3-user -ro -a MD5 -x DES
+				else	
+					clear
+					echo "- Returning to menu - no valid choice selected"
+					sleep 7
+					main_menu
 				fi
-			service snmpd restart
+			systemctl restart snmpd
 			sleep 3	
 			fi
 		main_menu
