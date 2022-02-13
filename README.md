@@ -66,6 +66,23 @@ Once the tool has been used to update host, you can execute this command to full
 ```shell
 proxmox-update
 ```
+### Fail2ban:  
+If you enable fail2ban, i guess you know what you're doing, if you dont: here's some usefull informations and commands:  
+- ban are for 1 hour
+- ssh and web interface logins are monitored  
+#### List of $jailname:
+```ssh
+fail2ban-client status
+```
+#### get status of a jails - display banned IP's
+```ssh
+fail2ban-client status $jailname
+```
+#### Unband an IP:
+```ssh
+fail2ban-client set $jailname unbanip  $ipaddress
+```
+
 
 ## Backup and Restauration:  
 - Be carefull has this was not extensively tested - especially not with cluster configurations
@@ -124,6 +141,7 @@ https://github.com/DerDanilo/proxmox-stuff/blob/master/prox_config_backup.sh
 https://pve.proxmox.com/wiki/Upgrade_from_6.x_to_7.0  
 https://wiki.debian.org/SSDOptimization  
 https://www.linuxtricks.fr/wiki/proxmox-quelques-infos
+https://bobcares.com/blog/fail2ban-unban-ip/
 
 ## TODO:  
 settings for zram -> https://pve.proxmox.com/wiki/Zram  
