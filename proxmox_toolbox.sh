@@ -405,7 +405,6 @@ main_menu(){
 					echo "- Read only community name? (ex: ro_tontonjo): "
 					read rocommunity
 					echo "- Allowed subnet? Enter for none (x.x.x.x/xx): "
-					echo "- Setting allowed subnet"
 					read allowedsubnet
 					echo "- Setting SNMP"
 					cp -n /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
