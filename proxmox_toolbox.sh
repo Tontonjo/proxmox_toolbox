@@ -764,10 +764,15 @@ backup_menu(){
 					 fi
 					 echo "- Remounting previously existing storages if any"
 					for mount in /etc/systemd/system/*.mount; do
+						echo "- Checking if $mount is still present in system"
+						if find /dev/disk/by-uuid/ | grep -w $What; then
 						echo "- Remountig using configuration $mount"
    						source $mount >/dev/null 2>&1
  						mkdir -p "$Where" 
- 						echo "$What $Where $Type $Options 0 2" >> /etc/fstab  
+ 						echo "$What $Where $Type $Options 0 2" >> /etc/fstab 
+						else
+						echo "- The drive for $mount was not found and will not be mounted back"
+						fi
 					done
 					mount -a
 					for pool in $(zpool import | grep pool: | awk '{print $2}'); do
