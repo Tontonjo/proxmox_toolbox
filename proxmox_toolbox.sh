@@ -44,7 +44,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.6
+version=3.7
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -63,6 +63,7 @@ version=3.6
 # V3.4.1: reverted.
 # V3.5: In order to have 1 tool and be able to simply update with ease, now it can be triggered using the -u flag
 # V3.6: reworked a bit the snmp menu for better clarity & use systemctl everywhere
+# V3.7: Add check when restoring "dir" to ensure the original drive still resides in system to avoid problems at boot
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
