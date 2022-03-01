@@ -96,7 +96,7 @@ update () {
 			echo "
 # Tonton Jo - Proxmox toolbox - used to update proxmox hosts
 proxmox-update() {
-wget -q -O - https://github.com/Tontonjo/proxmox_toolbox/raw/main/proxmox_toolbox.sh | bash -s -u
+wget -qO - https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh | bash /dev/stdin -u
 }" >> /$USER/.bashrc
 echo "- Reloading bashrc - need a new ssh session"
 source ~/.bashrc
