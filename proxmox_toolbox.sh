@@ -44,7 +44,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.7
+version=3.8
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -64,6 +64,7 @@ version=3.7
 # V3.5: In order to have 1 tool and be able to simply update with ease, now it can be triggered using the -u flag
 # V3.6: reworked a bit the snmp menu for better clarity & use systemctl everywhere
 # V3.7: Add check when restoring "dir" to ensure the original drive still resides in system to avoid problems at boot
+# V3.8: Use /usr/bin instead of .bashrc edit - way better
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -81,25 +82,16 @@ backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/sys
 # ---------------END OF ENVIRONNEMENT VARIABLES-----------------
 
 update () {
-		# Check if the bashrc entry for update is already created
-	  	if grep -Ewqi "proxmox-update" /$USER/.bashrc; then
-		sed -i '/proxmox_updater.sh/c\wget -qO - https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh | bash /dev/stdin -u' /$USER/.bashrc
+		# Check if the /usr/bin/proxmox-update entry for update is already created
+		if test -f "/usr/bin/proxmox-update"; then
+			echo " "
 		else
-		# Test if bashrc file backup exist to ensure we're not overwriting the original one - no matter what.
 			if test -f "/$USER/.bashrc.BCK"; then
-				echo "- Backup already exist"
-			else
-				echo "- Creating /$USER/.bashrc Backup at /$USER/.bashrc.BCK"
-				cp -n /$USER/.bashrc /$USER/.bashrc.BCK
+			echo "- Restoring original .bashrc entry - now using /usr/bin/proxmox-update"
+			cp "/$USER/.bashrc.BCK" "/$USER/.bashrc" && echo "- Deleting old backup" && rm -rf "/$USER/.bashrc.BCK"
 			fi
-			echo "- Adding command proxmox-update"
-			echo "
-# Tonton Jo - Proxmox toolbox - used to update proxmox hosts
-proxmox-update() {
-wget -qO - https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh | bash /dev/stdin -u
-}" >> /$USER/.bashrc
-echo "- Reloading bashrc - need a new ssh session"
-source ~/.bashrc
+			echo "- Retreiving new bin"
+			wget -qO "/usr/bin/proxmox-update"  https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update && chmod +x "/usr/bin/proxmox-update"
 		fi
 			echo "- Updating System"
 			apt-get update -y -qq
