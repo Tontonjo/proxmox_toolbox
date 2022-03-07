@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Tonton Jo - 2022
+# Join me on Youtube: https://www.youtube.com/c/tontonjo
+
+# Version:
+# 1.0: Initial file version
+
+# file is intended to be in /usr/bin/proxmox-update
+# This command retreive the latest version of proxmox-toolbox and execute it with update argument
+
+proxmox-update() {
+wget -qO - https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh | bash /dev/stdin -u
+}
+proxmox-update
