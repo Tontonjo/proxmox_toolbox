@@ -84,15 +84,6 @@ backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/sys
 update () {
 		# Check if the /usr/bin/proxmox-update entry for update is already created
 		if test -f "/usr/bin/proxmox-update"; then
-			echo " "
-		else
-			if test -f "/$USER/.bashrc.BCK"; then
-			echo "- Restoring original .bashrc entry - now using /usr/bin/proxmox-update"
-			cp "/$USER/.bashrc.BCK" "/$USER/.bashrc" && echo "- Deleting old backup" && rm -rf "/$USER/.bashrc.BCK"
-			fi
-			echo "- Retreiving new bin"
-			wget -qO "/usr/bin/proxmox-update"  https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update && chmod +x "/usr/bin/proxmox-update"
-		fi
 			echo "- Updating System"
 			apt-get update -y -qq
 			apt-get upgrade -y -qq
@@ -109,7 +100,15 @@ update () {
 							sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart proxmox-backup-proxy.service
 						fi
 				fi
-		sleep 3
+		else
+			if test -f "/$USER/.bashrc.BCK"; then
+			echo "- Restoring original .bashrc entry - now using /usr/bin/proxmox-update"
+			cp "/$USER/.bashrc.BCK" "/$USER/.bashrc" && echo "- Deleting old backup" && rm -rf "/$USER/.bashrc.BCK"
+			fi
+			echo "- Retreiving new bin"
+			wget -qO "/usr/bin/proxmox-update"  https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update && chmod +x "/usr/bin/proxmox-update"
+			proxmox-update
+		fi
 		fi
 }
 
@@ -199,6 +198,7 @@ main_menu(){
 	   ;;
 	   	  2) clear;
 		update
+		sleep 3
 		main_menu
 	   ;;
       3) clear;
