@@ -44,7 +44,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.8.1
+version=3.9
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -66,6 +66,7 @@ version=3.8.1
 # V3.7: Add check when restoring "dir" to ensure the original drive still resides in system to avoid problems at boot
 # V3.8: Use /usr/bin instead of .bashrc edit - way better
 # V3.8.1: Little enhancement for updates
+# V3.9: Fix update who happend to not work on first run for no apparent reasons
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -84,8 +85,12 @@ backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/sys
 
 update () {
 		# Check if the /usr/bin/proxmox-update entry for update is already created
-		if test -f "/usr/bin/proxmox-update"; then
-			echo "- Updating System"
+		if [ ! -f /usr/bin/proxmox-update ]; then
+			echo "- Retreiving new bin"
+			wget -qO "/usr/bin/proxmox-update"  https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update && chmod +x "/usr/bin/proxmox-update"
+			update
+		else
+		echo "- Updating System"
 			apt-get update -y -qq
 			apt-get upgrade -y -qq
 			apt-get dist-upgrade -y -qq
@@ -101,15 +106,7 @@ update () {
 							sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart proxmox-backup-proxy.service
 						fi
 				fi
-		else
-			if test -f "/$USER/.bashrc.BCK"; then
-			echo "- Restoring original .bashrc entry - now using /usr/bin/proxmox-update"
-			cp "/$USER/.bashrc.BCK" "/$USER/.bashrc" && echo "- Deleting old backup" && rm -rf "/$USER/.bashrc.BCK"
 			fi
-			echo "- Retreiving new bin"
-			wget -qO "/usr/bin/proxmox-update"  https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update && chmod +x "/usr/bin/proxmox-update"
-			proxmox-update
-		fi
 		fi
 }
 
@@ -444,22 +441,12 @@ main_menu(){
 }
 
 mail_menu(){
-			echo "- Installing missing libraries"
-			if ping -c 1 $dnstesthost &> /dev/null; then
-				if [ $(dpkg-query -W -f='${Status}' libsasl2-modules 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+			if [ $(dpkg-query -W -f='${Status}' libsasl2-modules 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 				  apt-get install -yqq libsasl2-modules;
-				fi
-				if [ $(dpkg-query -W -f='${Status}' mailutils 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+			fi
+			if [ $(dpkg-query -W -f='${Status}' mailutils 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 				  apt-get install -yqq mailutils;
-				fi
-			else
-				echo "- Looks like your host cant reach test domain $dnstesthost"
-				echo "- Please control your network and DNS settings"
-				sleep 7
-				main_menu
-fi
-
-
+			fi
 			clear
 			ALIASESBCK=/etc/aliases.BCK
 			if test -f "$ALIASESBCK"; then
@@ -814,4 +801,3 @@ backup_menu(){
 }
 
 main_menu
-
