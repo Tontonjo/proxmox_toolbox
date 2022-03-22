@@ -316,10 +316,9 @@ main_menu(){
 						pveum acl modify / -group $admingroup -role Administrator
 						echo "- adding $pveusername to $admingroup"
 						pveum user modify $pveusername@pve -group $admingroup
-					fi
-					clear
-					echo "!! Warning - root@pam is required to update host from Proxmox web ui !!"
-					read -p "- Do you want to disable "root@pam"?  y = yes / anything = no: " -n 1 -r
+						clear
+						echo "!! Warning - root@pam is required to update host from Proxmox web ui !!"
+						read -p "- Do you want to disable "root@pam"?  y = yes / anything = no: " -n 1 -r
 						if [[ $REPLY =~ ^[Yy]$ ]]; then
 							read -p "- Are you sure you want to disable root@pam? y = yes / anything = no: " -n 1 -r
 								if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -327,6 +326,9 @@ main_menu(){
 									pveum user modify root@pam -enable 0
 								fi
 						fi
+					fi
+					clear
+
 				else
 					echo "- Host is a PBS host - user management not implemented ATM"
 			fi
