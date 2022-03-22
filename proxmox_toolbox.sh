@@ -66,7 +66,7 @@ version=3.9
 # V3.7: Add check when restoring "dir" to ensure the original drive still resides in system to avoid problems at boot
 # V3.8: Use /usr/bin instead of .bashrc edit - way better
 # V3.8.1: Little enhancement for updates
-# V3.9: Fix update who happend to not work on first run for no apparent reasons
+# V3.9: Fix update who happend to not work on first run for no apparent reasons and remove ping in mail menu
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
