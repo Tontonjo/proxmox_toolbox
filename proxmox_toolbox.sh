@@ -300,13 +300,13 @@ main_menu(){
 						clear
 						echo "- What is the new pve username: "
 						read pveusername
+						echo "- Creating PVE user $pveusername"
+						pveum user add $pveusername@pve
+						pveum passwd $pveusername@pve
 						clear
 						echo "- What is the new admin group name: "
 						read admingroup	
 						clear
-						echo "- Creating PVE user $pveusername"
-						pveum user add $pveusername@pve
-						pveum passwd $pveusername@pve
 						echo "- Creating PVE admin group $admingroup"
 						pveum group add $admingroup -comment "System Administrators"
 						echo "- Defining administrators right"
@@ -317,6 +317,7 @@ main_menu(){
 						echo "!! Warning - root@pam is required to update host from Proxmox web ui !!"
 						read -p "- Do you want to disable "root@pam"?  y = yes / anything = no: " -n 1 -r
 						if [[ $REPLY =~ ^[Yy]$ ]]; then
+							clear
 							read -p "- Are you sure you want to disable root@pam? y = yes / anything = no: " -n 1 -r
 								if [[ $REPLY =~ ^[Yy]$ ]]; then
 									echo "- Removing root user from PVE"
