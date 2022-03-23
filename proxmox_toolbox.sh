@@ -747,10 +747,10 @@ backup_menu(){
 					 fi
 					 echo "- Remounting previously existing storages if any"
 					for mount in /etc/systemd/system/*.mount; do
+						source $mount >/dev/null 2>&1
 						echo "- Checking if $mount is still present in system"
 						if find /dev/disk/by-uuid/ | grep -w $What; then
 						echo "- Remountig using configuration $mount"
-   						source $mount >/dev/null 2>&1
  						mkdir -p "$Where" 
  						echo "$What $Where $Type $Options 0 2" >> /etc/fstab 
 						else
