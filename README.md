@@ -28,14 +28,14 @@ To fully enjoye Proxmox Toolbox, an internet connexion is needed in order to ret
 - Update host and create a new command "proxmox-update"
 -  -  when no-enterprise source is set, disable no-subscription message
 - Install usefull dependencies: ifupdown2 - git - sudo - libsasl2-modules - snmp
-- Enhance security a bit with the following:
+- Security settings:
 - - Enable fail 2 ban with default configuration for sshd, proxmox virtual environement and backup server  
 (credits to [inettgmbh](https://github.com/inettgmbh/fail2ban-proxmox-backup-server))  
 - - Create another user with sudo rights
 - - Disable root ssh login
 - - Create another Proxmox administrator 
 - - Disabling root@pam user !!! root@pam is needed to update from GUI - update can still be done trough SSH if disabled !!!
-- Change swappiness value or disable SWAP
+- Change or disable SWAP 
 - Enable S.M.A.R.T self-tests on all supported drives
 - - short: every sunday@22 - Long: every 1st of month @22
 - Enable SNMP V2 or v3 - you choose - with a default working configuration
