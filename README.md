@@ -13,7 +13,7 @@
 [![Express VPN](https://badgen.net/badge/Express%20VPN/Affiliated%20link?icon=K)](https://www.xvuslink.com/?a_fid=TontonJo)  
 ## Informations:
 
-This little tool aim to get smalls one-time configurations for Proxmox Virtual environement and backup server hosts in no time.
+This little tool aim to get smalls one-time configurations for Proxmox Virtual environement and backup server hosts in no time.  
 It automatically will find if the host is a pve or a pbs host and setup accordingly.  
 
 ### Demonstration:  
