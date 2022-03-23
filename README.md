@@ -115,8 +115,8 @@ In case of need, here's how you can manually mount storages:
 #### Directory:
 - run the following commands with the values you just retreived
 ```shell
-mkdir -p "where"
-echo "what where Type Options 0 2" >> /etc/fstab  
+mkdir -p "$where"
+echo "$what $where $Type $Options 0 2" >> /etc/fstab  
 mount -a
 ```  
 - Control if the drives are now correctly mounted  
