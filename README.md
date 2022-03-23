@@ -128,7 +128,7 @@ zpool import
 ```  
 - Take note of the "pool" name and run
 ```shell
-zpool import -f poolname
+zpool import -f $poolname
 ```  
 - Add a new ZFS storage in pve/pbs  
 ## SOURCES:
