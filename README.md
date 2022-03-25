@@ -3,7 +3,7 @@
 
 ![screenshot](https://i.ibb.co/nDXnvB4/image.png)  
 
-## Tonton Jo - 2021  
+## Tonton Jo  
 ### Join the community:
 [![Youtube channel](https://github-readme-youtube-stats.herokuapp.com/subscribers/index.php?id=UCnED3K6K5FDUp-x_8rwpsZw&key=AIzaSyA3ivqywNPQz0xFZBHfPDKzh1jFH5qGD_g)](http://youtube.com/channel/UCnED3K6K5FDUp-x_8rwpsZw?sub_confirmation=1)
 [![Discord Tonton Jo](https://badgen.net/discord/members/2NQskxZjfp?label=Discord%20Tonton%20Jo%20&icon=discord)](https://discord.gg/2NQskxZjfp)
