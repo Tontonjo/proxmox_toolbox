@@ -44,7 +44,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.9.1
+version=3.9.2
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -68,6 +68,7 @@ version=3.9.1
 # V3.8.1: Little enhancement for updates
 # V3.9.0: Fix update who happend to not work on first run for no apparent reasons and remove ping in mail menu
 # V3.9.1: Add more logic when creating new admin user
+# V3.9.2: Specify more clearly the realm to use when creating an alternate admin user
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -315,6 +316,9 @@ main_menu(){
 						echo "- adding $pveusername to $admingroup"
 						pveum user modify $pveusername@pve -group $admingroup
 						clear
+						echo "- You can now login on GUI with $pveusername@Proxmox VE authenticator Realm"
+						sleep 2
+						echo " "
 						echo "!! Warning - root@pam is required to update host from Proxmox web ui !!"
 						read -p "- Do you want to disable "root@pam"?  y = yes / anything = no: " -n 1 -r
 						if [[ $REPLY =~ ^[Yy]$ ]]; then
