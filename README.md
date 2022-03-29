@@ -31,9 +31,9 @@ To fully enjoye Proxmox Toolbox, an internet connexion is needed in order to ret
 - Security settings:
 - - Enable fail 2 ban with default configuration for sshd, proxmox virtual environement and backup server  
 (credits to [inettgmbh](https://github.com/inettgmbh/fail2ban-proxmox-backup-server))  
-- - Create another user with sudo rights
+- - Create another debian user with sudo rights
 - - Disable root ssh login
-- - Create another Proxmox administrator 
+- - Create another Proxmox GUI administrator (login with Proxmox VE Realm)
 - - Disabling root@pam user !!! root@pam is needed to update from GUI - update can still be done trough SSH if disabled !!!
 - Change or disable SWAP 
 - Enable S.M.A.R.T self-tests on all supported drives
