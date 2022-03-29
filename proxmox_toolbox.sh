@@ -313,7 +313,7 @@ main_menu(){
 						echo "- adding $pveusername to $admingroup"
 						pveum user modify $pveusername@pve -group $admingroup
 						clear
-						echo "- You can now login on GUI with $pveusername@Proxmox VE authenticator Realm"
+						echo "- You can now login on GUI with $pveusername@Proxmox VE authenticaton Realm"
 						sleep 2
 						echo " "
 						echo "!! Warning - root@pam is required to update host from Proxmox web ui !!"
