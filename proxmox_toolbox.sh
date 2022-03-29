@@ -130,7 +130,7 @@ main_menu(){
     echo -e "${MENU}**${NUMBER} 1)${MENU} No-subscription Sources Configuration ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 2)${MENU} Update host & create proxmox-update command ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 3)${MENU} Install usefull dependencies ${NORMAL}"
-    echo -e "${MENU}**${NUMBER} 4)${MENU} Security settings (fail2ban & users) ${NORMAL}"
+    echo -e "${MENU}**${NUMBER} 4)${MENU} Security settings (fail2ban - SSH user - GUI Administrator) ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 5)${MENU} SWAP Settings ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 6)${MENU} Enable S.M.A.R.T self-tests ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 7)${MENU} SNMP settings ${NORMAL}"
@@ -258,7 +258,7 @@ main_menu(){
 			systemctl restart fail2ban.service
 			fi
 		clear
-		echo "- Do you want to use another user than root?"
+		echo "- Do you want to create another SSH user ?"
 		echo "- This will guide you to create another user, add it as a sudo user and allow sudo users to connect trough ssh"
 		read -p "- Press: y = yes / anything = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -268,7 +268,7 @@ main_menu(){
 				else
 					echo "- sudo already installed"
 				fi
-				echo "- What is the new username: "
+				echo "- What is the new debian user username?: "
 				read username
 				clear
 				useradd -m $username
@@ -281,7 +281,7 @@ main_menu(){
 				echo "- Adding user to sudo users"
 				adduser $username sudo
 				echo "AllowGroups sudo" >> "/etc/ssh/sshd_config"
-				read -p "- Do you want to deny root ssh login?  y = yes / anything = no: " -n 1 -r
+				read -p "- Do you want to deny root SSH login?  y = yes / anything = no: " -n 1 -r
 					if [[ $REPLY =~ ^[Yy]$ ]]; then
 						if grep -qF "PermitRootLogin yes" /etc/ssh/sshd_config; then
 							sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
