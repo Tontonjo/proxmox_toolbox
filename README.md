@@ -52,20 +52,13 @@ wget -qO proxmox_toolbox.sh https://raw.githubusercontent.com/Tontonjo/proxmox_t
 ```shell
 bash proxmox_toolbox.sh
 ```
-Or using git:
-```shell
-git clone https://github.com/Tontonjo/proxmox_toolbox.git
-```
-```shell
-bash proxmox_toolbox/proxmox_toolbox.sh
-```
 
 ### Updating host: 
 To start an update only, without menu or prompt:
 ```shell
-bash proxmox_toolbox/proxmox_toolbox.sh -u
+bash proxmox_toolbox.sh -u
 ```
-Once the tool has been used to update host, you can execute this command to fully update your host
+Or once the tool has been used to update host, you can execute this command to fully update your host - kind of an alias of bash proxmox_toolbox.sh -u
 ```shell
 proxmox-update
 ```
