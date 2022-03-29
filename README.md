@@ -47,7 +47,7 @@ To fully enjoye Proxmox Toolbox, an internet connexion is needed in order to ret
 ## USAGE
 ###  Get and execute:  
 ```shell
-wget -q https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh
+wget -qO proxmox_toolbox.sh https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh
 ```
 ```shell
 bash proxmox_toolbox.sh
