@@ -41,7 +41,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.9.2
+version=3.9.3
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -66,6 +66,7 @@ version=3.9.2
 # V3.9.0: Fix update who happend to not work on first run for no apparent reasons and remove ping in mail menu
 # V3.9.1: Add more logic when creating new admin user
 # V3.9.2: Specify more clearly the realm to use when creating an alternate admin user
+# V3.9.3: Add check for .mount file to avoid error trying to remount
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
