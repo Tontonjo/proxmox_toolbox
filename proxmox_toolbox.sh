@@ -749,18 +749,23 @@ backup_menu(){
 						apt-get -yqq install fail2ban
 					 fi
 					 echo "- Remounting previously existing storages if any"
-					for mount in /etc/systemd/system/*.mount; do
-						source $mount >/dev/null 2>&1
-						echo "- Checking if $mount is still present in system"
-						if find /dev/disk/by-uuid/ | grep -w $What; then
-						echo "- Remountig using configuration $mount"
- 						mkdir -p "$Where" 
- 						echo "$What $Where $Type $Options 0 2" >> /etc/fstab 
-						else
-						echo "- The drive for $mount was not found and will not be mounted back"
-						fi
-					done
-					mount -a
+					 if find /etc/systemd/system/*.mount; then
+						echo "- .mount file found - trying to remount"
+						for mount in /etc/systemd/system/*.mount; do
+							source $mount >/dev/null 2>&1
+							echo "- Checking if $mount is still present in system"
+							if find /dev/disk/by-uuid/ | grep -w $What; then
+							echo "- Remountig using configuration $mount"
+							mkdir -p "$Where" 
+							echo "$What $Where $Type $Options 0 2" >> /etc/fstab 
+							else
+							echo "- The drive for $mount was not found and will not be mounted back"
+							fi
+						done
+						mount -a
+					else
+					echo "- No .mount file found"
+					fi
 					for pool in $(zpool import | grep pool: | awk '{print $2}'); do
 						echo "- Importing pool $pool"
 						zpool import -f $pool
