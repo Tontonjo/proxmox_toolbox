@@ -20,7 +20,8 @@ It automatically will find if the host is a pve or a pbs host and setup accordin
 You can watch a demonstration of the tool [in this playlist](https://www.youtube.com/playlist?list=PLU73OWQhDzsTpLpVNspJ14rVrXAmo2Biu) 
 
 ### Prerequisits:
-To fully enjoye Proxmox Toolbox, an internet connexion is needed in order to retreive new needed packages and update
+- PVE or PBS server
+- Internet connexion
 
 ## Features are:
 - Automatic PVE / PBS host detection
