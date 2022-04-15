@@ -157,16 +157,14 @@ main_menu(){
 					  echo "- Server is a PVE host"
 					#2: Edit sources list:
 					  echo "- Checking Sources list"
-						if grep -Fq "deb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
-						 then
+						if grep -Fq "deb http://download.proxmox.com/debian/pve" /etc/apt/sources.list; then
 						  echo "-- Source looks alredy configured - Skipping"
 						else
 						  echo "-- Adding new entry to sources.list"
 						  sed -i "\$adeb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
 						fi
 					  echo "- Checking Enterprise Source list"
-						if grep -Fq "#deb https://enterprise.proxmox.com/debian/pve $distribution pve-enterprise" /etc/apt/sources.list.d/pve-enterprise.list
-						then
+						if grep -Fq "#deb https://enterprise.proxmox.com/debian/pve" /etc/apt/sources.list.d/pve-enterprise.list; then
 						 echo "-- Entreprise repo looks already commented - Skipping"
 						else
 						 echo "-- Hiding Enterprise sources list"
@@ -175,16 +173,14 @@ main_menu(){
 					else
 					  echo "- Server is a PBS host"
 					  echo "- Checking Sources list"
-						if grep -Fq "deb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
-						then
+						if grep -Fq "deb http://download.proxmox.com/debian/pbs" /etc/apt/sources.list; then
 						  echo "-- Source looks alredy configured - Skipping"
 						else
 						 echo "-- Adding new entry to sources.list"
 						  sed -i "\$adeb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
 						fi
 					  echo "- Checking Enterprise Source list"
-						if grep -Fq "#deb https://enterprise.proxmox.com/debian/pbs $distribution pbs-enterprise" /etc/apt/sources.list.d/pbs-enterprise.list
-						  then
+						if grep -Fq "#deb https://enterprise.proxmox.com/debian/pbs" /etc/apt/sources.list.d/pbs-enterprise.list; then
 						  echo "-- Entreprise repo looks already commented - Skipping"
 						else
 						  echo "-- Hiding Enterprise sources list"
