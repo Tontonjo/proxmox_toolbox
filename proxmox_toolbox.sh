@@ -127,7 +127,7 @@ main_menu(){
     ENTER_LINE=`echo "\033[33m"`
     echo -e "${MENU}****************** Proxmox Toolbox **********************${NORMAL}"
     echo -e "${MENU}*********** Tonton Jo - 2022 - Version $version ************${NORMAL}"
-    echo -e "${MENU}********** https://www.youtube.com/c/tontonjo **************${NORMAL}"
+    echo -e "${MENU}********** https://www.youtube.com/c/tontonjo **********${NORMAL}"
     echo " "
     echo -e "${MENU}**${NUMBER} 1)${MENU} No-subscription Sources Configuration ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 2)${MENU} Update host & create proxmox-update command ${NORMAL}"
@@ -141,7 +141,7 @@ main_menu(){
     echo -e "${MENU}**${NUMBER} 0)${MENU} Exit ${NORMAL}"
     echo " "
     echo -e "${MENU}*********************************************${NORMAL}"
-    echo -e "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
+    echo -e "${ENTER_LINE}Please enter a menu option number or ${RED_TEXT}enter to exit. ${NORMAL}"
     read -rsn1 opt
 	while [ opt != '' ]
   do
@@ -470,7 +470,7 @@ mail_menu(){
 			ENTER_LINE=`echo "\033[33m"`
   			echo -e "${MENU}************* Ez Proxmox Mail Configurator ***************${NORMAL}"
 			echo -e "${MENU}********** Tonton Jo - 2022 - Version $version *****${NORMAL}"
-   			echo -e "${MENU}********* https://www.youtube.com/c/tontonjo ***********${NORMAL}"
+   			echo -e "${MENU}********* https://www.youtube.com/c/tontonjo **********${NORMAL}"
 			echo " "
 			echo -e "${MENU}**${NUMBER} 1)${MENU} Configure ${NORMAL}"
 			echo -e "${MENU}**${NUMBER} 2)${MENU} Test ${NORMAL}"
@@ -479,7 +479,7 @@ mail_menu(){
 			echo -e "${MENU}**${NUMBER} 0)${MENU} Back ${NORMAL}"
 			echo " "
 			echo -e "${MENU}*********************************************${NORMAL}"
-			echo -e "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
+			echo -e "${ENTER_LINE}Please enter a menu option number or ${RED_TEXT}enter to exit. ${NORMAL}"
 			read -rsn1 opt
 			while [ opt != '' ]
 		  do
@@ -696,14 +696,14 @@ backup_menu(){
 			ENTER_LINE=`echo "\033[33m"`
   			echo -e "${MENU}**************** Proxmxo backup and restore ***************${NORMAL}"
 			echo -e "${MENU}********** Tonton Jo - 2022 - Version $version *****${NORMAL}"
-   			echo -e "${MENU}********** https://www.youtube.com/c/tontonjo ***********${NORMAL}"
+   			echo -e "${MENU}********** https://www.youtube.com/c/tontonjo **********${NORMAL}"
 			echo " "
 			echo -e "${MENU}**${NUMBER} 1)${MENU} Backup configuration ${NORMAL}"
 			echo -e "${MENU}**${NUMBER} 2)${MENU} Restore configuration ${NORMAL}"
 			echo -e "${MENU}**${NUMBER} 0)${MENU} Back ${NORMAL}"
 			echo " "
 			echo -e "${MENU}*********************************************${NORMAL}"
-			echo -e "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
+			echo -e "${ENTER_LINE}Please enter a menu option number or ${RED_TEXT}enter to exit. ${NORMAL}"
 			read -rsn1 opt
 			while [ opt != '' ]
 		  do
