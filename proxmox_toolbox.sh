@@ -41,7 +41,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.9.3
+version=3.9.4
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -67,6 +67,7 @@ version=3.9.3
 # V3.9.1: Add more logic when creating new admin user
 # V3.9.2: Specify more clearly the realm to use when creating an alternate admin user
 # V3.9.3: Add check for .mount file to avoid error trying to remount
+# V3.9.4: Fix detection of enterprise source status in order to not reapply
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -156,7 +157,7 @@ main_menu(){
 					  echo "- Server is a PVE host"
 					#2: Edit sources list:
 					  echo "- Checking Sources list"
-						if grep -Fxq "deb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
+						if grep -Fq "deb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
 						 then
 						  echo "-- Source looks alredy configured - Skipping"
 						else
@@ -164,7 +165,7 @@ main_menu(){
 						  sed -i "\$adeb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
 						fi
 					  echo "- Checking Enterprise Source list"
-						if grep -Fxq "#deb https://enterprise.proxmox.com/debian/pve $distribution pve-enterprise" /etc/apt/sources.list.d/pve-enterprise.list
+						if grep -Fq "#deb https://enterprise.proxmox.com/debian/pve $distribution pve-enterprise" /etc/apt/sources.list.d/pve-enterprise.list
 						then
 						 echo "-- Entreprise repo looks already commented - Skipping"
 						else
@@ -174,7 +175,7 @@ main_menu(){
 					else
 					  echo "- Server is a PBS host"
 					  echo "- Checking Sources list"
-						if grep -Fxq "deb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
+						if grep -Fq "deb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
 						then
 						  echo "-- Source looks alredy configured - Skipping"
 						else
@@ -182,7 +183,7 @@ main_menu(){
 						  sed -i "\$adeb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
 						fi
 					  echo "- Checking Enterprise Source list"
-						if grep -Fxq "#deb https://enterprise.proxmox.com/debian/pbs $distribution pbs-enterprise" /etc/apt/sources.list.d/pbs-enterprise.list
+						if grep -Fq "#deb https://enterprise.proxmox.com/debian/pbs $distribution pbs-enterprise" /etc/apt/sources.list.d/pbs-enterprise.list
 						  then
 						  echo "-- Entreprise repo looks already commented - Skipping"
 						else
