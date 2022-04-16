@@ -48,10 +48,7 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 ## USAGE
 ###  Get and execute:  
 ```shell
-wget -qO proxmox_toolbox.sh https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh
-```
-```shell
-bash proxmox_toolbox.sh
+wget -qO proxmox_toolbox.sh https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh && bash proxmox_toolbox.sh
 ```
 
 ### Updating host: 
@@ -59,7 +56,7 @@ To start an update only, without menu or prompt:
 ```shell
 bash proxmox_toolbox.sh -u
 ```
-Or once the tool has been used to update host, you can execute this command to fully update your host - kind of an alias of bash proxmox_toolbox.sh -u
+Once the tool has been used to update host, you can execute this command to fully update your host - kind of an alias of bash proxmox_toolbox.sh -u
 ```shell
 proxmox-update
 ```
