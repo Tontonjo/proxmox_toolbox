@@ -51,7 +51,9 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 wget -qO proxmox_toolbox.sh https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh && bash proxmox_toolbox.sh
 ```
 
-### Updating host: 
+### Updating host & remove subscription
+The script will detect if no-enterprise source is configured, and if so, remove the subscription message. if you still encounter it after, clear your broswer cache.
+
 To start an update only, without menu or prompt:
 ```shell
 bash proxmox_toolbox.sh -u
