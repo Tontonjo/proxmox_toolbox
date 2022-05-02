@@ -111,11 +111,12 @@ update () {
 			fi
 		fi
 }
-getsnmpconfig() {
+snmpconfig() {
 wget -qO /etc/snmp/snmpd.conf.backup https://github.com/Tontonjo/proxmox_toolbox/raw/main/snmp/snmpd.conf
 }
 
 getcontentcheck() {
+exitcode=$?
 if [ $exitcode -ne 0 ]; then
 	echo "- Error retreiving necessary file - control your internet connexion"
 	sleep 7
@@ -409,7 +410,7 @@ main_menu(){
 				if [[ $REPLY =~ ^[2]$ ]]; then
 					clear
 					cp -n /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
-					getsnpmconfig
+					snmpconfig
 					getcontentcheck
 					echo "- Read only community name? (ex: ro_tontonjo): "
 					read rocommunity
@@ -420,7 +421,7 @@ main_menu(){
 				elif [[ $REPLY =~ ^[3]$ ]]; then
 					clear
 					cp -n /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
-					getsnpmconfig
+					snmpconfig
 					getcontentcheck
 					echo "- Encryption will be MD5 and DES"
 					systemctl stop snmpd
