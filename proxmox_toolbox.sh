@@ -41,7 +41,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.9.4
+version=3.9.5
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -68,6 +68,7 @@ version=3.9.4
 # V3.9.2: Specify more clearly the realm to use when creating an alternate admin user
 # V3.9.3: Add check for .mount file to avoid error trying to remount
 # V3.9.4: Fix detection of enterprise source status in order to not reapply
+# V3.9.5: Fix snmp file retreiving - add a success validation befor continuing.
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -109,6 +110,17 @@ update () {
 				fi
 			fi
 		fi
+}
+getsnmpconfig() {
+wget -qO /etc/snmp/snmpd.conf.backup https://github.com/Tontonjo/proxmox_toolbox/raw/main/snmp/snmpd.conf
+}
+
+getcontentcheck() {
+if [ $exitcode -ne 0 ]; then
+	echo "- Error retreiving necessary file - control your internet connexion"
+	sleep 7
+	main_menu
+fi
 }
 
 	if  [[ $1 = "-u" ]]; then
@@ -396,18 +408,20 @@ main_menu(){
 				read -p "- Press 2 for snmpv2 or 3 for SNMP V3 (ReadOnly) or anything to return to menu: " -n 1 -r
 				if [[ $REPLY =~ ^[2]$ ]]; then
 					clear
+					cp -n /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
+					getsnpmconfig
+					getcontentcheck
 					echo "- Read only community name? (ex: ro_tontonjo): "
 					read rocommunity
 					echo "- Allowed subnet? Enter for none (x.x.x.x/xx): "
 					read allowedsubnet
 					echo "- Setting SNMP"
-					cp -n /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
-					cp -f proxmox_toolbox/snmp/snmpd.conf /etc/snmp/snmpd.conf
 					echo "rocommunity $rocommunity $allowedsubnet" >> /etc/snmp/snmpd.conf
 				elif [[ $REPLY =~ ^[3]$ ]]; then
 					clear
 					cp -n /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
-					cp -f proxmox_toolbox/snmp/snmpd.conf /etc/snmp/snmpd.conf
+					getsnpmconfig
+					getcontentcheck
 					echo "- Encryption will be MD5 and DES"
 					systemctl stop snmpd
 					echo "- Deleting old SNMPv3 users in /usr/share/snmp/snmpd.conf"
