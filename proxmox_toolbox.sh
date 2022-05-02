@@ -112,7 +112,7 @@ update () {
 		fi
 }
 snmpconfig() {
-wget -qO /etc/snmp/snmpd.conf.backup https://github.com/Tontonjo/proxmox_toolbox/raw/main/snmp/snmpd.conf
+wget -qO /etc/snmp/snmpd.conf https://github.com/Tontonjo/proxmox_toolbox/raw/main/snmp/snmpd.conf
 }
 
 getcontentcheck() {
