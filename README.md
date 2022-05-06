@@ -52,6 +52,8 @@ wget -qO proxmox_toolbox.sh https://raw.githubusercontent.com/Tontonjo/proxmox_t
 ```
 
 ### Updating host & remove subscription
+If you update your host directly within the system, the no subscibtion message may reappear when the file gets updated.  
+In order to nerver see this again, you have to update Proxmox with one of the following options.
 The script will detect if no-enterprise source is configured, and if so, remove the subscription message. if you still encounter it after, clear your broswer cache.
 
 To start an update only, without menu or prompt:
