@@ -750,6 +750,7 @@ backup_menu(){
 				  echo "- Backup $opt selected"
 				  read -p "- Proceed with the restoration?  y = yes / anything = no: " -n 1 -r
 				  if [[ $REPLY =~ ^[Yy]$ ]]; then
+				  	 echo " "
 				  	 read -p "- Do you want to restore the network configuration aswell? y = yes / anything = no: " -n 1 -r
 				  	 if [[ $REPLY =~ ^[Yy]$ ]]; then
 					 	tar -xf "$opt" -C /
