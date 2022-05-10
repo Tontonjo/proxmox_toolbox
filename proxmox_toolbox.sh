@@ -41,7 +41,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.9.5
+version=3.9.6
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -69,6 +69,7 @@ version=3.9.5
 # V3.9.3: Add check for .mount file to avoid error trying to remount
 # V3.9.4: Fix detection of enterprise source status in order to not reapply
 # V3.9.5: Fix snmp file retreiving - add a success validation befor continuing.
+# V3.9.6: add choice to restore the network configuration usefull in case of other network configuration / hardware
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -749,7 +750,13 @@ backup_menu(){
 				  echo "- Backup $opt selected"
 				  read -p "- Proceed with the restoration?  y = yes / anything = no: " -n 1 -r
 				  if [[ $REPLY =~ ^[Yy]$ ]]; then
-					 tar -xf "$opt" -C /
+				  	 read -p "- Do you want to restore the network configuration aswell? y = yes / anything = no: " -n 1 -r
+				  	 if [[ $REPLY =~ ^[Yy]$ ]]; then
+					 	tar -xf "$opt" -C /
+
+					 else
+						tar -xf "$opt" --exclude='/etc/network/interfaces' -C /
+					 fi
 					 clear
 					 echo "- File restauration done"
 					 echo "- Installing missing dependencies if missing"
