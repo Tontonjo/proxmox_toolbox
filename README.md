@@ -83,7 +83,7 @@ fail2ban-client set $jailname unbanip  $ipaddress
 ```
 
 
-## Backup and Restauration:  
+## Backup and Restoration:  
 - Be carefull as this was not extensively tested - especially not with cluster configurations
 - The following folders and configurations are backuped by default:  
 ```/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/system/*.mount /etc/network/interfaces /etc/sysctl.conf /etc/resolv.conf /etc/hosts /etc/hostname /etc/cron* /etc/aliases /etc/snmp/ /etc/smartd.conf /usr/share/snmp/snmpd.conf /etc/postfix/ /etc/pve/ /etc/lvm/ /etc/modprobe.d/ /var/lib/pve-firewall/ /var/lib/pve-cluster/  /etc/vzdump.conf /etc/ksmtuned.conf /etc/proxmox-backup/```  
