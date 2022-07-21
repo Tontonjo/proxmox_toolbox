@@ -89,6 +89,7 @@ backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/sys
 
 if [ ! -f /root/proxmox_config_backups/$hostname-firstrun.tar.gz ]; then
 	echo "- Creating a backup at first run - dont delete it :-)"
+	mkdir -p $backupdir
 	sleep 2
 	tar -czf /root/proxmox_config_backups/$hostname-firstrun.tar.gz --absolute-names $backup_content
 	echo "- A backup of the actual configurations has been created at /root/$hostname-firstrun.tar.gz"
