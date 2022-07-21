@@ -41,7 +41,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.9.7
+version=3.9.8
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -71,6 +71,7 @@ version=3.9.7
 # V3.9.5: Fix snmp file retreiving - add a success validation befor continuing.
 # V3.9.6: add choice to restore the network configuration usefull in case of other network configuration / hardware
 # V3.9.7: Add a first run backup for people who rekt their installation and blame the toolbox :) - add some enhancements
+# V3.9.8: Uninstall fail2ban when restoring if no config exist in backup content
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -774,9 +775,13 @@ backup_menu(){
 						echo "- snmp config found - installing snmpd"
 						apt-get -yqq install snmpd libsnmp-dev
 					 fi
-					 if [ -d "/etc/fail2ban/" ]; then
+					 archivecontent=$(tar -tvf $opt)
+					 if cat $archivecontent | grep -qi fail2ban; then
 						echo "- fail2ban config found - installing fail2ban"
 						apt-get -yqq install fail2ban
+					 else
+					 	echo "- fail2ban config NOT found - uninstalling fail2ban if existing"
+						apt-get -yqq remove --purge fail2ban
 					 fi
 					 echo "- Remounting previously existing storages if any"
 					 if find /etc/systemd/system/*.mount; then
