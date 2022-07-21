@@ -41,7 +41,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.9.6
+version=3.9.7
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -70,6 +70,7 @@ version=3.9.6
 # V3.9.4: Fix detection of enterprise source status in order to not reapply
 # V3.9.5: Fix snmp file retreiving - add a success validation befor continuing.
 # V3.9.6: add choice to restore the network configuration usefull in case of other network configuration / hardware
+# V3.9.7: Add a first run backup for people who rekt their installation and blame the toolbox :) - add some enhancements
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -82,9 +83,17 @@ distribution=$(. /etc/*-release;echo $VERSION_CODENAME)
 execdir=$(dirname $0)
 hostname=$(hostname)
 date=$(date +%Y_%m_%d-%H_%M_%S)
-backupdir="/root/" #trailing slash is mandatory
+backupdir="/root/proxmox_config_backups" #trailing slash is mandatory
 backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/system/*.mount /etc/network/interfaces /etc/sysctl.conf /etc/resolv.conf /etc/hosts /etc/hostname /etc/cron* /etc/aliases /etc/snmp/ /etc/smartd.conf /usr/share/snmp/snmpd.conf /etc/postfix/ /etc/pve/ /etc/lvm/ /etc/modprobe.d/ /var/lib/pve-firewall/ /var/lib/pve-cluster/  /etc/vzdump.conf /etc/ksmtuned.conf /etc/proxmox-backup/"
 # ---------------END OF ENVIRONNEMENT VARIABLES-----------------
+
+if [ ! -f /root/proxmox_config_backups/$hostname-firstrun.tar.gz ]; then
+	echo "- Creating a backup at first run - dont delete it :-)"
+	sleep 2
+	tar -czf /root/proxmox_config_backups/$hostname-firstrun.tar.gz --absolute-names $backup_content
+	echo "- A backup of the actual configurations has been created at /root/$hostname-firstrun.tar.gz"
+	sleep 2
+fi
 
 update () {
 		# Check if the /usr/bin/proxmox-update entry for update is already created
@@ -728,10 +737,9 @@ backup_menu(){
 			else
 			case $opt in
 			  1) clear;
-			  backupname=$(hostname)
 			  mkdir -p $backupdir
 			  echo "- Creating backup"
-			 	 tar -czf $backupdir$backupname-$(date +%Y_%m_%d-%H_%M_%S).tar.gz --absolute-names $backup_content
+			 	 tar -czf $backupdir$hostname-$(date +%Y_%m_%d-%H_%M_%S).tar.gz --absolute-names $backup_content
 			  clear
 			  echo "- Backup done - please control and test it"
 			  echo "- Archive is located in $backupdir"
