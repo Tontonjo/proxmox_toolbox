@@ -162,7 +162,7 @@ main_menu(){
     echo -e "${MENU}**${NUMBER} 6)${MENU} Enable S.M.A.R.T self-tests ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 7)${MENU} SNMP settings ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 8)${MENU} Email notification configuration ${NORMAL}"
-    echo -e "${MENU}**${NUMBER} 9)${MENU} Backup and Restoration ${NORMAL}"
+    echo -e "${MENU}**${NUMBER} 9)${MENU} Configurations backup and restoration ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 0)${MENU} Exit ${NORMAL}"
     echo " "
     echo -e "${MENU}*********************************************${NORMAL}"
