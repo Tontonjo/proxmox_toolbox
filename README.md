@@ -21,7 +21,7 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 
 ### Prerequisits:
 - PVE or PBS server
-- Internet connexion
+- Internet connection
 
 ## Features are:
 - Automatic PVE / PBS host detection
