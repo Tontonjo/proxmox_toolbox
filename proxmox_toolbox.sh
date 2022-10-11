@@ -41,7 +41,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.9.8
+version=3.9.9
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -72,6 +72,7 @@ version=3.9.8
 # V3.9.6: add choice to restore the network configuration usefull in case of other network configuration / hardware
 # V3.9.7: Add a first run backup for people who rekt their installation and blame the toolbox :) - add some enhancements
 # V3.9.8: Uninstall fail2ban when restoring if no config exist in backup content
+# V3.9.9: Small cosmetic changes and enhancements, now check for update bin version
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
