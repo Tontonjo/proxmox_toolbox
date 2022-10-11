@@ -11,7 +11,7 @@
 # This command retreive the latest version of proxmox-toolbox and execute it with update argument
 
 proxmox-update() {
-echo "- Retreiving ressourges"
+echo "- Retreiving ressources"
 wget -qO - https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh | bash /dev/stdin -u
 }
 proxmox-update
