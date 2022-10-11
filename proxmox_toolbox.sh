@@ -90,7 +90,7 @@ execdir=$(dirname $0)
 hostname=$(hostname)
 date=$(date +%Y_%m_%d-%H_%M_%S)
 # ----------------- Ressources variables----------------------
-proxmox-update_bin=https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update
+proxmox-update_bin="https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update"
 # ---------------END OF VARIABLES-----------------
 
 if [ ! -f /root/proxmox_config_backups/$hostname-firstrun.tar.gz ]; then
