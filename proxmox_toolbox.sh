@@ -76,17 +76,21 @@ version=3.9.8
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
 
-# -----------------ENVIRONNEMENT VARIABLES----------------------
+# -----------------User variables----------------------
 dnstesthost=google.ch
+backupdir="/root/proxmox_config_backups" #trailing slash is mandatory
+backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/system/*.mount /etc/network/interfaces /etc/sysctl.conf /etc/resolv.conf /etc/hosts /etc/hostname /etc/cron* /etc/aliases /etc/snmp/ /etc/smartd.conf /usr/share/snmp/snmpd.conf /etc/postfix/ /etc/pve/ /etc/lvm/ /etc/modprobe.d/ /var/lib/pve-firewall/ /var/lib/pve-cluster/  /etc/vzdump.conf /etc/ksmtuned.conf /etc/proxmox-backup/"
+# ----------------- System variables----------------------
+updatebinversion=1.1
 pve_log_folder="/var/log/pve/tasks/"
 proxmoxlib="/usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js"
 distribution=$(. /etc/*-release;echo $VERSION_CODENAME)
 execdir=$(dirname $0)
 hostname=$(hostname)
 date=$(date +%Y_%m_%d-%H_%M_%S)
-backupdir="/root/proxmox_config_backups" #trailing slash is mandatory
-backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/system/*.mount /etc/network/interfaces /etc/sysctl.conf /etc/resolv.conf /etc/hosts /etc/hostname /etc/cron* /etc/aliases /etc/snmp/ /etc/smartd.conf /usr/share/snmp/snmpd.conf /etc/postfix/ /etc/pve/ /etc/lvm/ /etc/modprobe.d/ /var/lib/pve-firewall/ /var/lib/pve-cluster/  /etc/vzdump.conf /etc/ksmtuned.conf /etc/proxmox-backup/"
-# ---------------END OF ENVIRONNEMENT VARIABLES-----------------
+# ----------------- Ressources variables----------------------
+proxmox-update_bin=https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update
+# ---------------END OF VARIABLES-----------------
 
 if [ ! -f /root/proxmox_config_backups/$hostname-firstrun.tar.gz ]; then
 	echo "- Creating a backup at first run - dont delete it :-)"
@@ -101,7 +105,11 @@ update () {
 		# Check if the /usr/bin/proxmox-update entry for update is already created
 		if [ ! -f /usr/bin/proxmox-update ]; then
 			echo "- Retreiving new bin"
-			wget -qO "/usr/bin/proxmox-update"  https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update && chmod +x "/usr/bin/proxmox-update"
+			wget -qO "/usr/bin/proxmox-update" $proxmox-update_bin && chmod +x "/usr/bin/proxmox-update"
+			update
+		elif ! grep -Fq "$updatebinversion" /usr/bin/proxmox-update; then
+		    	echo "- Updating update binary to version $updatebinversion"
+			wget -qO "/usr/bin/proxmox-update" $proxmox-update_bin && chmod +x "/usr/bin/proxmox-update"
 			update
 		else
 		echo "- Updating System"
