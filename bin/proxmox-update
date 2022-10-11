@@ -5,11 +5,13 @@
 
 # Version:
 # 1.0: Initial file version
+# 1.1: add echo to inform in case execution get stuck
 
 # file is intended to be in /usr/bin/proxmox-update
 # This command retreive the latest version of proxmox-toolbox and execute it with update argument
 
 proxmox-update() {
+echo "- Retreiving ressourges"
 wget -qO - https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh | bash /dev/stdin -u
 }
 proxmox-update
