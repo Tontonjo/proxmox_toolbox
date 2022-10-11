@@ -89,8 +89,6 @@ distribution=$(. /etc/*-release;echo $VERSION_CODENAME)
 execdir=$(dirname $0)
 hostname=$(hostname)
 date=$(date +%Y_%m_%d-%H_%M_%S)
-# ----------------- Ressources variables----------------------
-proxmox-update_bin="https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update"
 # ---------------END OF VARIABLES-----------------
 
 if [ ! -f /root/proxmox_config_backups/$hostname-firstrun.tar.gz ]; then
@@ -106,11 +104,11 @@ update () {
 		# Check if the /usr/bin/proxmox-update entry for update is already created
 		if [ ! -f /usr/bin/proxmox-update ]; then
 			echo "- Retreiving new bin"
-			wget -qO "/usr/bin/proxmox-update" "$proxmox-update_bin" && chmod +x "/usr/bin/proxmox-update"
+			wget -qO "/usr/bin/proxmox-update" https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update && chmod +x "/usr/bin/proxmox-update"
 			update
 		elif ! grep -Fq "$updatebinversion" /usr/bin/proxmox-update; then
 		    	echo "- Updating update binary to version $updatebinversion"
-			wget -qO "/usr/bin/proxmox-update" "$proxmox-update_bin" && chmod +x "/usr/bin/proxmox-update"
+			wget -qO "/usr/bin/proxmox-update" https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update && chmod +x "/usr/bin/proxmox-update"
 			update
 		else
 		echo "- Updating System"
