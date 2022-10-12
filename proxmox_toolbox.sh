@@ -102,12 +102,8 @@ fi
 
 update () {
 		# Check if the /usr/bin/proxmox-update entry for update is already created
-		if [ ! -f /usr/bin/proxmox-update ]; then
-			echo "- Retreiving new bin"
-			wget -qO "/usr/bin/proxmox-update" https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update && chmod +x "/usr/bin/proxmox-update"
-			update
-		elif ! grep -Fq "$updatebinversion" /usr/bin/proxmox-update; then
-		    	echo "- Updating update binary to version $updatebinversion"
+		if ! grep -Fq "$updatebinversion" /usr/bin/proxmox-update; then
+		    	echo "- Downloading / Updating update binary version $updatebinversion"
 			wget -qO "/usr/bin/proxmox-update" https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update && chmod +x "/usr/bin/proxmox-update"
 			update
 		else
