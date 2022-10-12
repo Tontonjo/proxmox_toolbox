@@ -6,6 +6,7 @@
 # Version:
 # 1.0: Initial file version
 # 1.1: add echo to inform in case execution get stuck
+# 1.2: Fix error when file self updated by forcing to read full script
 
 # file is intended to be in /usr/bin/proxmox-update
 # This command retreive the latest version of proxmox-toolbox and execute it with update argument
@@ -14,4 +15,4 @@ proxmox-update() {
 echo "- Retreiving ressources"
 wget -qO - https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh | bash /dev/stdin -u
 }
-proxmox-update
+proxmox-update "$@"; exit
