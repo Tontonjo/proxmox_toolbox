@@ -27,23 +27,23 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 - Automatic PVE / PBS host detection
 - Hide enterprise repo and set no-subscription repository
 - Update host and create a new command "proxmox-update"
--  -  when no-enterprise source is set, disable no-subscription message
+  -  when no-enterprise source is set, disable no-subscription message
 - Install usefull dependencies: ifupdown2 - git - sudo - libsasl2-modules - snmp
 - Security settings:
-- - Enable fail 2 ban with default configuration for sshd, proxmox virtual environement and backup server  
+  - Enable fail 2 ban with default configuration for sshd, proxmox virtual environement and backup server  
 (credits to [inettgmbh](https://github.com/inettgmbh/fail2ban-proxmox-backup-server))  
-- - Create another debian user with sudo rights
-- - Disable root ssh login
-- - Create another Proxmox GUI administrator (login with Proxmox VE Realm)
-- - Disabling root@pam user !!! root@pam is needed to update from GUI - update can still be done trough SSH if disabled !!!
+  - Create another debian user with sudo rights
+  - Disable root ssh login
+  - Create another Proxmox GUI administrator (login with Proxmox VE Realm)
+  - Disabling root@pam user !!! root@pam is needed to update from GUI - update can still be done trough SSH if disabled !!!
 - Change or disable SWAP 
 - Enable S.M.A.R.T self-tests on all supported drives
-- - short: every sunday@22 - Long: every 1st of month @22
+  - short: every sunday@22 - Long: every 1st of month @22
 - Enable SNMP V2 or v3 - you choose - with a default working configuration
 - Configure email service to send system and proxmox notifications (postfix)
 - Backup and restore Proxmox Virtual Environment and Backup Server configuration
-- - Automatic remount of directories and zpools using previously existing configurations
-- - Please find more informations below  
+  - Automatic remount of directories and zpools using previously existing configurations
+  - Please find more informations below  
 
 ## USAGE
 ###  Get and execute:  
