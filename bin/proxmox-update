@@ -14,4 +14,4 @@ proxmox-update() {
 echo "- Retreiving ressources"
 wget -qO - https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh | bash /dev/stdin -u
 }
-proxmox-update
+proxmox-update "$@"; exit
