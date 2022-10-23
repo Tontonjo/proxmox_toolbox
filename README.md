@@ -97,7 +97,7 @@ Once the backup is done, a tar.gz archive is located at backupdir="/root/".
 
 ### Restauration:  
 The script looks for tar.gz files located in backupdir="/root/" and will list all the available archives for you to choose one.  
-Warning: The restauration will override any existing file with the one in archive  
+Warning: The restauration will overwrite any existing file with the one in archive  
 
 The restauration process will:
 - Reinstall missing dependencies for snmp and fail2ban if config were existing  
