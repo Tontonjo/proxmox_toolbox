@@ -41,7 +41,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=3.9.9
+version=4.0.0
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -73,14 +73,15 @@ version=3.9.9
 # V3.9.7: Add a first run backup for people who rekt their installation and blame the toolbox :) - add some enhancements
 # V3.9.8: Uninstall fail2ban when restoring if no config exist in backup content
 # V3.9.9: Small cosmetic changes and enhancements, now check for update bin version
+# V4.0.0: Some cosmetic changes
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
 
 # -----------------User variables----------------------
-dnstesthost=google.ch
 backupdir="/root/proxmox_config_backups" #trailing slash is mandatory
 backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/system/*.mount /etc/network/interfaces /etc/sysctl.conf /etc/resolv.conf /etc/hosts /etc/hostname /etc/cron* /etc/aliases /etc/snmp/ /etc/smartd.conf /usr/share/snmp/snmpd.conf /etc/postfix/ /etc/pve/ /etc/lvm/ /etc/modprobe.d/ /var/lib/pve-firewall/ /var/lib/pve-cluster/  /etc/vzdump.conf /etc/ksmtuned.conf /etc/proxmox-backup/"
+
 # ----------------- System variables----------------------
 updatebinversion=1.1
 pve_log_folder="/var/log/pve/tasks/"
@@ -107,21 +108,21 @@ update () {
 			wget -qO "/usr/bin/proxmox-update" https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update && chmod +x "/usr/bin/proxmox-update"
 			update
 		else
-		echo "- Updating System"
+			echo "- Updating System"
 			apt-get update -y -qq
 			apt-get upgrade -y -qq
 			apt-get dist-upgrade -y -qq
 			if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
 				if grep -q ".data.status.toLowerCase() == 'active') {" $proxmoxlib; then
-						echo "- Subscription Message already removed - Skipping"
-					else
-						if [ -d "$pve_log_folder" ]; then
-							echo "- Removing No Valid Subscription Message for PVE"
-							sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart pveproxy.service
-						else 
-							echo "- Removing No Valid Subscription Message for PBS"
-							sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart proxmox-backup-proxy.service
-						fi
+					echo "- Subscription Message already removed - Skipping"
+				else
+					if [ -d "$pve_log_folder" ]; then
+						echo "- Removing No Valid Subscription Message for PVE"
+						sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart pveproxy.service
+					else 
+						echo "- Removing No Valid Subscription Message for PBS"
+						sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart proxmox-backup-proxy.service
+					fi
 				fi
 			fi
 		fi
@@ -384,7 +385,7 @@ main_menu(){
 			fi
 		else
 			echo " - System has no swap - Nothing to do"
-			sleep 3	
+			sleep 7
 		fi
 		main_menu
       ;;
@@ -401,7 +402,7 @@ main_menu(){
 					echo "- Short smart test will occure every sunday at 22H and long smart tests every 1 of month at 22H"
 					echo "DEVICESCAN -d auto -n never -a -s (S/../../7/22|L/../01/./22) -m root -M exec /usr/share/smartmontools/smartd-runner" > "/etc/smartd.conf"
 				fi
-			sleep 3	
+			sleep 7
 			fi
 		main_menu
       ;;
@@ -519,11 +520,11 @@ mail_menu(){
 			  case $opt in
 			  1) clear;
 					echo "- System administrator recipient mail address (user@domain.tld) (root alias): "
-					read 'varrootmail'
+					read 'rootaddressalias'
 					echo "- What is the mail server hostname? (smtp.gmail.com): "
-					read 'varmailserver'
-					echo "- What is the mail server port? (Usually 587 - can be 25 (no tls)): "
-					read 'varmailport'
+					read 'mailserverhostname'
+					echo "- What is the mail SMTP port? (Usually 587 - can be 25 (no tls)): "
+					read 'smtpport'
 					read -p  "- Does the server require TLS? y = yes / anything = no: " -n 1 -r 
 					if [[ $REPLY =~ ^[Yy]$ ]]; then
 					vartls=yes
@@ -532,17 +533,17 @@ mail_menu(){
 					fi
 					echo " "
 					echo "- What is the AUTHENTIFICATION USERNAME? (user@domain.tld or username): "
-					read 'varmailusername'
+					read 'authusername'
 					echo "- What is the AUTHENTIFICATION PASSWORD?: "
-					read 'varmailpassword'
+					read 'authpassword'
 					echo "- Is the SENDER mail address the same as the AUTHENTIFICATION USERNAME?"
-					read -p " y to use $varmailusername / Enter to set something else: " -n 1 -r 
+					read -p " y to use $authusername / Enter to set something else: " -n 1 -r 
 					if [[ $REPLY =~ ^[Yy]$ ]]; then
-					varsenderaddress=$varmailusername
+					senderaddress=$authusername
 					else
 					echo " "
 					echo "- What is the sender email address?: "
-					read 'varsenderaddress'
+					read 'senderaddress'
 					fi
 					echo " "
 				echo "- Working on it!"
@@ -550,23 +551,23 @@ mail_menu(){
 				echo "- Setting Aliases"
 				if grep "root:" /etc/aliases
 					then
-					echo "- Alias entry was found: editing for $varrootmail"
-					sed -i "s/^root:.*$/root: $varrootmail/" /etc/aliases
+					echo "- Alias entry was found: editing for $rootaddressalias"
+					sed -i "s/^root:.*$/root: $rootaddressalias/" /etc/aliases
 				else
 					echo "- No root alias found: Adding"
-					echo "root: $varrootmail" >> /etc/aliases
+					echo "root: $rootaddressalias" >> /etc/aliases
 				fi
 				
 				#Setting canonical file for sender - :
-				echo "root $varsenderaddress" > /etc/postfix/canonical
+				echo "root $senderaddress" > /etc/postfix/canonical
 				chmod 600 /etc/postfix/canonical
 				
 				# Preparing for password hash
-				echo [$varmailserver]:$varmailport $varmailusername:$varmailpassword > /etc/postfix/sasl_passwd
+				echo [$mailserverhostname]:$smtpport $authusername:$authpassword > /etc/postfix/sasl_passwd
 				chmod 600 /etc/postfix/sasl_passwd 
 				
 				# Add mailserver in main.cf
-				sed -i "/#/!s/\(relayhost[[:space:]]*=[[:space:]]*\)\(.*\)/\1"[$varmailserver]:"$varmailport""/"  /etc/postfix/main.cf
+				sed -i "/#/!s/\(relayhost[[:space:]]*=[[:space:]]*\)\(.*\)/\1"[$mailserverhostname]:"$smtpport""/"  /etc/postfix/main.cf
 				
 				# Checking TLS settings
 				echo "- Setting correct TLS Settings: $vartls"
