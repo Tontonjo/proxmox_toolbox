@@ -109,6 +109,7 @@ The restauration process will:
 In case of need, here's how you can manually mount storages:
 
 #### Directory:
+Mount configurations are located in /etc/systemd/system/*.mount  
 - run the following commands with the values you just retreived
 ```shell
 mkdir -p "$where"
