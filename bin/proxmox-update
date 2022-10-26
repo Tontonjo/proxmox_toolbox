@@ -6,6 +6,7 @@
 # Version:
 # 1.0: Initial file version
 # 1.1: add echo to inform in case execution get stuck
+# 1.2: force to read whole script in case it get overwritten by an update
 
 # file is intended to be in /usr/bin/proxmox-update
 # This command retreive the latest version of proxmox-toolbox and execute it with update argument
