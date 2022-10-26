@@ -750,7 +750,7 @@ backup_menu(){
 			  clear
 			  echo "- Backup done - please control and test it"
 			  echo "- Archive is located in $backupdir"
-			  sleep 3
+			  sleep 7
 			  clear
 			  backup_menu
 			;;
