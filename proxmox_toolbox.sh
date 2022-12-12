@@ -41,7 +41,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.0.2
+version=4.0.3
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -76,6 +76,7 @@ version=4.0.2
 # V4.0.0: Some cosmetic changes
 # V4.0.1: Small enhancement for backup / restore function - bump bin version to 1.2
 # V4.0.2: Small enhancements
+# V4.0.3: Update sources before attempt to install packages and ensure git is installed before trying to clone
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -231,6 +232,8 @@ main_menu(){
 			read -p "- This will install thoses libraries if missing: ifupdown2 - git - sudo - libsasl2-modules - Continue? y = yes / anything = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo " "
+				echo "- Updating sources"
+				apt-get update -y -qq
 				if [ $(dpkg-query -W -f='${Status}' ifupdown2 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 					apt-get install -y ifupdown2;
 				else
@@ -258,6 +261,8 @@ main_menu(){
 	4) clear;
 		read -p "Do you want to enable fail2ban? y = yes / anything = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
+				echo "- Updating sources"
+				apt-get update -y -qq
 				if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 					apt-get install -y fail2ban;
 				else
@@ -265,23 +270,28 @@ main_menu(){
 				fi
 				if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 					apt-get install -y git;
+					if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+						echo "- Git does not appears to be correctly installed - aborting filters installation"
+					else
+						git clone -q https://github.com/Tontonjo/proxmox_toolbox.git
+						if [ -d "$pve_log_folder" ]; then
+							echo "- Host is a PVE Host"	
+							# Put filter.d/proxmox-backup-server.conf contents to /etc/fail2ban/filter.d/proxmox-backup-server.conf
+							cp -f proxmox_toolbox/pve/filter.d/proxmox-virtual-environement.conf /etc/fail2ban/filter.d/proxmox-virtual-environement.conf
+							# Put jail.d/proxmox-backup-server.conf to /etc/fail2ban/jail.d/proxmox-backup-server.conf
+							cp -f proxmox_toolbox/pve/jail.d/proxmox-virtual-environement.conf /etc/fail2ban/jail.d/proxmox-virtual-environement.conf
+						else
+							echo "- Host is a PBS Host"
+							# Put filter.d/proxmox-backup-server.conf contents to /etc/fail2ban/filter.d/proxmox-backup-server.conf
+							cp -f proxmox_toolbox/pbs/filter.d/proxmox-backup-server.conf /etc/fail2ban/filter.d/proxmox-backup-server.conf
+							# Put jail.d/proxmox-backup-server.conf to /etc/fail2ban/jail.d/proxmox-backup-server.conf
+							cp -f proxmox_toolbox/pbs/jail.d/proxmox-backup-server.conf /etc/fail2ban/jail.d/proxmox-backup-server.conf
+						fi
+					fi
 				else
 					echo "- git already installed"
 				fi
-				git clone -q https://github.com/Tontonjo/proxmox_toolbox.git
-					if [ -d "$pve_log_folder" ]; then
-						echo "- Host is a PVE Host"	
-						# Put filter.d/proxmox-backup-server.conf contents to /etc/fail2ban/filter.d/proxmox-backup-server.conf
-						cp -f proxmox_toolbox/pve/filter.d/proxmox-virtual-environement.conf /etc/fail2ban/filter.d/proxmox-virtual-environement.conf
-						# Put jail.d/proxmox-backup-server.conf to /etc/fail2ban/jail.d/proxmox-backup-server.conf
-						cp -f proxmox_toolbox/pve/jail.d/proxmox-virtual-environement.conf /etc/fail2ban/jail.d/proxmox-virtual-environement.conf
-					else
-						echo "- Host is a PBS Host"
-						# Put filter.d/proxmox-backup-server.conf contents to /etc/fail2ban/filter.d/proxmox-backup-server.conf
-						cp -f proxmox_toolbox/pbs/filter.d/proxmox-backup-server.conf /etc/fail2ban/filter.d/proxmox-backup-server.conf
-						# Put jail.d/proxmox-backup-server.conf to /etc/fail2ban/jail.d/proxmox-backup-server.conf
-						cp -f proxmox_toolbox/pbs/jail.d/proxmox-backup-server.conf /etc/fail2ban/jail.d/proxmox-backup-server.conf
-					fi
+
 			clear
 			# Restart Fail2Ban Service
 			systemctl restart fail2ban.service
