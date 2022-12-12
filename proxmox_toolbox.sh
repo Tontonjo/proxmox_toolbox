@@ -41,7 +41,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.0.1
+version=4.0.2
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -75,6 +75,7 @@ version=4.0.1
 # V3.9.9: Small cosmetic changes and enhancements, now check for update bin version
 # V4.0.0: Some cosmetic changes
 # V4.0.1: Small enhancement for backup / restore function - bump bin version to 1.2
+# V4.0.2: Small enhancements
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -104,7 +105,7 @@ fi
 
 update () {
 		# Check if the /usr/bin/proxmox-update entry for update is already created
-		if ! grep -Fq "$updatebinversion" /usr/bin/proxmox-update; then
+		if ! grep -Fqs "$updatebinversion" /usr/bin/proxmox-update; then
 		    	echo "- Downloading / Updating update binary to version $updatebinversion"
 			wget -qO "/usr/bin/proxmox-update" https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update && chmod +x "/usr/bin/proxmox-update"
 			update
@@ -366,13 +367,12 @@ main_menu(){
 		lsblk | grep -qi swap
 		swapenabled=$?
 	   	if [ $swapenabled -eq 0 ]; then
+		echo ""
+		swapvalue=$(cat /proc/sys/vm/swappiness)
+		echo "- SWAP is actually set on $swapvalue"
+		echo "- Recommanded value: 1 - The lower the value - the less SWAP will be used - 0 to use SWAP only when out of memory"
 		read -p "- Do you want to edit swappiness value or disable SWAP? y = yes / anything = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
-				swapvalue=$(cat /proc/sys/vm/swappiness)
-				echo ""
-				echo "- SWAP is actually set on $swapvalue"
-				echo "- Recommanded value: 1 - The lower the value - the less SWAP will be used - 0 to use SWAP only when out of memory"
-				echo ""
 				echo "- What is the new swapiness value? 0 to 100 "
 				read newswapvalue
 				echo "- Setting swapiness to $newswapvalue"
