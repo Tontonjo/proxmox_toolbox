@@ -373,6 +373,7 @@ main_menu(){
 		echo "- Recommanded value: 1 - The lower the value - the less SWAP will be used - 0 to use SWAP only when out of memory"
 		read -p "- Do you want to edit swappiness value or disable SWAP? y = yes / anything = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
+				echo ""
 				echo "- What is the new swapiness value? 0 to 100 "
 				read newswapvalue
 				echo "- Setting swapiness to $newswapvalue"
