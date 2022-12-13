@@ -261,6 +261,7 @@ main_menu(){
 	4) clear;
 		read -p "Do you want to enable fail2ban? y = yes / anything = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
+				echo " "
 				echo "- Updating sources"
 				apt-get update -y -qq
 				if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
@@ -273,28 +274,30 @@ main_menu(){
 				if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 					apt-get install -y git;
 					getcontentcheck
+				else
+					echo "- git already installed"
+				fi
 					echo "- Retreiving fail2ban Proxmox jails from github"
 					git clone -q https://github.com/Tontonjo/proxmox_toolbox.git
 					getcontentcheck
-						if [ -d "$pve_log_folder" ]; then
-							echo "- Host is a PVE Host"	
-							# Put filter.d/proxmox-backup-server.conf contents to /etc/fail2ban/filter.d/proxmox-backup-server.conf
-							cp -f proxmox_toolbox/pve/filter.d/proxmox-virtual-environement.conf /etc/fail2ban/filter.d/proxmox-virtual-environement.conf
-							# Put jail.d/proxmox-backup-server.conf to /etc/fail2ban/jail.d/proxmox-backup-server.conf
-							cp -f proxmox_toolbox/pve/jail.d/proxmox-virtual-environement.conf /etc/fail2ban/jail.d/proxmox-virtual-environement.conf
-						else
-							echo "- Host is a PBS Host"
-							# Put filter.d/proxmox-backup-server.conf contents to /etc/fail2ban/filter.d/proxmox-backup-server.conf
-							cp -f proxmox_toolbox/pbs/filter.d/proxmox-backup-server.conf /etc/fail2ban/filter.d/proxmox-backup-server.conf
-							# Put jail.d/proxmox-backup-server.conf to /etc/fail2ban/jail.d/proxmox-backup-server.conf
-							cp -f proxmox_toolbox/pbs/jail.d/proxmox-backup-server.conf /etc/fail2ban/jail.d/proxmox-backup-server.conf
-						fi
-						clear
-						# Restart Fail2Ban Service
-						echo "- Restarting fail2ban service"
-						systemctl restart fail2ban.service
+				if [ -d "$pve_log_folder" ]; then
+					echo "- Host is a PVE Host"	
+					# Put filter.d/proxmox-backup-server.conf contents to /etc/fail2ban/filter.d/proxmox-backup-server.conf
+					cp -f proxmox_toolbox/pve/filter.d/proxmox-virtual-environement.conf /etc/fail2ban/filter.d/proxmox-virtual-environement.conf
+					# Put jail.d/proxmox-backup-server.conf to /etc/fail2ban/jail.d/proxmox-backup-server.conf
+					cp -f proxmox_toolbox/pve/jail.d/proxmox-virtual-environement.conf /etc/fail2ban/jail.d/proxmox-virtual-environement.conf
+				else
+					echo "- Host is a PBS Host"
+					# Put filter.d/proxmox-backup-server.conf contents to /etc/fail2ban/filter.d/proxmox-backup-server.conf
+					cp -f proxmox_toolbox/pbs/filter.d/proxmox-backup-server.conf /etc/fail2ban/filter.d/proxmox-backup-server.conf
+					# Put jail.d/proxmox-backup-server.conf to /etc/fail2ban/jail.d/proxmox-backup-server.conf
+					cp -f proxmox_toolbox/pbs/jail.d/proxmox-backup-server.conf /etc/fail2ban/jail.d/proxmox-backup-server.conf
 				fi
-
+				# Restart Fail2Ban Service
+				echo "- Restarting fail2ban service"
+				systemctl restart fail2ban.service
+				echo "- Cleaning git ressources"
+				rm -rf ./proxmox_toolbox/
 
 			fi
 		clear
@@ -304,7 +307,8 @@ main_menu(){
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				clear
 				if [ $(dpkg-query -W -f='${Status}' sudo 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y sudo;
+					apt-get install -y sudo
+					getcontentcheck
 				else
 					echo "- sudo already installed"
 				fi
@@ -392,7 +396,7 @@ main_menu(){
 				echo "vm.swappiness=$newswapvalue" > /etc/sysctl.d/swappiness.conf
 				echo "- Emptying swap - This may take some time"
 				swapoff -a
-				echo "- Re-enabling swap with $newswapvalue value"
+				echo "- Re-enabling with a swapiness of: $newswapvalue"
 				swapon -a
 				sleep 3	
 			fi
