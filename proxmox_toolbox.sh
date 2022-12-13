@@ -13,9 +13,8 @@
 # Backup and restore has not been extensivly tested - and has never been tested on cluster configurations - Dont count on it too much
 
 # USAGE
-# You can use this tool either with:
-# wget -qO proxmox_toolbox.sh https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh
-# bash proxmox_toolbox.sh
+# You can download and execute this script using:
+# wget -qO proxmox_toolbox.sh https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh && bash proxmox_toolbox.sh
 
 # SOURCES:
 # https://pve.proxmox.com/wiki/Fail2ban
