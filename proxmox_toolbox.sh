@@ -41,7 +41,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.0.3
+version=4.1.0
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -77,6 +77,7 @@ version=4.0.3
 # V4.0.1: Small enhancement for backup / restore function - bump bin version to 1.2
 # V4.0.2: Small enhancements
 # V4.0.3: Update sources before attempt to install packages and ensure git is installed before trying to clone
+# V4.1.0: Correction and optimisations in fail2ban setup
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -137,16 +138,16 @@ wget -qO /etc/snmp/snmpd.conf https://github.com/Tontonjo/proxmox_toolbox/raw/ma
 getcontentcheck() {
 exitcode=$?
 if [ $exitcode -ne 0 ]; then
-	echo "- Error retreiving necessary file - control your internet connexion"
+	echo "- Error retreiving ressources - control your internet connexion"
 	sleep 7
 	main_menu
 fi
 }
 
-	if  [[ $1 = "-u" ]]; then
-	update
-	exit
-	fi
+if  [[ $1 = "-u" ]]; then
+update
+exit
+fi
 	
 	
 main_menu(){
@@ -265,15 +266,17 @@ main_menu(){
 				apt-get update -y -qq
 				if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 					apt-get install -y fail2ban;
+					getcontentcheck
 				else
 					echo "- fail2ban already installed"
 				fi
+				echo "- Ensuring Git is installed"
 				if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 					apt-get install -y git;
-					if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-						echo "- Git does not appears to be correctly installed - aborting filters installation"
-					else
-						git clone -q https://github.com/Tontonjo/proxmox_toolbox.git
+					getcontentcheck
+					echo "- Retreiving fail2ban Proxmox jails from github"
+					git clone -q https://github.com/Tontonjo/proxmox_toolbox.git
+					getcontentcheck
 						if [ -d "$pve_log_folder" ]; then
 							echo "- Host is a PVE Host"	
 							# Put filter.d/proxmox-backup-server.conf contents to /etc/fail2ban/filter.d/proxmox-backup-server.conf
@@ -287,14 +290,13 @@ main_menu(){
 							# Put jail.d/proxmox-backup-server.conf to /etc/fail2ban/jail.d/proxmox-backup-server.conf
 							cp -f proxmox_toolbox/pbs/jail.d/proxmox-backup-server.conf /etc/fail2ban/jail.d/proxmox-backup-server.conf
 						fi
-					fi
-				else
-					echo "- git already installed"
+						clear
+						# Restart Fail2Ban Service
+						echo "- Restarting fail2ban service"
+						systemctl restart fail2ban.service
 				fi
 
-			clear
-			# Restart Fail2Ban Service
-			systemctl restart fail2ban.service
+
 			fi
 		clear
 		echo "- Do you want to create another SSH user ?"
