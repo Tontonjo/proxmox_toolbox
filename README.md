@@ -1,7 +1,7 @@
 # Proxmox Toolbox  
 ## Toolbox to setup Proxmox Virtual Environment and Backup Server
 
-![screenshot](https://i.ibb.co/F5YdLyd/Screenshot-2022-04-15-170607.png)  
+![screenshot](https://i.ibb.co/Tr3rbw0/Screenshot-2022-12-29-101432.png)  
 
 ## Tonton Jo  
 ### Join the community:
