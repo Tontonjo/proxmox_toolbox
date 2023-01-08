@@ -40,7 +40,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.1.0
+version=4.1.1
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -77,6 +77,7 @@ version=4.1.0
 # V4.0.2: Small enhancements
 # V4.0.3: Update sources before attempt to install packages and ensure git is installed before trying to clone
 # V4.1.0: Correction and optimisations in fail2ban setup
+# V4.1.1: Important fix in permissions for ssh keys
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -320,7 +321,7 @@ main_menu(){
 				mkdir /home/$username/.ssh/
 				ssh-keygen -t rsa -b 4096 -f /home/$username/.ssh/id_rsa -q -N ""
 				cp /home/$username/.ssh/id_rsa.pub /home/$username/.ssh/authorized_keys
-				chown -R $username:users /home/$username/.ssh/
+				chown -R $username:$username /home/$username/.ssh/
 				echo "- New user $username created"
 				echo "- Adding user to sudo users"
 				adduser $username sudo
