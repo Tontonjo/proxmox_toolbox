@@ -230,7 +230,7 @@ main_menu(){
 		main_menu
 	   ;;
       3) clear;
-			read -p "- This will install thoses libraries if missing: ifupdown2 - git - sudo - libsasl2-modules - Continue? y = yes / anything = no: " -n 1 -r
+			read -p "- This will install thoses libraries if missing: ifupdown2 - git - sudo - libsasl2-modules - lshw - lm-sensors - Continue? y = yes / anything = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo " "
 				echo "- Updating sources"
@@ -254,6 +254,16 @@ main_menu(){
 					apt-get install -y libsasl2-modules;.
 				else
 					echo "- libsasl2-modules already installed"
+				fi
+				if [ $(dpkg-query -W -f='${Status}' lshw 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+					apt-get install -y lshw;.
+				else
+					echo "- lshw already installed"
+				fi
+				if [ $(dpkg-query -W -f='${Status}' lm-sensors 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+					apt-get install -y lm-sensors;.
+				else
+					echo "- lm-sensors already installed"
 				fi
 			sleep 3
 			fi	
