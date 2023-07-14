@@ -20,7 +20,7 @@ It automatically will find if the host is a pve or a pbs host and setup accordin
 You can watch a demonstration of the tool [in this playlist](https://www.youtube.com/playlist?list=PLU73OWQhDzsTpLpVNspJ14rVrXAmo2Biu) 
 
 ### Prerequisits:
-- PVE or PBS server
+- Up-to-date PVE 7 / 8 or PBS server
 - Internet connexion
 
 ## Features are:
