@@ -40,7 +40,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.1.1
+version=4.1.2
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -78,6 +78,7 @@ version=4.1.1
 # V4.0.3: Update sources before attempt to install packages and ensure git is installed before trying to clone
 # V4.1.0: Correction and optimisations in fail2ban setup
 # V4.1.1: Important fix in permissions for ssh keys
+# V4.1.2: Add Ceph enterprise list to ignored sources when using no-subcription
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -189,7 +190,7 @@ main_menu(){
 				if [ -d "$pve_log_folder" ]; then
 					  echo "- Server is a PVE host"
 					#2: Edit sources list:
-					  echo "- Checking Sources list"
+					  echo "- Checking  Sources lists"
 						if grep -Fq "deb http://download.proxmox.com/debian/pve" /etc/apt/sources.list; then
 						  echo "-- Source looks alredy configured - Skipping"
 						else
@@ -197,11 +198,18 @@ main_menu(){
 						  sed -i "\$adeb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
 						fi
 					  echo "- Checking Enterprise Source list"
-						if grep -Fq "#deb https://enterprise.proxmox.com/debian/pve" /etc/apt/sources.list.d/pve-enterprise.list; then
+						if grep -Fq "#deb https://enterprise.proxmox.com/debian/pve" "/etc/apt/sources.list.d/pve-enterprise.list"; then
 						 echo "-- Entreprise repo looks already commented - Skipping"
 						else
 						 echo "-- Hiding Enterprise sources list"
 						 sed -i 's/^/#/' /etc/apt/sources.list.d/pve-enterprise.list
+					   fi
+					        echo "- Checking Ceph Enterprise Source list"
+						if grep -Fq "#deb https://enterprise.proxmox.com/debian/ceph-quincy" "/etc/apt/sources.list.d/ceph.list"; then
+						 echo "-- Ceph Entreprise repo looks already commented - Skipping"
+						else
+						 echo "-- Hiding Ceph Enterprise sources list"
+						 sed -i 's/^/#/' /etc/apt/sources.list.d/ceph.list
 					   fi
 					else
 					  echo "- Server is a PBS host"
