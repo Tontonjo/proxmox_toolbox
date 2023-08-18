@@ -205,12 +205,18 @@ main_menu(){
 						 sed -i 's/^/#/' /etc/apt/sources.list.d/pve-enterprise.list
 					   fi
 					        echo "- Checking Ceph Enterprise Source list"
-						if grep -Fq "#deb https://enterprise.proxmox.com/debian/ceph-quincy" "/etc/apt/sources.list.d/ceph.list"; then
-						 echo "-- Ceph Entreprise repo looks already commented - Skipping"
-						else
-						 echo "-- Hiding Ceph Enterprise sources list"
-						 sed -i 's/^/#/' /etc/apt/sources.list.d/ceph.list
-					   fi
+	     					# Checking that source list file exist
+						if [[ -f "/etc/apt/sources.list.d/ceph.list" ]]; then
+      							# Checking if it source is already commented or not
+							if grep -Fq "#deb https://enterprise.proxmox.com/debian/ceph-quincy" "/etc/apt/sources.list.d/ceph.list"; then
+       								# If so do nothing
+								 echo "-- Ceph Entreprise repo looks already commented - Skipping"
+							else
+       								 # else comment it
+								 echo "-- Hiding Ceph Enterprise sources list"
+								 sed -i 's/^/#/' /etc/apt/sources.list.d/ceph.list
+						   	fi
+						fi
 					else
 					  echo "- Server is a PBS host"
 					  echo "- Checking Sources list"
