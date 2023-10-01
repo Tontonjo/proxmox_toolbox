@@ -40,7 +40,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.1.2
+version=4.1.3
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -79,6 +79,7 @@ version=4.1.2
 # V4.1.0: Correction and optimisations in fail2ban setup
 # V4.1.1: Important fix in permissions for ssh keys
 # V4.1.2: Add Ceph enterprise list to ignored sources when using no-subcription
+# V4.1.3: Add a function to restore a working self-signed certificate in case of mistake, replace sleep with a more permissive method
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -97,13 +98,23 @@ hostname=$(hostname)
 date=$(date +%Y_%m_%d-%H_%M_%S)
 # ---------------END OF VARIABLES-----------------
 
+wait_or_input() {
+  local timeout=30 # timeout
+  local input
+
+  if read -t "$timeout" -n 1 -p "- Continue: press any key or wait $timeout seconds... " input; then
+    echo "Key pressed: continuing"
+  else
+    echo "- No key pressed until $timeout tiemout. continuing..."
+  fi
+}
+
 if [ ! -f /root/proxmox_config_backups/$hostname-firstrun.tar.gz ]; then
 	echo "- Creating a backup at first run - dont delete it :-)"
 	mkdir -p /root/proxmox_config_backups/
-	sleep 2
 	tar -czf /root/proxmox_config_backups/$hostname-firstrun.tar.gz --absolute-names $backup_content
 	echo "- First run: a backup of the actual configurations has been created at /root/proxmox_config_backups/$hostname-firstrun.tar.gz"
-	sleep 2
+	wait_or_input
 fi
 
 update () {
@@ -140,7 +151,7 @@ getcontentcheck() {
 exitcode=$?
 if [ $exitcode -ne 0 ]; then
 	echo "- Error retreiving ressources - control your internet connexion"
-	sleep 7
+	wait_or_input
 	main_menu
 fi
 }
@@ -234,13 +245,13 @@ main_menu(){
 						  sed -i 's/^/#/' /etc/apt/sources.list.d/pbs-enterprise.list
 						fi
 				fi
-			sleep 3
+			wait_or_input
 			fi
 		main_menu
 	   ;;
 	   	  2) clear;
 		update
-		sleep 3
+		wait_or_input
 		main_menu
 	   ;;
       3) clear;
@@ -279,7 +290,7 @@ main_menu(){
 				else
 					echo "- lm-sensors already installed"
 				fi
-			sleep 3
+			wait_or_input
 			fi	
 		main_menu
       ;;
@@ -323,7 +334,6 @@ main_menu(){
 				systemctl restart fail2ban.service
 				echo "- Cleaning git ressources"
 				rm -rf ./proxmox_toolbox/
-
 			fi
 		clear
 		echo "- Do you want to create another SSH user ?"
@@ -383,7 +393,7 @@ main_menu(){
 						pveum user modify $pveusername@pve -group $admingroup
 						clear
 						echo "- You can now login on GUI with $pveusername@Proxmox VE authenticaton Realm"
-						sleep 2
+						wait_or_input
 						echo " "
 						echo "!! Warning - root@pam is required to update host from Proxmox web ui !!"
 						read -p "- Do you want to disable "root@pam"?  y = yes / anything = no: " -n 1 -r
@@ -423,11 +433,11 @@ main_menu(){
 				swapoff -a
 				echo "- Re-enabling with a swapiness of: $newswapvalue"
 				swapon -a
-				sleep 3	
+				wait_or_input
 			fi
 		else
 			echo " - System has no swap - Nothing to do"
-			sleep 7
+			wait_or_input
 		fi
 		main_menu
       ;;
@@ -444,7 +454,7 @@ main_menu(){
 					echo "- Short smart test will occure every sunday at 22H and long smart tests every 1 of month at 22H"
 					echo "DEVICESCAN -d auto -n never -a -s (S/../../7/22|L/../01/./22) -m root -M exec /usr/share/smartmontools/smartd-runner" > "/etc/smartd.conf"
 				fi
-			sleep 7
+			wait_or_input
 			fi
 		main_menu
       ;;
@@ -490,11 +500,11 @@ main_menu(){
 				else	
 					clear
 					echo "- Returning to menu - no valid choice selected"
-					sleep 7
+					wait_or_input
 					main_menu
 				fi
 			systemctl restart snmpd
-			sleep 3	
+			wait_or_input
 			fi
 		main_menu
 	   ;;
@@ -650,7 +660,6 @@ mail_menu(){
 					else
 					postconf sender_canonical_maps=hash:/etc/postfix/canonical
 				fi 
-				
 				echo "- Encrypting password and canonical entry"
 				postmap /etc/postfix/sasl_passwd
 				postmap /etc/postfix/canonical
@@ -659,7 +668,7 @@ mail_menu(){
 				echo "- Cleaning file used to generate password hash"
 				rm -rf "/etc/postfix/sasl_passwd"
 				echo "- Files cleaned"
-				
+				wait_or_input
 			  mail_menu;
       ;;
 
@@ -669,7 +678,7 @@ mail_menu(){
 		echo "- An email will be sent to: $vardestaddress"
 		echo “If you reveive this, it means your email configurations looks correct. Yay!” | mail -s "test mail - $hostname - $date" $vardestaddress
 		echo "- Email should have been sent - If none received, you may want to check for errors in menu 3"
-		sleep 3
+		wait_or_input
 	  
 	  mail_menu;	
       ;;
@@ -723,7 +732,7 @@ mail_menu(){
 				fi
 		    else
 			echo "- No configured error found - nothing to do!"
-			sleep 3
+			wait_or_input
 			fi
 	  mail_menu;	
       ;;
@@ -737,6 +746,7 @@ mail_menu(){
 					echo "- Restarting services "
 					systemctl restart postfix
 					echo "- Restoration done"
+     					wait_or_input
 			fi
 	  mail_menu;
 	     ;;
@@ -773,6 +783,7 @@ backup_menu(){
 			echo " "
 			echo -e "${MENU}**${NUMBER} 1)${MENU} Backup configuration ${NORMAL}"
 			echo -e "${MENU}**${NUMBER} 2)${MENU} Restore configuration ${NORMAL}"
+   			echo -e "${MENU}**${NUMBER} 3)${MENU} Restore a Self signed certificate ${NORMAL}"
 			echo -e "${MENU}**${NUMBER} 0)${MENU} Back ${NORMAL}"
 			echo " "
 			echo -e "${MENU}*********************************************${NORMAL}"
@@ -791,7 +802,7 @@ backup_menu(){
 			  clear
 			  echo "- Backup done - please control and test it"
 			  echo "- Archive is located in $backupdir"
-			  sleep 7
+			  wait_or_input
 			  clear
 			  backup_menu
 			;;
@@ -851,6 +862,7 @@ backup_menu(){
 						echo "- Importing pool $pool"
 						zpool import -f $pool
 					done
+     					wait_or_input
 					 read -p "- Do you want to reboot host now? y = yes / anything = no: " -n 1 -r
 					if [[ $REPLY =~ ^[Yy]$ ]]; then
 						reboot now
@@ -870,6 +882,18 @@ backup_menu(){
 				  ;;
 			  esac
 			done
+			;;
+   			  3) clear;
+			  echo "- Removing old certificates "
+     			  rm -f /etc/pve/pve-root-ca.pem
+	 		  rm -f /etc/pve/priv/pve-root-ca.key
+   			  rm -f /etc/pve/nodes/$hostname/pve-ssl.pem
+ 			  rm -f /etc/pve/nodes/$hostname/pve-ssl.key
+       			  echo "- Generating new certificates"
+      			  pvecm updatecerts -f
+			  wait_or_input
+			  clear
+			  backup_menu
 			;;
       0) clear;
       main_menu;
