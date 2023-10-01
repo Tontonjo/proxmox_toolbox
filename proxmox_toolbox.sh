@@ -40,7 +40,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.1.3
+version=4.1.4
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -80,6 +80,7 @@ version=4.1.3
 # V4.1.1: Important fix in permissions for ssh keys
 # V4.1.2: Add Ceph enterprise list to ignored sources when using no-subcription
 # V4.1.3: Add a function to restore a working self-signed certificate in case of mistake, replace sleep with a more permissive method
+# V4.1.4: reworked menu a bit
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -143,8 +144,17 @@ update () {
 			fi
 		fi
 }
+
 snmpconfig() {
 wget -qO /etc/snmp/snmpd.conf https://github.com/Tontonjo/proxmox_toolbox/raw/main/snmp/snmpd.conf
+}
+
+
+banner() {
+    echo -e "${MENU}****************** Proxmox Toolbox **********************${NORMAL}"
+    echo -e "${MENU}*********** Tonton Jo - 2023 - Version $version ************${NORMAL}"
+    echo -e "${MENU}********** https://www.youtube.com/c/tontonjo **********${NORMAL}"
+	echo -e "${MENU} " "${NORMAL}"
 }
 
 getcontentcheck() {
@@ -170,9 +180,8 @@ main_menu(){
     FGRED=`echo "\033[41m"`
     RED_TEXT=`echo "\033[31m"`
     ENTER_LINE=`echo "\033[33m"`
-    echo -e "${MENU}****************** Proxmox Toolbox **********************${NORMAL}"
-    echo -e "${MENU}*********** Tonton Jo - 2022 - Version $version ************${NORMAL}"
-    echo -e "${MENU}********** https://www.youtube.com/c/tontonjo **********${NORMAL}"
+	banner
+    echo -e "${MENU}****************** Main menu **********************${NORMAL}"
     echo " "
     echo -e "${MENU}**${NUMBER} 1)${MENU} No-subscription Sources Configuration ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 2)${MENU} Update host & create proxmox-update command ${NORMAL}"
@@ -551,9 +560,8 @@ mail_menu(){
 			FGRED=`echo "\033[41m"`
 			RED_TEXT=`echo "\033[31m"`
 			ENTER_LINE=`echo "\033[33m"`
-  			echo -e "${MENU}************* Ez Proxmox Mail Configurator ***************${NORMAL}"
-			echo -e "${MENU}********** Tonton Jo - 2022 - Version $version *****${NORMAL}"
-   			echo -e "${MENU}********* https://www.youtube.com/c/tontonjo **********${NORMAL}"
+			banner
+			echo -e "${MENU}****************** Mail Menu **********************${NORMAL}"
 			echo " "
 			echo -e "${MENU}**${NUMBER} 1)${MENU} Configure ${NORMAL}"
 			echo -e "${MENU}**${NUMBER} 2)${MENU} Test ${NORMAL}"
@@ -777,9 +785,8 @@ backup_menu(){
 			FGRED=`echo "\033[41m"`
 			RED_TEXT=`echo "\033[31m"`
 			ENTER_LINE=`echo "\033[33m"`
-  			echo -e "${MENU}**************** Proxmxo backup and restore ***************${NORMAL}"
-			echo -e "${MENU}********** Tonton Jo - 2022 - Version $version *****${NORMAL}"
-   			echo -e "${MENU}********** https://www.youtube.com/c/tontonjo **********${NORMAL}"
+			banner
+			echo -e "${MENU}************ Backup and restoration Menu ****************${NORMAL}"
 			echo " "
 			echo -e "${MENU}**${NUMBER} 1)${MENU} Backup configuration ${NORMAL}"
 			echo -e "${MENU}**${NUMBER} 2)${MENU} Restore configuration ${NORMAL}"
