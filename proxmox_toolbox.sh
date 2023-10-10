@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Tonton Jo - 2022
+# Tonton Jo - 2023
 # Join me on Youtube: https://www.youtube.com/c/tontonjo
 
 # This little tool is aimed to set some default configurations up and running in not time
@@ -40,7 +40,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.1.4
+version=4.1.5
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -81,6 +81,7 @@ version=4.1.4
 # V4.1.2: Add Ceph enterprise list to ignored sources when using no-subcription
 # V4.1.3: Add a function to restore a working self-signed certificate in case of mistake, replace sleep with a more permissive method
 # V4.1.4: reworked menu a bit
+# V4.1.5: Fixed fail2ban in proxmox V8 - needed to add "backend = systemd" in every jail
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -326,7 +327,7 @@ main_menu(){
 					git clone -q https://github.com/Tontonjo/proxmox_toolbox.git
 					getcontentcheck
 				if [ -d "$pve_log_folder" ]; then
-					echo "- Host is a PVE Host"	
+					echo "- Host is a PVE Host"
 					# Put filter.d/proxmox-backup-server.conf contents to /etc/fail2ban/filter.d/proxmox-backup-server.conf
 					cp -f proxmox_toolbox/pve/filter.d/proxmox-virtual-environement.conf /etc/fail2ban/filter.d/proxmox-virtual-environement.conf
 					# Put jail.d/proxmox-backup-server.conf to /etc/fail2ban/jail.d/proxmox-backup-server.conf
@@ -338,9 +339,35 @@ main_menu(){
 					# Put jail.d/proxmox-backup-server.conf to /etc/fail2ban/jail.d/proxmox-backup-server.conf
 					cp -f proxmox_toolbox/pbs/jail.d/proxmox-backup-server.conf /etc/fail2ban/jail.d/proxmox-backup-server.conf
 				fi
+    				# Adding the right backend to fail2ban sshd configuration
+				if ! grep -Fqs "systemd" /etc/fail2ban/jail.d/defaults-debian.conf; then
+    				echo "- Backend missing in defaults-debian.conf"
+    				echo "backend = systemd" >> /etc/fail2ban/jail.d/defaults-debian.conf
+    				else
+				echo "- Backend already setted-up in defaults-debian.conf"
+				fi
+    				if ! grep -Fqs "systemd" /etc/fail2ban/jail.d/proxmox-virtual-environement.conf; then
+    				echo "- Backend missing in proxmox-virtual-environement.conf"
+    				echo "backend = systemd" >> /etc/fail2ban/jail.d/proxmox-virtual-environement.conf
+    				else
+				echo "- Backend already setted-up in defaults-debian.conf"
+				fi
+        			if ! grep -Fqs "systemd" /etc/fail2ban/jail.d/proxmox-backup-server.conf; then
+    				echo "- Backend missing in proxmox-backup-server.conf"
+    				echo "backend = systemd" >> /etc/fail2ban/jail.d/proxmox-backup-server.conf
+    				else
+				echo "- Backend already setted-up in defaults-debian.conf"
+				fi
 				# Restart Fail2Ban Service
 				echo "- Restarting fail2ban service"
 				systemctl restart fail2ban.service
+    				if systemctl is-active fail2ban | grep -q 'active'; then
+					echo "- Fail2ban started correctly"
+				else
+    					echo "- Fail2ban failed to start"
+	 				systemctl status fail2ban
+      					wait_or_input
+    				fi
 				echo "- Cleaning git ressources"
 				rm -rf ./proxmox_toolbox/
 			fi
