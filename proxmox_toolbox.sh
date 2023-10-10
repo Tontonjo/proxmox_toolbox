@@ -346,21 +346,21 @@ main_menu(){
     				else
 				echo "- Backend already setted-up in defaults-debian.conf"
 				fi
-    				if [ -d "$pve_log_folder" ]; then
-	    				if ! grep -Fqs "systemd" /etc/fail2ban/jail.d/proxmox-virtual-environement.conf; then
-	    				echo "- Backend missing in proxmox-virtual-environement.conf"
-	    				echo -e "\nbackend = systemd" >> /etc/fail2ban/jail.d/proxmox-virtual-environement.conf
-	    				else
-					echo "- Backend already setted-up in proxmox-virtual-environement.conf"
-					fi
-     				else
-	        			if ! grep -Fqs "systemd" /etc/fail2ban/jail.d/proxmox-backup-server.conf; then
-	    				echo "- Backend missing in proxmox-backup-server.conf"
-	    				echo -e "\nackend = systemd" >> /etc/fail2ban/jail.d/proxmox-backup-server.conf
-	    				else
-					echo "- Backend already setted-up in proxmox-backup-server.conf"
-					fi
-     				fi
+#    				if [ -d "$pve_log_folder" ]; then
+#	    				if ! grep -Fqs "systemd" /etc/fail2ban/jail.d/proxmox-virtual-environement.conf; then
+#	    				echo "- Backend missing in proxmox-virtual-environement.conf"
+#	    				echo -e "\nbackend = systemd" >> /etc/fail2ban/jail.d/proxmox-virtual-environement.conf
+#	    				else
+#					echo "- Backend already setted-up in proxmox-virtual-environement.conf"
+#					fi
+#    				else
+#	        			if ! grep -Fqs "systemd" /etc/fail2ban/jail.d/proxmox-backup-server.conf; then
+#	    				echo "- Backend missing in proxmox-backup-server.conf"
+#	    				echo -e "\nackend = systemd" >> /etc/fail2ban/jail.d/proxmox-backup-server.conf
+#	    				else
+#					echo "- Backend already setted-up in proxmox-backup-server.conf"
+#					fi
+#    				fi
 				# Restart Fail2Ban Service
 				echo "- Restarting fail2ban service"
 				systemctl restart fail2ban.service
