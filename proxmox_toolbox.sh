@@ -366,10 +366,10 @@ main_menu(){
 				else
     					echo "- Fail2ban failed to start"
 	 				systemctl status fail2ban
-      					wait_or_input
     				fi
 				echo "- Cleaning git ressources"
 				rm -rf ./proxmox_toolbox/
+    				wait_or_input
 			fi
 		clear
 		echo "- Do you want to create another SSH user ?"
