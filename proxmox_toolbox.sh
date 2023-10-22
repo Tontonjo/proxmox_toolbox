@@ -40,7 +40,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.1.5
+version=4.1.6
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -82,6 +82,7 @@ version=4.1.5
 # V4.1.3: Add a function to restore a working self-signed certificate in case of mistake, replace sleep with a more permissive method
 # V4.1.4: reworked menu a bit
 # V4.1.5: Fixed fail2ban in proxmox V8 - needed to add "backend = systemd" in every jail
+# V4.1.6: Small add to pbs in order to support case where the source.list file is missing (docker container)
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -245,7 +246,12 @@ main_menu(){
 						  echo "-- Source looks alredy configured - Skipping"
 						else
 						 echo "-- Adding new entry to sources.list"
-						  sed -i "\$adeb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
+						 sed -i "\$adeb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
+       						if [ $exitcode -ne 0 ]; then
+	     					echo "-- Sources.list seems to be missing as sed failed: creating it in /etc/apt/sources.list.d"
+	   					echo "deb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" >> /etc/apt/sources.list.d/pbs-no-enterprise.list
+						fi
+
 						fi
 					  echo "- Checking Enterprise Source list"
 						if grep -Fq "#deb https://enterprise.proxmox.com/debian/pbs" /etc/apt/sources.list.d/pbs-enterprise.list; then
