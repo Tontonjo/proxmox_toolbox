@@ -249,8 +249,14 @@ main_menu(){
 						 sed -i "\$adeb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
        						exitcode=$?
        						if [ $exitcode -ne 0 ]; then
-	     					echo "-- Sources.list seems to be missing as sed failed: creating it in /etc/apt/sources.list.d"
-	   					echo "deb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" >> /etc/apt/sources.list.d/pbs-no-enterprise.list
+	     					echo "-- Sources.list seems to be missing as sed failed: creating it in /etc/apt/sources.list"
+							if [ -f "/etc/apt/sources.list" ]; then
+		      						echo "-- Source.list appear to exist but an error was encountered. please report this case on github"
+	      						else
+			    					echo "-- Creating source.list"
+		      	   					echo "deb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" >> /etc/apt/sources.list
+			 					wget https://enterprise.proxmox.com/debian/proxmox-release-$distribution.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
+							fi
 						fi
 
 						fi
