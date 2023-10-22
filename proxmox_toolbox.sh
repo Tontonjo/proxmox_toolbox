@@ -247,6 +247,7 @@ main_menu(){
 						else
 						 echo "-- Adding new entry to sources.list"
 						 sed -i "\$adeb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
+       						exitcode=$?
        						if [ $exitcode -ne 0 ]; then
 	     					echo "-- Sources.list seems to be missing as sed failed: creating it in /etc/apt/sources.list.d"
 	   					echo "deb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" >> /etc/apt/sources.list.d/pbs-no-enterprise.list
