@@ -255,7 +255,7 @@ main_menu(){
 	      						else
 			    					echo "-- Creating source.list"
 		      	   					echo "deb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" >> /etc/apt/sources.list
-			 					wget https://enterprise.proxmox.com/debian/proxmox-release-$distribution.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
+			 					wget -q https://enterprise.proxmox.com/debian/proxmox-release-$distribution.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
 							fi
 						fi
 
