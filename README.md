@@ -41,13 +41,13 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 - - Automatic remount of directories and zpools using previously existing configurations
 - - Please find more informations below  
 
-## USAGE
+## Usage and arguments:
 ###  Get and execute:  
 ```shell
 wget -qO proxmox_toolbox.sh https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh && bash proxmox_toolbox.sh
 ```
 
-### Updating host & remove subscription
+### Updating host & remove subscription message
 The script will update your host and detect if the no-enterprise source is configured, if so, remove the subscription message.
 - If you still encounter it after, clear your broswer cache.
 - If you update your host directly within the system, the no subscribtion message may reappear when the file gets updated.  
@@ -61,7 +61,13 @@ Once the tool has been used to update host, you can execute this command to full
 ```shell
 proxmox-update
 ```
-### Fail2ban:  
+
+### Backup configuration  
+To start a configuration backup only:
+```shell
+bash proxmox_toolbox.sh -b
+```  
+## Fail2ban:  
 If you enable fail2ban, i guess you know what you're doing, if you dont: here's some usefull informations and commands:  
 - ban are for 1 hour
 - ssh and web interface logins are monitored  
