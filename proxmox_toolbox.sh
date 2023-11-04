@@ -40,7 +40,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.1.6
+version=4.2.0
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -83,6 +83,7 @@ version=4.1.6
 # V4.1.4: reworked menu a bit
 # V4.1.5: Fixed fail2ban in proxmox V8 - needed to add "backend = systemd" in every jail
 # V4.1.6: Small add to pbs in order to support case where the source.list file is missing (docker container)
+# V4.2.0: Add argument to run backup directly
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -101,6 +102,18 @@ hostname=$(hostname)
 date=$(date +%Y_%m_%d-%H_%M_%S)
 # ---------------END OF VARIABLES-----------------
 
+
+
+if [ ! -f /root/proxmox_config_backups/$hostname-firstrun.tar.gz ]; then
+	echo "- Creating a backup at first run - dont delete it :-)"
+	mkdir -p /root/proxmox_config_backups/
+	tar -czf /root/proxmox_config_backups/$hostname-firstrun.tar.gz --absolute-names $backup_content
+	echo "- First run: a backup of the actual configurations has been created at /root/proxmox_config_backups/$hostname-firstrun.tar.gz"
+	wait_or_input
+fi
+
+## Funtions
+# Function to wait an amount of time or a key press
 wait_or_input() {
   local timeout=30 # timeout
   local input
@@ -111,15 +124,7 @@ wait_or_input() {
     echo "- No key pressed until $timeout tiemout. continuing..."
   fi
 }
-
-if [ ! -f /root/proxmox_config_backups/$hostname-firstrun.tar.gz ]; then
-	echo "- Creating a backup at first run - dont delete it :-)"
-	mkdir -p /root/proxmox_config_backups/
-	tar -czf /root/proxmox_config_backups/$hostname-firstrun.tar.gz --absolute-names $backup_content
-	echo "- First run: a backup of the actual configurations has been created at /root/proxmox_config_backups/$hostname-firstrun.tar.gz"
-	wait_or_input
-fi
-
+# Update 
 update () {
 		# Check if the /usr/bin/proxmox-update entry for update is already created
 		if ! grep -Fqs "$updatebinversion" /usr/bin/proxmox-update; then
@@ -146,12 +151,12 @@ update () {
 			fi
 		fi
 }
-
+# get the snmp configurations 
 snmpconfig() {
 wget -qO /etc/snmp/snmpd.conf https://github.com/Tontonjo/proxmox_toolbox/raw/main/snmp/snmpd.conf
 }
 
-
+# Display the banner in menu
 banner() {
     echo -e "${MENU}****************** Proxmox Toolbox **********************${NORMAL}"
     echo -e "${MENU}*********** Tonton Jo - 2023 - Version $version ************${NORMAL}"
@@ -159,6 +164,7 @@ banner() {
 	echo -e "${MENU} " "${NORMAL}"
 }
 
+# Validate that a content retreiving was successfull
 getcontentcheck() {
 exitcode=$?
 if [ $exitcode -ne 0 ]; then
@@ -167,13 +173,28 @@ if [ $exitcode -ne 0 ]; then
 	main_menu
 fi
 }
-
+# backup the configurations
+backup() {
+mkdir -p $backupdir
+echo "- Creating backup"
+tar -czf $backupdir/$hostname-$(date +%Y_%m_%d-%H_%M_%S).tar.gz --absolute-names $backup_content
+clear
+echo "- Backup done - please control and test it"
+echo "- Archive is located in $backupdir"
+}
+# Arguments
+# Thoses are argument that directly trigger specific toolbox functions
 if  [[ $1 = "-u" ]]; then
 update
 exit
 fi
-	
-	
+
+if  [[ $1 = "-b" ]]; then
+backup
+exit
+fi
+# End of arguments
+
 main_menu(){
     clear
     NORMAL=`echo "\033[m"`
@@ -846,12 +867,7 @@ backup_menu(){
 			else
 			case $opt in
 			  1) clear;
-			  mkdir -p $backupdir
-			  echo "- Creating backup"
-		 	  tar -czf $backupdir/$hostname-$(date +%Y_%m_%d-%H_%M_%S).tar.gz --absolute-names $backup_content
-			  clear
-			  echo "- Backup done - please control and test it"
-			  echo "- Archive is located in $backupdir"
+			  backup
 			  wait_or_input
 			  clear
 			  backup_menu
