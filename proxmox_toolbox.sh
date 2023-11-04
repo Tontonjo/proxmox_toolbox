@@ -112,7 +112,7 @@ if [ ! -f /root/proxmox_config_backups/$hostname-firstrun.tar.gz ]; then
 	wait_or_input
 fi
 
-## Funtions
+## Functions
 # Function to wait an amount of time or a key press
 wait_or_input() {
   local timeout=30 # timeout
