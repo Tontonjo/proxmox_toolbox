@@ -112,11 +112,11 @@ In case of need, here's how you can manually mount storages:
 
 #### Directory:
 Mount configurations are located in /etc/systemd/system/mnt-datastore-$datastorename.mount  
-- run the following commands with the values you just retreived
+- run the following commands:  
 ```shell
 source /etc/systemd/system/mnt-datastore-$datastorename.mount  
 mkdir -p "$where"
-echo "$what $where $Type $Options 0 2" >> /etc/fstab  
+echo "$What $Where $Type $Options 0 2" >> /etc/fstab  
 mount -a
 ```  
 - Control if the drives are now correctly mounted  
