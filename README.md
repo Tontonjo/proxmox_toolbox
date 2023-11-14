@@ -115,7 +115,7 @@ Mount configurations are located in /etc/systemd/system/mnt-datastore-$datastore
 - run the following commands:  
 ```shell
 source /etc/systemd/system/mnt-datastore-$datastorename.mount  
-mkdir -p "$where"
+mkdir -p "$Where"
 echo "$What $Where $Type $Options 0 2" >> /etc/fstab  
 mount -a
 ```  
