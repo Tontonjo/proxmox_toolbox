@@ -40,7 +40,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.2.0
+version=4.2.1
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -84,6 +84,7 @@ version=4.2.0
 # V4.1.5: Fixed fail2ban in proxmox V8 - needed to add "backend = systemd" in every jail
 # V4.1.6: Small add to pbs in order to support case where the source.list file is missing (docker container)
 # V4.2.0: Add argument to run backup directly
+# V4.2.1: Notifications now use hostname in from instead of "root"
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -731,10 +732,18 @@ mail_menu(){
 					echo "- Canonical entry already existing"
 					else
 					postconf sender_canonical_maps=hash:/etc/postfix/canonical
-				fi 
+				fi
+    				if grep "smtp_header_checks" /etc/postfix/main.cf
+					then
+					echo "- smtp_header_checks entry already existing"
+					else
+					postconf -e 'smtp_header_checks = regexp:/etc/postfix/header_checks'
+     					echo "/^From:(.*)/ REPLACE From: $hostname <notifications@fission.ch>" > /etc/postfix/header_checks
+				fi
 				echo "- Encrypting password and canonical entry"
 				postmap /etc/postfix/sasl_passwd
 				postmap /etc/postfix/canonical
+   				postmap /etc/postfix/header_checks
 				echo "- Restarting postfix and enable automatic startup"
 				systemctl restart postfix && systemctl enable postfix
 				echo "- Cleaning file used to generate password hash"
