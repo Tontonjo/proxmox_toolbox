@@ -738,7 +738,7 @@ mail_menu(){
 					echo "- smtp_header_checks entry already existing"
 					else
 					postconf -e 'smtp_header_checks = regexp:/etc/postfix/header_checks'
-     					echo "/^From:(.*)/ REPLACE From: $hostname <$senderaddress>" > /etc/postfix/header_checks
+     					echo "/^From:(.*)/ REPLACE From: $hostname <notifications@fission.ch>" > /etc/postfix/header_checks
 				fi
 				echo "- Encrypting password and canonical entry"
 				postmap /etc/postfix/sasl_passwd
