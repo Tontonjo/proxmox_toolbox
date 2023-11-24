@@ -39,7 +39,10 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 - Configure email service to send system and proxmox notifications (postfix)
 - Backup and restore Proxmox Virtual Environment and Backup Server configuration
 - - Automatic remount of directories and zpools using previously existing configurations
-- - Please find more informations below  
+- - Please find more informations below
+
+## News  
+2023.11.24: Proxmox 8.1 - Emails Notifications - Proxmox VE now supports email configurations very well from the GUI, the toolbox wont get any update related to this function anymore.  
 
 ## Usage and arguments:
 ###  Get and execute:  
