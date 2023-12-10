@@ -40,7 +40,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.2.1
+version=4.2.2
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -85,13 +85,14 @@ version=4.2.1
 # V4.1.6: Small add to pbs in order to support case where the source.list file is missing (docker container)
 # V4.2.0: Add argument to run backup directly
 # V4.2.1: Notifications now use hostname in from instead of "root"
+# V4.2.2: Add a corosync file to backup content as it appear to be necessary to restore a node in a cluster -> https://github.com/Tontonjo/proxmox_toolbox/issues/19
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
 
 # -----------------User variables----------------------
 backupdir="/root/proxmox_config_backups" # NO trailing slash is mandatory
-backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/system/*.mount /etc/network/interfaces /etc/sysctl.conf /etc/resolv.conf /etc/hosts /etc/hostname /etc/cron* /etc/aliases /etc/snmp/ /etc/smartd.conf /usr/share/snmp/snmpd.conf /etc/postfix/ /etc/pve/ /etc/lvm/ /etc/modprobe.d/ /var/lib/pve-firewall/ /var/lib/pve-cluster/  /etc/vzdump.conf /etc/ksmtuned.conf /etc/proxmox-backup/"
+backup_content="/etc/ssh/sshd_config /root/.ssh/ /etc/fail2ban/ /etc/systemd/system/*.mount /etc/network/interfaces /etc/sysctl.conf /etc/resolv.conf /etc/hosts /etc/hostname /etc/cron* /etc/aliases /etc/snmp/ /etc/smartd.conf /usr/share/snmp/snmpd.conf /etc/postfix/ /etc/pve/ /etc/lvm/ /etc/modprobe.d/ /var/lib/pve-firewall/ /var/lib/pve-cluster/ /etc/corosync/authkey /etc/vzdump.conf /etc/ksmtuned.conf /etc/proxmox-backup/"
 
 # ----------------- System variables----------------------
 updatebinversion=1.2
