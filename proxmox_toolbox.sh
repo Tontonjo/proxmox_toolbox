@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Tonton Jo - 2023
+# Tonton Jo - 2024
 # Join me on Youtube: https://www.youtube.com/c/tontonjo
 
 # This little tool is aimed to set some default configurations up and running in not time
