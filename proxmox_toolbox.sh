@@ -596,10 +596,11 @@ main_menu(){
 	;;
 	     8) clear;
 		backup_menu
-      ;;
+
 	   ;;
 	   	 9) clear;
 		mail_menu
+        ;;
 
       0)
 	  clear
