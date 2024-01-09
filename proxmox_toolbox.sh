@@ -40,7 +40,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.2.2
+version=4.2.3
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -86,6 +86,8 @@ version=4.2.2
 # V4.2.0: Add argument to run backup directly
 # V4.2.1: Notifications now use hostname in from instead of "root"
 # V4.2.2: Add a corosync file to backup content as it appear to be necessary to restore a node in a cluster -> https://github.com/Tontonjo/proxmox_toolbox/issues/19
+# V4.2.3: fixed snmpd dependencies installation check to be more reliable
+# V4.2.4: Added Rsyslog as it's missing in pve8 and can be usefull to check logs (merci l'ami)
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -336,6 +338,11 @@ main_menu(){
 				else
 					echo "- lm-sensors already installed"
 				fi
+    				if [ $(dpkg-query -W -f='${Status}' rsyslog 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+					apt-get install -y rsyslog;
+				else
+					echo "- rsyslog already installed"
+				fi
 			wait_or_input
 			fi	
 		main_menu
@@ -544,9 +551,14 @@ main_menu(){
 				fi
 				git clone -q https://github.com/Tontonjo/proxmox_toolbox.git
 				if [ $(dpkg-query -W -f='${Status}' snmpd 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y snmpd libsnmp-dev;
+					apt-get install -y snmpd;
 				else
 					echo "- snmpd already installed"
+				fi
+    				if [ $(dpkg-query -W -f='${Status}' libsnmp-dev 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+					apt-get install -y libsnmp-dev;
+				else
+					echo "- libsnmp-dev already installed"
 				fi
 				clear
 				read -p "- Press 2 for snmpv2 or 3 for SNMP V3 (ReadOnly) or anything to return to menu: " -n 1 -r
