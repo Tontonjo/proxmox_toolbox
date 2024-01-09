@@ -40,7 +40,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.2.3
+version=4.3.0
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -88,7 +88,7 @@ version=4.2.3
 # V4.2.2: Add a corosync file to backup content as it appear to be necessary to restore a node in a cluster -> https://github.com/Tontonjo/proxmox_toolbox/issues/19
 # V4.2.3: fixed snmpd dependencies installation check to be more reliable
 # V4.2.4: Added Rsyslog as it's missing in pve8 and can be usefull to check logs (merci l'ami)
-
+# V4.3.0: Removed email options as pve8 has now a gui configuration tool that is way better. hidden in menu 9 in case :)
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
 
@@ -217,8 +217,7 @@ main_menu(){
     echo -e "${MENU}**${NUMBER} 5)${MENU} SWAP Settings ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 6)${MENU} Enable S.M.A.R.T self-tests ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 7)${MENU} SNMP settings ${NORMAL}"
-    echo -e "${MENU}**${NUMBER} 8)${MENU} Email notification configuration ${NORMAL}"
-    echo -e "${MENU}**${NUMBER} 9)${MENU} Configurations backup and restoration ${NORMAL}"
+    echo -e "${MENU}**${NUMBER} 8)${MENU} Configurations backup and restoration ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 0)${MENU} Exit ${NORMAL}"
     echo " "
     echo -e "${MENU}*********************************************${NORMAL}"
@@ -594,13 +593,14 @@ main_menu(){
 			wait_or_input
 			fi
 		main_menu
-	   ;;
-	   	 8) clear;
-		mail_menu
-      ;;
-	     9) clear;
+	;;
+	     8) clear;
 		backup_menu
       ;;
+	   ;;
+	   	 9) clear;
+		mail_menu
+
       0)
 	  clear
       exit
@@ -639,7 +639,7 @@ mail_menu(){
 			RED_TEXT=`echo "\033[31m"`
 			ENTER_LINE=`echo "\033[33m"`
 			banner
-			echo -e "${MENU}****************** Mail Menu **********************${NORMAL}"
+			echo -e "${MENU}****************** Mail Menu (LEGACY) **********************${NORMAL}"
 			echo " "
 			echo -e "${MENU}**${NUMBER} 1)${MENU} Configure ${NORMAL}"
 			echo -e "${MENU}**${NUMBER} 2)${MENU} Test ${NORMAL}"
