@@ -36,10 +36,12 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 - Enable S.M.A.R.T self-tests on all supported drives
 - - short: every sunday@22 - Long: every 1st of month @22
 - Enable SNMP V2 or v3 - you choose - with a default working configuration
-- Configure email service to send system and proxmox notifications (postfix)
 - Backup and restore Proxmox Virtual Environment and Backup Server configuration
 - - Automatic remount of directories and zpools using previously existing configurations
-- - Please find more informations below
+- - Please find more informations below  
+
+## Legacy hidden function:
+- Configure email service to send system and proxmox notifications (postfix)
 
 ## News  
 2023.11.24: Proxmox 8.1 - Emails Notifications - Proxmox VE now supports email configurations very well from the GUI, the toolbox wont get any update related to this function anymore.  
