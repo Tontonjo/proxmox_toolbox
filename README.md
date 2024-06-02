@@ -27,7 +27,7 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 -  -  when no-enterprise source is set, disable no-subscription message
 - Install usefull dependencies: ifupdown2 - git - sudo - libsasl2-modules - snmp
 - Security settings:
-- - Enable fail 2 ban with default configuration for sshd, proxmox virtual environement and backup server  
+- - Enable fail2ban with default configuration for sshd, Proxmox virtual environement and Proxmox backup server  
 (credits to [inettgmbh](https://github.com/inettgmbh/fail2ban-proxmox-backup-server))  
 - - Create another debian user with sudo rights
 - - Disable root ssh login
