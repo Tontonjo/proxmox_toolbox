@@ -138,7 +138,7 @@ update () {
 			wget -qO "/usr/bin/proxmox-update" https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update && chmod +x "/usr/bin/proxmox-update"
 			update
 		else
-			echo "- Updating System"
+			echo "- Updating System using proxmox_toolbox version: $version"
 			apt-get update -y -qq
 			apt-get dist-upgrade -y -qq
 			if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
