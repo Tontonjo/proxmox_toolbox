@@ -18,8 +18,13 @@
 
 # SOURCES:
 # https://pve.proxmox.com/wiki/Fail2ban
-# https://github.com/inettgmbh/fail2ban-proxmox-backup-server
+# https://pve.proxmox.com/wiki/System_Software_Updates
 # https://forum.proxmox.com/threads/how-do-i-set-the-mail-server-to-be-used-in-proxmox.23669/
+# https://pve.proxmox.com/wiki/Upgrade_from_6.x_to_7.0
+
+# https://www.linuxtricks.fr/wiki/proxmox-quelques-infos
+
+# https://github.com/inettgmbh/fail2ban-proxmox-backup-server
 # https://linuxscriptshub.com/configure-smtp-with-gmail-using-postfix/
 # https://suoption_pickedpport.google.com/accounts/answer/6010255
 # https://www.howtoforge.com/community/threads/solved-problem-with-outgoing-mail-from-server.53920/
@@ -29,8 +34,6 @@
 # https://blog.lbdg.me/proxmox-best-performance-disable-swappiness/
 # https://gist.github.com/mrpeardotnet/6bdc4b504f43ce57fa7eaee96d376edf
 # https://github.com/DerDanilo/proxmox-stuff/blob/master/prox_config_backup.sh
-# https://pve.proxmox.com/wiki/Upgrade_from_6.x_to_7.0
-# https://www.linuxtricks.fr/wiki/proxmox-quelques-infos
 
 
 # TODO:
