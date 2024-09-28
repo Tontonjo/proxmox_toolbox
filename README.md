@@ -5,7 +5,7 @@
 
 
 ## Tonton Jo  
-### Join the community & Support my work   
+### Rejoint la trame - Join the community & Support my work   
 [Click Here!](https://linktr.ee/tontonjo)  
 
 ## Informations:
