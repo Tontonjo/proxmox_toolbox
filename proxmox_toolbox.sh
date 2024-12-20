@@ -43,7 +43,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.3.1
+version=4.3.2
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -93,6 +93,7 @@ version=4.3.1
 # V4.2.4: Added Rsyslog as it's missing in pve8 and can be usefull to check logs (merci l'ami)
 # V4.3.0: Removed email options as pve8 has now a gui configuration tool that is way better. hidden in menu 9 in case :)
 # V4.3.1: Removed apt-get upgrade in update as it's useless and less safe thant apt-get dist-upgrade
+# V4.3.2: Getting snmp ready for ipv6
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
