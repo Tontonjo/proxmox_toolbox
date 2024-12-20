@@ -578,7 +578,7 @@ main_menu(){
      					read allowedsubnet6
 					echo "- Setting SNMP"
 					echo "rocommunity $rocommunity $allowedsubnet" >> /etc/snmp/snmpd.conf
-     					echo "rocommunity6 $rocommunity6 $allowedsubnet" >> /etc/snmp/snmpd.conf
+     					echo "rocommunity6 $rocommunity" >> /etc/snmp/snmpd.conf
 				elif [[ $REPLY =~ ^[3]$ ]]; then
 					clear
 					cp -n /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
