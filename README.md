@@ -33,11 +33,11 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 - - Disable root ssh login
 - - Create another Proxmox GUI administrator (login with Proxmox VE Realm)
 - - Disabling root@pam user !!! root@pam is needed to update from GUI - update can still be done trough SSH if disabled !!!
-- Change or disable SWAP 
+- SWAP value change or disable 
 - Enable S.M.A.R.T self-tests on all supported drives
-- - short: every sunday@22 - Long: every 1st of month @22
-- Enable SNMP V2 or v3 - you choose - with a default working configuration
-- Backup and restore Proxmox Virtual Environment and Backup Server configuration
+- - short: every sunday@22h - Long: every 1st of month @22h
+- Enable SNMP V2 or v3
+- Backup and restore Proxmox Virtual Environment and Backup Server configurations
 - - Automatic remount of directories and zpools using previously existing configurations
 - - Please find more informations below  
 
