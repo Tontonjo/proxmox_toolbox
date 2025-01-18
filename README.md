@@ -23,8 +23,8 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 ## Features are:
 - Automatic PVE / PBS host detection
 - Hide enterprise repo and set no-subscription repository
-- Update host and create a new command "proxmox-update"
 -  -  when no-enterprise source is set, disable no-subscription message
+- Update host and create a new command "proxmox-update"
 - Install usefull dependencies: ifupdown2 - git - sudo - libsasl2-modules - snmp
 - Security settings:
 - - Enable fail2ban with default configuration for sshd, Proxmox virtual environement and Proxmox backup server  
