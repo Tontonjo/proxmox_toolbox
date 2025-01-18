@@ -161,5 +161,3 @@ settings for zram -> https://pve.proxmox.com/wiki/Zram
 PBS: add support for user creation and backup / restoration
 user creation fro PBS when available  
 make things stupid-proof (deny characters when numbers expected and so on)  
-
-Tonton Jo - 2022
