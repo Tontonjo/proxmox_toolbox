@@ -52,6 +52,10 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 ```shell
 wget -qO proxmox_toolbox.sh https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh && bash proxmox_toolbox.sh
 ```
+### OR just execute without save script
+```shell
+bash <(curl -s https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh)
+```
 
 ### Updating host & remove subscription message
 The script will update your host and detect if the no-enterprise source is configured, if so, remove the subscription message.
