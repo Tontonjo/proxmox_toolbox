@@ -52,7 +52,7 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 ```shell
 wget -qO proxmox_toolbox.sh https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh && bash proxmox_toolbox.sh
 ```
-### OR just execute
+### OR just execute:
 ```shell
 bash <(wget -qO- https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh)
 ```
