@@ -48,15 +48,11 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 2023.11.24: Proxmox 8.1 - Emails Notifications - Proxmox VE now supports email configurations very well from the GUI, the toolbox wont get any update related to this function anymore.  
 
 ## Usage and arguments:
-###  Get and execute:  
+###  Download and execute:  
 ```shell
 wget -qO proxmox_toolbox.sh https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh && bash proxmox_toolbox.sh
 ```
-### OR just execute without save script with curl cli
-```shell
-bash <(curl -s https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh)
-```
-### OR with wget cli
+### OR just execute
 ```shell
 bash <(wget -qO- https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/proxmox_toolbox.sh)
 ```
