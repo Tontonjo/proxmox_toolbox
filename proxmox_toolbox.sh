@@ -92,7 +92,7 @@ version=5.0.1
 # V4.2.3: fixed snmpd dependencies installation check to be more reliable
 # V4.2.4: Added Rsyslog as it's missing in pve8 and can be usefull to check logs (merci l'ami)
 # V4.3.0: Removed email options as pve8 has now a gui configuration tool that is way better. hidden in menu 9 in case :)
-# V4.3.1: Removed apt-get upgrade in update as it's useless and less safe thant apt-get dist-upgrade
+# V4.3.1: Removed apt upgrade in update as it's useless and less safe thant apt dist-upgrade
 # V5.0.0: Support for PVE 9, enhancements and error management in the security settings
 # V5.0.1: Some more corrections
 
@@ -146,8 +146,8 @@ update () {
 			update
 		else
 			echo "- Updating System using proxmox_toolbox version: $version"
-			apt-get update -y -qq
-			apt-get dist-upgrade -y -qq
+			apt update -y -qq
+			apt dist-upgrade -y -qq
 			if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
 				if grep -q ".data.status.toLowerCase() == 'active') {" $proxmoxlib; then
 					echo "- Subscription Message already removed - Skipping"
@@ -266,6 +266,7 @@ for file in "${files[@]}"; do
         rm -f "$file"
     fi
 done
+apt update
 fi
 }
 
@@ -361,39 +362,39 @@ main_menu(){
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo " "
 				echo "- Updating sources"
-				apt-get update -y -qq
+				apt update -y -qq
 				if [ $(dpkg-query -W -f='${Status}' ifupdown2 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y ifupdown2;
+					apt install -y ifupdown2;
 				else
 					echo "- ifupdown2 already installed"
 				fi
 				if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y git;
+					apt install -y git;
 				else
 					echo "- git already installed"
 				fi
 				if [ $(dpkg-query -W -f='${Status}' sudo 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y sudo;
+					apt install -y sudo;
 				else
 					echo "- sudo already installed"
 				fi
 				if [ $(dpkg-query -W -f='${Status}' libsasl2-modules 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y libsasl2-modules;.
+					apt install -y libsasl2-modules;.
 				else
 					echo "- libsasl2-modules already installed"
 				fi
 				if [ $(dpkg-query -W -f='${Status}' lshw 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y lshw;.
+					apt install -y lshw;.
 				else
 					echo "- lshw already installed"
 				fi
 				if [ $(dpkg-query -W -f='${Status}' lm-sensors 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y lm-sensors;.
+					apt install -y lm-sensors;.
 				else
 					echo "- lm-sensors already installed"
 				fi
     				if [ $(dpkg-query -W -f='${Status}' rsyslog 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y rsyslog;
+					apt install -y rsyslog;
 				else
 					echo "- rsyslog already installed"
 				fi
@@ -406,16 +407,16 @@ main_menu(){
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo " "
 				echo "- Updating sources"
-				apt-get update -y -qq
+				apt update -y -qq
 				if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y fail2ban;
+					apt install -y fail2ban;
 					getcontentcheck
 				else
 					echo "- fail2ban already installed"
 				fi
 				echo "- Ensuring Git is installed"
 				if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y git;
+					apt install -y git;
 					getcontentcheck
 				else
 					echo "- git already installed"
@@ -478,7 +479,7 @@ main_menu(){
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				clear
 				if [ $(dpkg-query -W -f='${Status}' sudo 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y sudo
+					apt install -y sudo
 					getcontentcheck
 				else
 					echo "- sudo already installed"
@@ -628,18 +629,18 @@ main_menu(){
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo " "
 				if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y git;
+					apt install -y git;
 				else
 					echo "- git already installed"
 				fi
 				git clone -q https://github.com/Tontonjo/proxmox_toolbox.git
 				if [ $(dpkg-query -W -f='${Status}' snmpd 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y snmpd;
+					apt install -y snmpd;
 				else
 					echo "- snmpd already installed"
 				fi
     				if [ $(dpkg-query -W -f='${Status}' libsnmp-dev 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y libsnmp-dev;
+					apt install -y libsnmp-dev;
 				else
 					echo "- libsnmp-dev already installed"
 				fi
@@ -698,10 +699,10 @@ main_menu(){
 
 mail_menu(){
 			if [ $(dpkg-query -W -f='${Status}' libsasl2-modules 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-				  apt-get install -yqq libsasl2-modules;
+				  apt install -yqq libsasl2-modules;
 			fi
 			if [ $(dpkg-query -W -f='${Status}' mailutils 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-				  apt-get install -yqq mailutils;
+				  apt install -yqq mailutils;
 			fi
 			clear
 			ALIASESBCK=/etc/aliases.BCK
@@ -1003,15 +1004,15 @@ backup_menu(){
 					 echo "- Installing missing dependencies if missing"
 					 if [ -d "/etc/snmp/" ]; then
 						echo "- snmp config found - installing snmpd"
-						apt-get -yqq install snmpd libsnmp-dev
+						apt -yqq install snmpd libsnmp-dev
 					 fi
 					 archivecontent=$(tar -tvf $opt)
 					 if cat $archivecontent | grep -qi fail2ban; then
 						echo "- fail2ban config found - installing fail2ban"
-						apt-get -yqq install fail2ban
+						apt -yqq install fail2ban
 					 else
 					 	echo "- fail2ban config NOT found - uninstalling fail2ban if existing"
-						apt-get -yqq remove --purge fail2ban
+						apt -yqq remove --purge fail2ban
 					 fi
 					 echo "- Remounting previously existing storages if any"
 					 if find /etc/systemd/system/*.mount; then
