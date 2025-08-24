@@ -251,9 +251,8 @@ fi
 	  mv /etc/apt/sources.list.d/ceph.sources /etc/apt/sources.list.d/ceph.sources.BAK
 	fi
 	if grep -q '^[[:space:]]*deb http://download.proxmox.com/debian/pve trixie pve-no-subscription' /etc/apt/sources.list; then
-	echo "-- Commenting old sources.list line for proxmox ve"
-		echo "- Found active Proxmox repo, commenting it..."
-		echo "- Looks like you upgraded your proxmox instance, you may want to run "apt modernize-sources""
+		echo "- Found active Proxmox no subscription repo, commenting it..."
+		echo "-- Looks like you upgraded your proxmox instance, you may want to run "apt modernize-sources""
 		sed -i '/^[[:space:]]*deb http:\/\/download\.proxmox\.com\/debian\/pve trixie pve-no-subscription/ s/^/# /' /etc/apt/sources.list
 	fi
 
@@ -263,7 +262,7 @@ files=(
 )
 for file in "${files[@]}"; do
     if [[ -f "$file" ]]; then
-        echo "- Nettoyage de $file"
+        echo "- Deleting old file $file"
         rm -f "$file"
     fi
 done
