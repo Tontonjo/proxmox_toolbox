@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Tonton Jo - 2024
+# Tonton Jo - 2025
 # Join me on Youtube: https://www.youtube.com/c/tontonjo
 
 # This little tool is aimed to set some default configurations up and running in not time
@@ -43,7 +43,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=4.3.2
+version=5.0.0
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -93,7 +93,7 @@ version=4.3.2
 # V4.2.4: Added Rsyslog as it's missing in pve8 and can be usefull to check logs (merci l'ami)
 # V4.3.0: Removed email options as pve8 has now a gui configuration tool that is way better. hidden in menu 9 in case :)
 # V4.3.1: Removed apt-get upgrade in update as it's useless and less safe thant apt-get dist-upgrade
-# V4.3.2: Getting snmp ready for ipv6
+# V5.0.0: Support for PVE 9, enhancements and error management in the security settings
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -110,6 +110,8 @@ distribution=$(. /etc/*-release;echo $VERSION_CODENAME)
 execdir=$(dirname $0)
 hostname=$(hostname)
 date=$(date +%Y_%m_%d-%H_%M_%S)
+proxmox_version=$(pveversion | cut -d'/' -f2 | cut -d' ' -f1 | cut -d'.' -f1)
+
 # ---------------END OF VARIABLES-----------------
 
 
@@ -163,6 +165,108 @@ update () {
 # get the snmp configurations 
 snmpconfig() {
 wget -qO /etc/snmp/snmpd.conf https://github.com/Tontonjo/proxmox_toolbox/raw/main/snmp/snmpd.conf
+}
+
+pvesourcesconfv8() {
+if [ -d "$pve_log_folder" ]; then
+  if grep -Fq "deb http://download.proxmox.com/debian/pve" /etc/apt/sources.list; then
+    echo "-- Source already configured - Skipping"
+  else
+    echo "-- Adding new entry to sources.list"
+    sed -i "\$adeb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
+  fi
+
+  echo "- Checking Enterprise Source list"
+  if grep -Fq "#deb https://enterprise.proxmox.com/debian/pve" "/etc/apt/sources.list.d/pve-enterprise.list"; then
+    echo "-- Enterprise repo looks already commented - Skipping"
+  else
+    echo "-- Hiding Enterprise sources list"
+    sed -i 's/^/#/' /etc/apt/sources.list.d/pve-enterprise.list
+  fi
+
+  echo "- Checking Ceph Enterprise Source list"
+  if [[ -f "/etc/apt/sources.list.d/ceph.list" ]]; then
+    if grep -Fq "#deb https://enterprise.proxmox.com/debian/ceph-quincy" "/etc/apt/sources.list.d/ceph.list"; then
+      echo "-- Ceph Enterprise repo looks already commented - Skipping"
+    else
+      echo "-- Hiding Ceph Enterprise sources list"
+      sed -i 's/^/#/' /etc/apt/sources.list.d/ceph.list
+    fi
+  fi
+else
+  # PBS branch
+  if grep -Fq "deb http://download.proxmox.com/debian/pbs" /etc/apt/sources.list; then
+    echo "-- PBS source already configured - Skipping"
+  else
+    echo "-- Adding PBS entry to sources.list"
+    sed -i "\$adeb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
+    exitcode=$?
+    if [ $exitcode -ne 0 ]; then
+      echo "-- sources.list seems to be missing as sed failed: creating it in /etc/apt/sources.list"
+      if [ -f "/etc/apt/sources.list" ]; then
+        echo "-- sources.list appears to exist but an error was encountered. Please report this case on GitHub."
+      else
+        echo "-- Creating sources.list"
+        echo "deb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" >> /etc/apt/sources.list
+        wget -q https://enterprise.proxmox.com/debian/proxmox-release-$distribution.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
+      fi
+    fi
+  fi
+
+  echo "- Checking PBS Enterprise Source list"
+  if grep -Fq "#deb https://enterprise.proxmox.com/debian/pbs" /etc/apt/sources.list.d/pbs-enterprise.list; then
+    echo "-- PBS Enterprise repo looks already commented - Skipping"
+  else
+    echo "-- Hiding PBS Enterprise sources list"
+    sed -i 's/^/#/' /etc/apt/sources.list.d/pbs-enterprise.list
+  fi
+  fi
+}
+
+
+pvesourcesconfv9() {
+if [ -d "$pve_log_folder" ]; then
+# --- Proxmox VE No-Subscription ---
+if [[ ! -f /etc/apt/sources.list.d/proxmox.sources ]]; then
+  echo "-- Configuring No-Subscription for Proxmox VE"
+  cat > /etc/apt/sources.list.d/proxmox.sources << EOF
+Types: deb
+URIs: http://download.proxmox.com/debian/pve
+Suites: $distribution
+Components: pve-no-subscription
+Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
+EOF
+else
+  echo "-- No enterprise sources already configured - skipping"
+fi
+	# --- Désactivation Enterprise ---
+	if [[ -f /etc/apt/sources.list.d/pve-enterprise.sources ]]; then
+	  echo "-- Comment Enterprise PVE repo (backup)"
+	  mv /etc/apt/sources.list.d/pve-enterprise.sources /etc/apt/sources.list.d/pve-enterprise.sources.BAK
+	fi
+	# --- Désactivation Ceph Enterprise ---
+	if [[ -f /etc/apt/sources.list.d/ceph.sources ]]; then
+	  echo "-- Comment Ceph enterprise repo (backup)"
+	  mv /etc/apt/sources.list.d/ceph.sources /etc/apt/sources.list.d/ceph.sources.BAK
+	fi
+	if grep -q '^[[:space:]]*deb http://download.proxmox.com/debian/pve trixie pve-no-subscription' /etc/apt/sources.list; then
+	echo "-- Commenting old sources.list line for proxmox ve"
+		echo "- Found active Proxmox repo, commenting it..."
+		echo "- Looks like you upgraded your proxmox instance, you may want to run "apt modernize-sources""
+		sed -i '/^[[:space:]]*deb http:\/\/download\.proxmox\.com\/debian\/pve trixie pve-no-subscription/ s/^/# /' /etc/apt/sources.list
+	fi
+
+files=(
+    "/etc/apt/sources.list.d/pve-enterprise.list"
+    "/etc/apt/sources.list.d/pbs-enterprise.list"
+)
+for file in "${files[@]}"; do
+    if [[ -f "$file" ]]; then
+        echo "- Nettoyage de $file"
+        rm -f "$file"
+    fi
+done
+fi
 }
 
 # Display the banner in menu
@@ -237,68 +341,14 @@ main_menu(){
 
 	  	  1) clear;
 		read -p "This will configure sources for no-enterprise repository - Continue? y = yes / anything = no: " -n 1 -r
-			if [[ $REPLY =~ ^[Yy]$ ]]; then
-				if [ -d "$pve_log_folder" ]; then
-					  echo "- Server is a PVE host"
-					#2: Edit sources list:
-					  echo "- Checking  Sources lists"
-						if grep -Fq "deb http://download.proxmox.com/debian/pve" /etc/apt/sources.list; then
-						  echo "-- Source looks alredy configured - Skipping"
+					  echo ""
+						if [ "$proxmox_version" -ge 9 ]; then
+							pvesourcesconfv9
 						else
-						  echo "-- Adding new entry to sources.list"
-						  sed -i "\$adeb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
-						fi
-					  echo "- Checking Enterprise Source list"
-						if grep -Fq "#deb https://enterprise.proxmox.com/debian/pve" "/etc/apt/sources.list.d/pve-enterprise.list"; then
-						 echo "-- Entreprise repo looks already commented - Skipping"
-						else
-						 echo "-- Hiding Enterprise sources list"
-						 sed -i 's/^/#/' /etc/apt/sources.list.d/pve-enterprise.list
-					   fi
-					        echo "- Checking Ceph Enterprise Source list"
-	     					# Checking that source list file exist
-						if [[ -f "/etc/apt/sources.list.d/ceph.list" ]]; then
-      							# Checking if it source is already commented or not
-							if grep -Fq "#deb https://enterprise.proxmox.com/debian/ceph-quincy" "/etc/apt/sources.list.d/ceph.list"; then
-       								# If so do nothing
-								 echo "-- Ceph Entreprise repo looks already commented - Skipping"
-							else
-       								 # else comment it
-								 echo "-- Hiding Ceph Enterprise sources list"
-								 sed -i 's/^/#/' /etc/apt/sources.list.d/ceph.list
-						   	fi
-						fi
-					else
-					  echo "- Server is a PBS host"
-					  echo "- Checking Sources list"
-						if grep -Fq "deb http://download.proxmox.com/debian/pbs" /etc/apt/sources.list; then
-						  echo "-- Source looks alredy configured - Skipping"
-						else
-						 echo "-- Adding new entry to sources.list"
-						 sed -i "\$adeb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
-       						exitcode=$?
-       						if [ $exitcode -ne 0 ]; then
-	     					echo "-- Sources.list seems to be missing as sed failed: creating it in /etc/apt/sources.list"
-							if [ -f "/etc/apt/sources.list" ]; then
-		      						echo "-- Source.list appear to exist but an error was encountered. please report this case on github"
-	      						else
-			    					echo "-- Creating source.list"
-		      	   					echo "deb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" >> /etc/apt/sources.list
-			 					wget -q https://enterprise.proxmox.com/debian/proxmox-release-$distribution.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
-							fi
+							pvesourcesconfv8
 						fi
 
-						fi
-					  echo "- Checking Enterprise Source list"
-						if grep -Fq "#deb https://enterprise.proxmox.com/debian/pbs" /etc/apt/sources.list.d/pbs-enterprise.list; then
-						  echo "-- Entreprise repo looks already commented - Skipping"
-						else
-						  echo "-- Hiding Enterprise sources list"
-						  sed -i 's/^/#/' /etc/apt/sources.list.d/pbs-enterprise.list
-						fi
-				fi
 			wait_or_input
-			fi
 		main_menu
 	   ;;
 	   	  2) clear;
@@ -352,7 +402,7 @@ main_menu(){
 		main_menu
       ;;
 	4) clear;
-		read -p "Do you want to enable fail2ban? y = yes / anything = no: " -n 1 -r
+		read -p "== Do you want to enable fail2ban? y = yes / anything = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo " "
 				echo "- Updating sources"
@@ -422,7 +472,7 @@ main_menu(){
     				wait_or_input
 			fi
 		clear
-		echo "- Do you want to create another SSH user ?"
+		echo "== Do you want to create another SSH user ?"
 		echo "- This will guide you to create another user, add it as a sudo user and allow sudo users to connect trough ssh"
 		read -p "- Press: y = yes / anything = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -446,12 +496,10 @@ main_menu(){
 				echo "- Adding user to sudo users"
 				adduser $username sudo
 				echo "AllowGroups sudo" >> "/etc/ssh/sshd_config"
-				read -p "- Do you want to deny root SSH login?  y = yes / anything = no: " -n 1 -r
+				read -p "== Do you want to deny root SSH login?  y = yes / anything = no: " -n 1 -r
 					if [[ $REPLY =~ ^[Yy]$ ]]; then
 						if grep -qF "PermitRootLogin yes" /etc/ssh/sshd_config; then
 							sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
-						else
-						main_menu
 						fi
 				systemctl restart ssh sshd
 					fi
@@ -459,30 +507,67 @@ main_menu(){
 			fi
 			clear
 			if [ -d "$pve_log_folder" ]; then
-					read -p "- Do you want to create an alternate PVE admin user? y = yes / anything = no: " -n 1 -r
+					read -p "== Do you want to create an alternate PVE admin user? y = yes / anything = no: " -n 1 -r
 					if [[ $REPLY =~ ^[Yy]$ ]]; then
 						clear
 						echo "- What is the new pve username: "
 						read pveusername
-						echo "- Creating PVE user $pveusername"
-						pveum user add $pveusername@pve
-						pveum passwd $pveusername@pve
-						clear
+						# Check if the user already exists
+						if pveum user list | grep -q "$pveusername@pve "; then
+							echo "  -> User $pveusername already exists, skipping."
+						else
+							echo "- Creating PVE user $pveusername"
+							pveum user add "$pveusername@pve"
+							# Retry if the command fails
+							while [ $? -ne 0 ]; do
+								echo "  -> Failed to create user $pveusername (exit code $?), retrying..."
+								sleep 1
+								pveum user add "$pveusername@pve"
+							done
+							echo "  -> User $pveusername created successfully."
+						fi
+						echo "- Setting password for $pveusername"
+						pveum passwd "$pveusername@pve"
+						while [ $? -ne 0 ]; do
+							echo "  -> Failed to set password (exit code $?), retrying..."
+							sleep 1  # optional delay
+							pveum passwd "$pveusername@pve"
+						done
+
+						echo "  -> Password set successfully for $pveusername."
+						echo " "
 						echo "- What is the new admin group name: "
 						read admingroup	
-						clear
-						echo "- Creating PVE admin group $admingroup"
-						pveum group add $admingroup -comment "System Administrators"
+						# Check if the group already exists
+						if pveum group list | grep -q "$admingroup" ; then
+							echo "  -> Group $admingroup already exists, skipping."
+						else
+							pveum group add "$admingroup" -comment "System Administrators"
+							echo "  -> Group $admingroup created successfully."
+						fi
 						echo "- Defining administrators right"
-						pveum acl modify / -group $admingroup -role Administrator
+						# Check if the group already has the Administrator role on /
+						if pveum acl list | grep -q "Administrator" | grep -q $admingroup ; then
+							echo "  -> $admingroup already has Administrator rights, skipping."
+						else
+							pveum acl modify / -group "$admingroup" -role Administrator
+							echo "  -> Administrator rights assigned to $admingroup."
+						fi
+
 						echo "- adding $pveusername to $admingroup"
-						pveum user modify $pveusername@pve -group $admingroup
-						clear
-						echo "- You can now login on GUI with $pveusername@Proxmox VE authenticaton Realm"
+						# Check if the user is already in the group
+						if pveum user list | grep -q "^$pveusername.*$admingroup"; then
+							echo "  -> $pveusername is already a member of $admingroup, skipping."
+						else
+							pveum user modify "$pveusername"@pve -group "$admingroup"
+							echo "  -> $pveusername added to $admingroup successfully."
+						fi
+				
+						echo "- You should now be able to login on GUI with $pveusername@Proxmox VE authenticaton Realm"
 						wait_or_input
 						echo " "
 						echo "!! Warning - root@pam is required to update host from Proxmox web ui !!"
-						read -p "- Do you want to disable "root@pam"?  y = yes / anything = no: " -n 1 -r
+						read -p "== Do you want to disable "root@pam"?  y = yes / anything = no: " -n 1 -r
 						if [[ $REPLY =~ ^[Yy]$ ]]; then
 							clear
 							read -p "- Are you sure you want to disable root@pam? y = yes / anything = no: " -n 1 -r
@@ -575,11 +660,8 @@ main_menu(){
 					read rocommunity
 					echo "- Allowed subnet? Enter for none (x.x.x.x/xx): "
 					read allowedsubnet
-     					echo "- Allowed subnet for IPV6? Enter for none (xx::xx/xx): "
-     					read allowedsubnet6
 					echo "- Setting SNMP"
 					echo "rocommunity $rocommunity $allowedsubnet" >> /etc/snmp/snmpd.conf
-     					echo "rocommunity6 $rocommunity" >> /etc/snmp/snmpd.conf
 				elif [[ $REPLY =~ ^[3]$ ]]; then
 					clear
 					cp -n /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
