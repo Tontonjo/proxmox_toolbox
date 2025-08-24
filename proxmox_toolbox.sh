@@ -43,7 +43,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=5.0.0
+version=5.0.1
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -94,6 +94,7 @@ version=5.0.0
 # V4.3.0: Removed email options as pve8 has now a gui configuration tool that is way better. hidden in menu 9 in case :)
 # V4.3.1: Removed apt-get upgrade in update as it's useless and less safe thant apt-get dist-upgrade
 # V5.0.0: Support for PVE 9, enhancements and error management in the security settings
+# V5.0.1: Some more corrections
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -474,7 +475,7 @@ main_menu(){
 		clear
 		echo "== Do you want to create another SSH user ?"
 		echo "- This will guide you to create another user, add it as a sudo user and allow sudo users to connect trough ssh"
-		read -p "- Press: y = yes / anything = no: " -n 1 -r
+		read -p "- Press: y = yes / ANYTHING = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				clear
 				if [ $(dpkg-query -W -f='${Status}' sudo 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
@@ -507,7 +508,7 @@ main_menu(){
 			fi
 			clear
 			if [ -d "$pve_log_folder" ]; then
-					read -p "== Do you want to create an alternate PVE admin user? y = yes / anything = no: " -n 1 -r
+					read -p "== Do you want to create an alternate PVE admin user? y = yes / ANYTHING = no: " -n 1 -r
 					if [[ $REPLY =~ ^[Yy]$ ]]; then
 						clear
 						echo "- What is the new pve username: "
@@ -555,22 +556,16 @@ main_menu(){
 						fi
 
 						echo "- adding $pveusername to $admingroup"
-						# Check if the user is already in the group
-						if pveum user list | grep -q "^$pveusername.*$admingroup"; then
-							echo "  -> $pveusername is already a member of $admingroup, skipping."
-						else
 							pveum user modify "$pveusername"@pve -group "$admingroup"
-							echo "  -> $pveusername added to $admingroup successfully."
-						fi
 				
 						echo "- You should now be able to login on GUI with $pveusername@Proxmox VE authenticaton Realm"
 						wait_or_input
 						echo " "
 						echo "!! Warning - root@pam is required to update host from Proxmox web ui !!"
-						read -p "== Do you want to disable "root@pam"?  y = yes / anything = no: " -n 1 -r
+						read -p "== Do you want to disable "root@pam"?  y = yes / ANYTHING = no: " -n 1 -r
 						if [[ $REPLY =~ ^[Yy]$ ]]; then
 							clear
-							read -p "- Are you sure you want to disable root@pam? y = yes / anything = no: " -n 1 -r
+							read -p "- Are you sure you want to disable root@pam? y = yes / ANYTHING = no: " -n 1 -r
 								if [[ $REPLY =~ ^[Yy]$ ]]; then
 									echo "- Removing root user from PVE"
 									pveum user modify root@pam -enable 0
@@ -592,7 +587,7 @@ main_menu(){
 		swapvalue=$(cat /proc/sys/vm/swappiness)
 		echo "- SWAP is actually set on $swapvalue"
 		echo "- Recommanded value: 1 - The lower the value - the less SWAP will be used - 0 to use SWAP only when out of memory"
-		read -p "- Do you want to edit swappiness value or disable SWAP? y = yes / anything = no: " -n 1 -r
+		read -p "- Do you want to edit swappiness value or disable SWAP? y = yes / ANYTHING = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo ""
 				echo "- What is the new swapiness value? 0 to 100 "
@@ -613,7 +608,7 @@ main_menu(){
 		main_menu
       ;;
 	   6) clear;
-	   	read -p "- Do you want to enable short and long S.M.A.R.T self-tests? y = yes / anything = no: " -n 1 -r
+	   	read -p "- Do you want to enable short and long S.M.A.R.T self-tests? y = yes / ANYTHING = no: " -n 1 -r
 		clear
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				if grep -Ewqi "(S/../../7/22|L/../01/./22)" /etc/smartd.conf; then
@@ -754,7 +749,7 @@ mail_menu(){
 					read 'mailserverhostname'
 					echo "- What is the mail SMTP port? (Usually 587 - can be 25 (no tls)): "
 					read 'smtpport'
-					read -p  "- Does the server require TLS? y = yes / anything = no: " -n 1 -r 
+					read -p  "- Does the server require TLS? y = yes / ANYTHING = no: " -n 1 -r 
 					if [[ $REPLY =~ ^[Yy]$ ]]; then
 					vartls=yes
 					else
