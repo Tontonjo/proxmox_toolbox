@@ -266,7 +266,7 @@ for file in "${files[@]}"; do
         rm -f "$file"
     fi
 done
-apt update
+apt update -qq
 fi
 }
 
