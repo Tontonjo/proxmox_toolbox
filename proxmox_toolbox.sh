@@ -43,7 +43,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=5.0.1
+version=5.1.0
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -95,6 +95,7 @@ version=5.0.1
 # V4.3.1: Removed apt upgrade in update as it's useless and less safe thant apt dist-upgrade
 # V5.0.0: Support for PVE 9, enhancements and error management in the security settings
 # V5.0.1: Some more corrections
+# V5.1.0: Corrected sources configurations to support PBS correctly
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -111,8 +112,6 @@ distribution=$(. /etc/*-release;echo $VERSION_CODENAME)
 execdir=$(dirname $0)
 hostname=$(hostname)
 date=$(date +%Y_%m_%d-%H_%M_%S)
-proxmox_version=$(pveversion | cut -d'/' -f2 | cut -d' ' -f1 | cut -d'.' -f1)
-
 # ---------------END OF VARIABLES-----------------
 
 
@@ -146,8 +145,8 @@ update () {
 			update
 		else
 			echo "- Updating System using proxmox_toolbox version: $version"
-			apt update -y -qq
-			apt dist-upgrade -y -qq
+			apt-get update -y -qq
+			apt-get dist-upgrade -y -qq
 			if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
 				if grep -q ".data.status.toLowerCase() == 'active') {" $proxmoxlib; then
 					echo "- Subscription Message already removed - Skipping"
@@ -168,10 +167,53 @@ snmpconfig() {
 wget -qO /etc/snmp/snmpd.conf https://github.com/Tontonjo/proxmox_toolbox/raw/main/snmp/snmpd.conf
 }
 
-pvesourcesconfv8() {
-if [ -d "$pve_log_folder" ]; then
+sources_conf_pve () {
+if [ "$proxmox_version" -ge 9 ]; then
+if [[ ! -f /etc/apt/sources.list.d/proxmox.sources ]]; then
+  echo "-- Configuring No-Subscription for Proxmox VE $proxmox_version"
+  cat > /etc/apt/sources.list.d/proxmox.sources << EOF
+Types: deb
+URIs: http://download.proxmox.com/debian/pve
+Suites: $distribution
+Components: pve-no-subscription
+Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
+EOF
+else
+  echo " "
+  echo "-- No enterprise sources already configured - skipping"
+fi
+	# --- Désactivation Enterprise ---
+	if [[ -f /etc/apt/sources.list.d/pve-enterprise.sources ]]; then
+	  echo "-- Comment Enterprise PVE repo (backup)"
+	  mv /etc/apt/sources.list.d/pve-enterprise.sources /etc/apt/sources.list.d/pve-enterprise.sources.BAK
+	fi
+	# --- Désactivation Ceph Enterprise ---
+	if [[ -f /etc/apt/sources.list.d/ceph.sources ]]; then
+	  echo "-- Comment Ceph enterprise repo (backup)"
+	  mv /etc/apt/sources.list.d/ceph.sources /etc/apt/sources.list.d/ceph.sources.BAK
+	fi
+	if grep -q '^[[:space:]]*deb http://download.proxmox.com/debian/pve trixie pve-no-subscription' /etc/apt/sources.list; then
+		echo "- Found active Proxmox no subscription repo, commenting it..."
+		echo "-- Looks like you upgraded your proxmox instance, you may want to run \"apt modernize-sources\""
+		sed -i '/^[[:space:]]*deb http:\/\/download\.proxmox\.com\/debian\/pve trixie pve-no-subscription/ s/^/# /' /etc/apt/sources.list
+	fi
+
+files=(
+    "/etc/apt/sources.list.d/pve-enterprise.list"
+    "/etc/apt/sources.list.d/pbs-enterprise.list"
+)
+for file in "${files[@]}"; do
+    if [[ -f "$file" ]]; then
+        echo "- Deleting old file $file"
+        rm -f "$file"
+    fi
+done
+apt-get update -qq
+else
+  echo "-- Configuring No-Subscription for Proxmox VE $proxmox_version"
   if grep -Fq "deb http://download.proxmox.com/debian/pve" /etc/apt/sources.list; then
-    echo "-- Source already configured - Skipping"
+	echo " "
+    echo "-- No enterprise Source already configured - Skipping"
   else
     echo "-- Adding new entry to sources.list"
     sed -i "\$adeb http://download.proxmox.com/debian/pve $distribution pve-no-subscription" /etc/apt/sources.list
@@ -194,9 +236,52 @@ if [ -d "$pve_log_folder" ]; then
       sed -i 's/^/#/' /etc/apt/sources.list.d/ceph.list
     fi
   fi
+fi
+
+}
+
+sources_conf_pbs () {
+if [ "$pbs_version" -ge 4 ]; then
+if [[ ! -f /etc/apt/sources.list.d/proxmox.sources ]]; then
+  echo "-- Configuring No-Subscription for Proxmox Backup Server $pbs_version"
+  cat > /etc/apt/sources.list.d/proxmox.sources << EOF
+Types: deb
+URIs: http://download.proxmox.com/debian/pbs
+Suites: $distribution
+Components: pbs-no-subscription
+Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
+EOF
 else
-  # PBS branch
+  echo " "
+  echo "-- No enterprise sources already configured - skipping"
+fi
+
+if [[ -f /etc/apt/sources.list.d/pbs-enterprise.sources ]]; then
+  echo "-- Comment Enterprise PBS repo (backup)"
+  mv /etc/apt/sources.list.d/pbs-enterprise.sources /etc/apt/sources.list.d/pbs-enterprise.sources.BAK
+fi
+
+if grep -q '^[[:space:]]*deb http://download.proxmox.com/debian/pbs' /etc/apt/sources.list; then
+    echo "- Found active Proxmox Backup no-subscription repo in sources.list, commenting it..."
+    echo "-- Looks like you upgraded your PBS instance, you may want to run \"apt modernize-sources\""
+    sed -i '/^[[:space:]]*deb http:\/\/download\.proxmox\.com\/debian\/pbs/ s/^/# /' /etc/apt/sources.list
+fi
+
+# --- Suppression anciens fichiers list éventuels ---
+files=(
+    "/etc/apt/sources.list.d/pbs-enterprise.list"
+)
+for file in "${files[@]}"; do
+    if [[ -f "$file" ]]; then
+        echo "- Deleting old file $file"
+        rm -f "$file"
+    fi
+done
+apt-get update -qq
+else
+	echo "-- Configuring No-Subscription for Proxmox Backup Server $pbs_version"
   if grep -Fq "deb http://download.proxmox.com/debian/pbs" /etc/apt/sources.list; then
+    echo " "
     echo "-- PBS source already configured - Skipping"
   else
     echo "-- Adding PBS entry to sources.list"
@@ -221,54 +306,9 @@ else
     echo "-- Hiding PBS Enterprise sources list"
     sed -i 's/^/#/' /etc/apt/sources.list.d/pbs-enterprise.list
   fi
-  fi
+ fi
 }
 
-
-pvesourcesconfv9() {
-if [ -d "$pve_log_folder" ]; then
-# --- Proxmox VE No-Subscription ---
-if [[ ! -f /etc/apt/sources.list.d/proxmox.sources ]]; then
-  echo "-- Configuring No-Subscription for Proxmox VE"
-  cat > /etc/apt/sources.list.d/proxmox.sources << EOF
-Types: deb
-URIs: http://download.proxmox.com/debian/pve
-Suites: $distribution
-Components: pve-no-subscription
-Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
-EOF
-else
-  echo "-- No enterprise sources already configured - skipping"
-fi
-	# --- Désactivation Enterprise ---
-	if [[ -f /etc/apt/sources.list.d/pve-enterprise.sources ]]; then
-	  echo "-- Comment Enterprise PVE repo (backup)"
-	  mv /etc/apt/sources.list.d/pve-enterprise.sources /etc/apt/sources.list.d/pve-enterprise.sources.BAK
-	fi
-	# --- Désactivation Ceph Enterprise ---
-	if [[ -f /etc/apt/sources.list.d/ceph.sources ]]; then
-	  echo "-- Comment Ceph enterprise repo (backup)"
-	  mv /etc/apt/sources.list.d/ceph.sources /etc/apt/sources.list.d/ceph.sources.BAK
-	fi
-	if grep -q '^[[:space:]]*deb http://download.proxmox.com/debian/pve trixie pve-no-subscription' /etc/apt/sources.list; then
-		echo "- Found active Proxmox no subscription repo, commenting it..."
-		echo "-- Looks like you upgraded your proxmox instance, you may want to run "apt modernize-sources""
-		sed -i '/^[[:space:]]*deb http:\/\/download\.proxmox\.com\/debian\/pve trixie pve-no-subscription/ s/^/# /' /etc/apt/sources.list
-	fi
-
-files=(
-    "/etc/apt/sources.list.d/pve-enterprise.list"
-    "/etc/apt/sources.list.d/pbs-enterprise.list"
-)
-for file in "${files[@]}"; do
-    if [[ -f "$file" ]]; then
-        echo "- Deleting old file $file"
-        rm -f "$file"
-    fi
-done
-apt update -qq
-fi
-}
 
 # Display the banner in menu
 banner() {
@@ -341,15 +381,18 @@ main_menu(){
       case $opt in
 
 	  	  1) clear;
-		read -p "This will configure sources for no-enterprise repository - Continue? y = yes / anything = no: " -n 1 -r
-					  echo ""
-						if [ "$proxmox_version" -ge 9 ]; then
-							pvesourcesconfv9
-						else
-							pvesourcesconfv8
-						fi
-
-			wait_or_input
+		read -p "This will configure sources for no-enterprise repository - Continue? y = yes / ANYTHING = no: " -n 1 -r
+		if [[ $REPLY =~ ^[Yy]$ ]]; then
+			if [ -d "$pve_log_folder" ]; then
+				proxmox_version=$(pveversion | cut -d'/' -f2 | cut -d' ' -f1 | cut -d'.' -f1)
+				sources_conf_pve
+				wait_or_input
+			else
+				pbs_version=$(proxmox-backup-manager version | awk '{print $2}' | cut -d'.' -f1)
+				sources_conf_pbs
+				wait_or_input
+			fi
+		fi
 		main_menu
 	   ;;
 	   	  2) clear;
@@ -362,39 +405,39 @@ main_menu(){
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo " "
 				echo "- Updating sources"
-				apt update -y -qq
+				apt-get update -y -qq
 				if [ $(dpkg-query -W -f='${Status}' ifupdown2 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt install -y ifupdown2;
+					apt-get install -y ifupdown2;
 				else
 					echo "- ifupdown2 already installed"
 				fi
 				if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt install -y git;
+					apt-get install -y git;
 				else
 					echo "- git already installed"
 				fi
 				if [ $(dpkg-query -W -f='${Status}' sudo 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt install -y sudo;
+					apt-get install -y sudo;
 				else
 					echo "- sudo already installed"
 				fi
 				if [ $(dpkg-query -W -f='${Status}' libsasl2-modules 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt install -y libsasl2-modules;.
+					apt-get install -y libsasl2-modules;.
 				else
 					echo "- libsasl2-modules already installed"
 				fi
 				if [ $(dpkg-query -W -f='${Status}' lshw 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt install -y lshw;.
+					apt-get install -y lshw;.
 				else
 					echo "- lshw already installed"
 				fi
 				if [ $(dpkg-query -W -f='${Status}' lm-sensors 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt install -y lm-sensors;.
+					apt-get install -y lm-sensors;.
 				else
 					echo "- lm-sensors already installed"
 				fi
     				if [ $(dpkg-query -W -f='${Status}' rsyslog 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt install -y rsyslog;
+					apt-get install -y rsyslog;
 				else
 					echo "- rsyslog already installed"
 				fi
@@ -407,16 +450,16 @@ main_menu(){
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo " "
 				echo "- Updating sources"
-				apt update -y -qq
+				apt-get update -y -qq
 				if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt install -y fail2ban;
+					apt-get install -y fail2ban;
 					getcontentcheck
 				else
 					echo "- fail2ban already installed"
 				fi
 				echo "- Ensuring Git is installed"
 				if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt install -y git;
+					apt-get install -y git;
 					getcontentcheck
 				else
 					echo "- git already installed"
@@ -479,7 +522,7 @@ main_menu(){
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				clear
 				if [ $(dpkg-query -W -f='${Status}' sudo 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt install -y sudo
+					apt-get install -y sudo
 					getcontentcheck
 				else
 					echo "- sudo already installed"
@@ -629,18 +672,18 @@ main_menu(){
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo " "
 				if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt install -y git;
+					apt-get install -y git;
 				else
 					echo "- git already installed"
 				fi
 				git clone -q https://github.com/Tontonjo/proxmox_toolbox.git
 				if [ $(dpkg-query -W -f='${Status}' snmpd 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt install -y snmpd;
+					apt-get install -y snmpd;
 				else
 					echo "- snmpd already installed"
 				fi
     				if [ $(dpkg-query -W -f='${Status}' libsnmp-dev 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt install -y libsnmp-dev;
+					apt-get install -y libsnmp-dev;
 				else
 					echo "- libsnmp-dev already installed"
 				fi
@@ -699,10 +742,10 @@ main_menu(){
 
 mail_menu(){
 			if [ $(dpkg-query -W -f='${Status}' libsasl2-modules 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-				  apt install -yqq libsasl2-modules;
+				  apt-get install -yqq libsasl2-modules;
 			fi
 			if [ $(dpkg-query -W -f='${Status}' mailutils 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-				  apt install -yqq mailutils;
+				  apt-get install -yqq mailutils;
 			fi
 			clear
 			ALIASESBCK=/etc/aliases.BCK
@@ -1004,15 +1047,15 @@ backup_menu(){
 					 echo "- Installing missing dependencies if missing"
 					 if [ -d "/etc/snmp/" ]; then
 						echo "- snmp config found - installing snmpd"
-						apt -yqq install snmpd libsnmp-dev
+						apt-get -yqq install snmpd libsnmp-dev
 					 fi
 					 archivecontent=$(tar -tvf $opt)
 					 if cat $archivecontent | grep -qi fail2ban; then
 						echo "- fail2ban config found - installing fail2ban"
-						apt -yqq install fail2ban
+						apt-get -yqq install fail2ban
 					 else
 					 	echo "- fail2ban config NOT found - uninstalling fail2ban if existing"
-						apt -yqq remove --purge fail2ban
+						apt-get -yqq remove --purge fail2ban
 					 fi
 					 echo "- Remounting previously existing storages if any"
 					 if find /etc/systemd/system/*.mount; then
