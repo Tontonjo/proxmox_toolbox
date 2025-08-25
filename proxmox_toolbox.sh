@@ -43,7 +43,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=5.2.0
+version=5.2.1
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -97,6 +97,7 @@ version=5.2.0
 # V5.0.1: Some more corrections
 # V5.1.0: Corrected sources configurations to support PBS correctly
 # V5.2.0: Corrected and enhanced No subscription message removal 
+# V5.2.1: fixed detection of no subscription sources 
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -148,30 +149,32 @@ update () {
 			echo "- Updating System using proxmox_toolbox version: $version"
 			apt-get update -y -qq
 			apt-get dist-upgrade -y -qq
-			if grep -Ewqi "no-subscription" /etc/apt/sources.list; then
-			    # Check if the js file is already modified to bypass no subscription message
-				if awk '/check_subscription:/ {in_block=1} in_block && /^\s*},/ {in_block=0} in_block {print}' "$proxmoxlib" | grep -q "res.data.status.toLowerCase() === 'active'"; then
+			# We check for new source files first in case the sources arent modernized
+			if [[ -f /etc/apt/sources.list.d/proxmox.sources ]]; then
+			# Check if the js file is already modified to bypass no subscription message
+				if grep -q "res\.data\.status\.toLowerCase() *==\{0,2\} *'active'" $proxmoxlib; then
 					echo "- Subscription Message already removed - Skipping"
 				else
 					if [ -d "$pve_log_folder" ]; then
 						echo "- Removing No Valid Subscription Message for PVE"
-						sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart pveproxy.service
+						sed -Ezi.bak "s/!== 'active'/=== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart pveproxy.service
 					else 
 						echo "- Removing No Valid Subscription Message for PBS"
-						sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart proxmox-backup-proxy.service
+						sed -Ezi.bak "s/!== 'active'/=== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart proxmox-backup-proxy.service
 					fi
 				fi
-			elif [[ -f /etc/apt/sources.list.d/proxmox.sources ]]; then
-			# Check if the js file is already modified to bypass no subscription message
-				if awk '/check_subscription:/ {in_block=1} in_block && /^\s*},/ {in_block=0} in_block {print}' "$proxmoxlib" | grep -q "res.data.status.toLowerCase() === 'active'"; then
+			# Then we check for old sources list entries
+			elif grep -Ewqi "no-subscription" /etc/apt/sources.list; then
+			    # Check if the js file is already modified to bypass no subscription message (need to match old erroneous == )
+				if grep -q "res\.data\.status\.toLowerCase() *==\{0,2\} *'active'" $proxmoxlib; then
 					echo "- Subscription Message already removed - Skipping"
 				else
 					if [ -d "$pve_log_folder" ]; then
 						echo "- Removing No Valid Subscription Message for PVE"
-						sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart pveproxy.service
+						sed -Ezi.bak "s/!== 'active'/=== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart pveproxy.service
 					else 
 						echo "- Removing No Valid Subscription Message for PBS"
-						sed -Ezi.bak "s/!== 'active'/== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart proxmox-backup-proxy.service
+						sed -Ezi.bak "s/!== 'active'/=== 'active'/" $proxmoxlib && echo "- Restarting proxy service" && systemctl restart proxmox-backup-proxy.service
 					fi
 				fi
 			fi
@@ -215,7 +218,6 @@ fi
 
 files=(
     "/etc/apt/sources.list.d/pve-enterprise.list"
-    "/etc/apt/sources.list.d/pbs-enterprise.list"
 )
 for file in "${files[@]}"; do
     if [[ -f "$file" ]]; then
