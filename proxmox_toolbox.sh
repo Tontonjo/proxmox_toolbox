@@ -197,7 +197,6 @@ Components: pve-no-subscription
 Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
 EOF
 else
-  echo " "
   echo "-- No enterprise sources already configured - skipping"
 fi
 	# --- Désactivation Enterprise ---
@@ -229,7 +228,6 @@ apt-get update -qq
 else
   echo "-- Configuring No-Subscription for Proxmox VE $proxmox_version"
   if grep -Fq "deb http://download.proxmox.com/debian/pve" /etc/apt/sources.list; then
-	echo " "
     echo "-- No enterprise Source already configured - Skipping"
   else
     echo "-- Adding new entry to sources.list"
@@ -269,7 +267,6 @@ Components: pbs-no-subscription
 Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
 EOF
 else
-  echo " "
   echo "-- No enterprise sources already configured - skipping"
 fi
 
@@ -298,7 +295,6 @@ apt-get update -qq
 else
 	echo "-- Configuring No-Subscription for Proxmox Backup Server $pbs_version"
   if grep -Fq "deb http://download.proxmox.com/debian/pbs" /etc/apt/sources.list; then
-    echo " "
     echo "-- PBS source already configured - Skipping"
   else
     echo "-- Adding PBS entry to sources.list"
@@ -400,6 +396,7 @@ main_menu(){
 	  	  1) clear;
 		read -p "This will configure sources for no-enterprise repository - Continue? y = yes / ANYTHING = no: " -n 1 -r
 		if [[ $REPLY =~ ^[Yy]$ ]]; then
+  			echo " "
 			if [ -d "$pve_log_folder" ]; then
 				proxmox_version=$(pveversion | cut -d'/' -f2 | cut -d' ' -f1 | cut -d'.' -f1)
 				sources_conf_pve
