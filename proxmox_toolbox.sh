@@ -43,7 +43,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=5.2.1
+version=5.2.2
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -98,6 +98,7 @@ version=5.2.1
 # V5.1.0: Corrected sources configurations to support PBS correctly
 # V5.2.0: Corrected and enhanced No subscription message removal 
 # V5.2.1: fixed detection of no subscription sources 
+# V5.2.2: fixed detection of fail2ban configuration, added some comments and Cosmetic changes
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -188,7 +189,7 @@ wget -qO /etc/snmp/snmpd.conf https://github.com/Tontonjo/proxmox_toolbox/raw/ma
 sources_conf_pve () {
 if [ "$proxmox_version" -ge 9 ]; then
 if [[ ! -f /etc/apt/sources.list.d/proxmox.sources ]]; then
-  echo "-- Configuring No-Subscription for Proxmox VE $proxmox_version"
+  echo "- Configuring No-Subscription for Proxmox VE $proxmox_version"
   cat > /etc/apt/sources.list.d/proxmox.sources << EOF
 Types: deb
 URIs: http://download.proxmox.com/debian/pve
@@ -201,7 +202,7 @@ else
 fi
 	# --- Désactivation Enterprise ---
 	if [[ -f /etc/apt/sources.list.d/pve-enterprise.sources ]]; then
-	  echo "-- Comment Enterprise PVE repo (backup)"
+	  echo "-- Commenting PVE Enterprise repo (backup)"
 	  mv /etc/apt/sources.list.d/pve-enterprise.sources /etc/apt/sources.list.d/pve-enterprise.sources.BAK
 	fi
 	# --- Désactivation Ceph Enterprise ---
@@ -210,8 +211,8 @@ fi
 	  mv /etc/apt/sources.list.d/ceph.sources /etc/apt/sources.list.d/ceph.sources.BAK
 	fi
 	if grep -q '^[[:space:]]*deb http://download.proxmox.com/debian/pve trixie pve-no-subscription' /etc/apt/sources.list; then
-		echo "- Found active Proxmox no subscription repo, commenting it..."
-		echo "-- Looks like you upgraded your proxmox instance, you may want to run \"apt modernize-sources\""
+		echo "-- Found active Proxmox no subscription repo, commenting it..."
+		echo "!! Looks like you upgraded your proxmox instance, you may want to run \"apt modernize-sources\" !! "
 		sed -i '/^[[:space:]]*deb http:\/\/download\.proxmox\.com\/debian\/pve trixie pve-no-subscription/ s/^/# /' /etc/apt/sources.list
 	fi
 
@@ -220,13 +221,13 @@ files=(
 )
 for file in "${files[@]}"; do
     if [[ -f "$file" ]]; then
-        echo "- Deleting old file $file"
+        echo "- Deleting old source list $file"
         rm -f "$file"
     fi
 done
 apt-get update -qq
 else
-  echo "-- Configuring No-Subscription for Proxmox VE $proxmox_version"
+  echo "- Configuring No-Subscription for Proxmox VE $proxmox_version"
   if grep -Fq "deb http://download.proxmox.com/debian/pve" /etc/apt/sources.list; then
     echo "-- No enterprise Source already configured - Skipping"
   else
@@ -258,7 +259,7 @@ fi
 sources_conf_pbs () {
 if [ "$pbs_version" -ge 4 ]; then
 if [[ ! -f /etc/apt/sources.list.d/proxmox.sources ]]; then
-  echo "-- Configuring No-Subscription for Proxmox Backup Server $pbs_version"
+  echo "- Configuring No-Subscription for Proxmox Backup Server $pbs_version"
   cat > /etc/apt/sources.list.d/proxmox.sources << EOF
 Types: deb
 URIs: http://download.proxmox.com/debian/pbs
@@ -276,8 +277,8 @@ if [[ -f /etc/apt/sources.list.d/pbs-enterprise.sources ]]; then
 fi
 
 if grep -q '^[[:space:]]*deb http://download.proxmox.com/debian/pbs' /etc/apt/sources.list; then
-    echo "- Found active Proxmox Backup no-subscription repo in sources.list, commenting it..."
-    echo "-- Looks like you upgraded your PBS instance, you may want to run \"apt modernize-sources\""
+    echo "-- Found active Proxmox Backup no-subscription repo in sources.list, commenting it..."
+    echo "!! Looks like you upgraded your PBS instance, you may want to run \"apt modernize-sources\" !! "
     sed -i '/^[[:space:]]*deb http:\/\/download\.proxmox\.com\/debian\/pbs/ s/^/# /' /etc/apt/sources.list
 fi
 
@@ -287,13 +288,13 @@ files=(
 )
 for file in "${files[@]}"; do
     if [[ -f "$file" ]]; then
-        echo "- Deleting old file $file"
+        echo "- Deleting old source list $file"
         rm -f "$file"
     fi
 done
 apt-get update -qq
 else
-	echo "-- Configuring No-Subscription for Proxmox Backup Server $pbs_version"
+	echo "- Configuring No-Subscription for Proxmox Backup Server $pbs_version"
   if grep -Fq "deb http://download.proxmox.com/debian/pbs" /etc/apt/sources.list; then
     echo "-- PBS source already configured - Skipping"
   else
@@ -346,8 +347,7 @@ mkdir -p $backupdir
 echo "- Creating backup"
 tar -czf $backupdir/$hostname-$(date +%Y_%m_%d-%H_%M_%S).tar.gz --absolute-names $backup_content
 clear
-echo "- Backup done - please control and test it"
-echo "- Archive is located in $backupdir"
+echo "-- Backup done at $backupdir - please control and test it"
 }
 # Arguments
 # Thoses are argument that directly trigger specific toolbox functions
@@ -380,7 +380,7 @@ main_menu(){
     echo -e "${MENU}**${NUMBER} 5)${MENU} SWAP Settings ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 6)${MENU} Enable S.M.A.R.T self-tests ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 7)${MENU} SNMP settings ${NORMAL}"
-    echo -e "${MENU}**${NUMBER} 8)${MENU} Configurations backup and restoration ${NORMAL}"
+    echo -e "${MENU}**${NUMBER} 8)${MENU} PVE / PBS Configurations backup and restoration ${NORMAL}"
     echo -e "${MENU}**${NUMBER} 0)${MENU} Exit ${NORMAL}"
     echo " "
     echo -e "${MENU}*********************************************${NORMAL}"
@@ -1045,8 +1045,8 @@ backup_menu(){
 			select opt in "${options[@]}" "- Return to backup menu"; do
 			  case "$opt" in 
 			  *.tar.gz)
-				  echo "- Backup $opt selected"
-				  read -p "- Proceed with the restoration?  y = yes / anything = no: " -n 1 -r
+				  echo "- Backup archive $opt selected"
+				  read -p "-- Proceed with the restoration?  y = yes / anything = no: " -n 1 -r
 				  if [[ $REPLY =~ ^[Yy]$ ]]; then
 				  	 echo " "
 				  	 read -p "- Do you want to restore the network configuration aswell? y = yes / anything = no: " -n 1 -r
@@ -1060,29 +1060,29 @@ backup_menu(){
 					 echo "- File restauration done"
 					 echo "- Installing missing dependencies if missing"
 					 if [ -d "/etc/snmp/" ]; then
-						echo "- snmp config found - installing snmpd"
+						echo "-- snmp config found - installing snmpd"
 						apt-get -yqq install snmpd libsnmp-dev
 					 fi
-					 archivecontent=$(tar -tvf $opt)
-					 if cat $archivecontent | grep -qi fail2ban; then
-						echo "- fail2ban config found - installing fail2ban"
+					 # Here we check in archive if fail2ban is existing in order to be able to rollback
+					 if echo "$archivecontent" | grep -qi fail2ban; then
+						echo "-- fail2ban config found - installing fail2ban"
 						apt-get -yqq install fail2ban
 					 else
-					 	echo "- fail2ban config NOT found - uninstalling fail2ban if existing"
+					 	echo "-- fail2ban config NOT found - uninstalling fail2ban"
 						apt-get -yqq remove --purge fail2ban
 					 fi
 					 echo "- Remounting previously existing storages if any"
 					 if find /etc/systemd/system/*.mount; then
-						echo "- .mount file found - trying to remount"
+						echo "-- .mount file found - trying to remount"
 						for mount in /etc/systemd/system/*.mount; do
 							source $mount >/dev/null 2>&1
-							echo "- Checking if $mount is still present in system"
+							echo "-- Checking if $mount is still present in system"
 							if find /dev/disk/by-uuid/ | grep -w $What; then
-							echo "- Remountig using configuration $mount"
+							echo "-- Remountig using configuration $mount"
 							mkdir -p "$Where" 
 							echo "$What $Where $Type $Options 0 2" >> /etc/fstab 
 							else
-							echo "- The drive for $mount was not found and will not be mounted back"
+							echo "-- The drive for $mount was not found and will not be mounted back"
 							fi
 						done
 						mount -a
