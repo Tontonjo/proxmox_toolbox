@@ -148,7 +148,7 @@ update () {
 			wget -qO "/usr/bin/proxmox-update" https://raw.githubusercontent.com/Tontonjo/proxmox_toolbox/main/bin/proxmox-update && chmod +x "/usr/bin/proxmox-update"
 			update
 		else
-			echo "- Updating System using proxmox_toolbox version: $version"
+			echo "- Updating System using proxmox_toolbox.sh version $version"
 			apt-get update -y -qq
 			apt-get dist-upgrade -y -qq
 			# We check for new source files first in case the sources arent modernized
