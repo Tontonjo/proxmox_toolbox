@@ -25,7 +25,7 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 - Hide enterprise repo and set no-subscription repository
 -  -  when no-enterprise source is set, disable no-subscription message
 - Update host and create a new command "proxmox-update"
-- Install usefull dependencies: ifupdown2 - git - sudo - libsasl2-modules - snmp
+- Install usefull dependencies: ifupdown2, git, sudo, libsasl2-modules, amd64-microcode (add non-free-firmware repository)
 - Security settings:
 - - Enable fail2ban with default configuration for sshd, Proxmox virtual environement and Proxmox backup server  
 (credits to [inettgmbh](https://github.com/inettgmbh/fail2ban-proxmox-backup-server))  
