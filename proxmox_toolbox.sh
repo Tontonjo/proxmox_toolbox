@@ -43,7 +43,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=5.3.0
+version=5.3.1
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -101,6 +101,7 @@ version=5.3.0
 # V5.2.2: fixed detection of fail2ban configuration, added some comments and Cosmetic changes
 # V5.2.3: Suggest to modernize sources if an upgrade is detected
 # V5.3.0: usefull dependencies: Suggest to enable non-free-firmware in sources configurations and install amd-64-microcode (suggested as per pve8to9)
+# V5.3.1: Various corrections and enhancements
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -463,17 +464,22 @@ main_menu(){
 				else
 					echo "- rsyslog already installed"
 				fi
-				read -p "- Enable non-free-firware sources and install amd64-microcode? y = yes / ANYTHING = no: " -n 1 -r
+				read -p "- Install amd64-microcode? This will Enable non-free-firmware sources y = yes / ANYTHING = no: " -n 1 -r
+				echo
 				if [[ $REPLY =~ ^[Yy]$ ]]; then
-					if [[ -f /etc/apt/sources.list.d/debian.sources ]]; then
-						sed -i '0,/^Components: main contrib$/s//Components: main contrib non-free-firmware/' /etc/apt/sources.list.d/debian.sources
-					elif [[ -f "/etc/apt/sources.list" ]]; then
-						sed -i '0,/main contrib/s/^\(.*main contrib\)\(.*\)$/\1 non-free-firmware\2/' /etc/apt/sources.list
-					fi
-					apt-get update
-					apt-get install amd64-microcode
+				    if [[ -f /etc/apt/sources.list.d/debian.sources ]]; then
+				        # Vérifie si "non-free-firmware" est déjà présent
+				        if ! grep -q "non-free-firmware" /etc/apt/sources.list.d/debian.sources; then
+				            sed -i '0,/^Components: main contrib$/s//Components: main contrib non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+				        fi
+				    elif [[ -f "/etc/apt/sources.list" ]]; then
+				        if ! grep -q "non-free-firmware" /etc/apt/sources.list; then
+				            sed -i '0,/main contrib/s/^\(.*main contrib\)\(.*\)$/\1 non-free-firmware\2/' /etc/apt/sources.list
+				        fi
+				    fi
+				    apt-get update
+				    apt-get install -y amd64-microcode
 				fi
-				
 			wait_or_input
 			fi	
 		main_menu
