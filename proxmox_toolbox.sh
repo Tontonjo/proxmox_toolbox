@@ -212,9 +212,9 @@ fi
 	  echo "-- Comment Ceph enterprise repo (backup)"
 	  mv /etc/apt/sources.list.d/ceph.sources /etc/apt/sources.list.d/ceph.sources.BAK
 	fi
-	if grep -q '^[[:space:]]*deb http://download.proxmox.com/debian/pve trixie pve-no-subscription' /etc/apt/sources.list; then
+	if grep -q '^[[:space:]]*deb http://download.proxmox.com/debian/pve $distribution pve-no-subscription' /etc/apt/sources.list; then
 		echo "-- Found active Proxmox no subscription repo, commenting it..."
-		sed -i '/^[[:space:]]*deb http:\/\/download\.proxmox\.com\/debian\/pve trixie pve-no-subscription/ s/^/# /' /etc/apt/sources.list
+		sed -i '/^[[:space:]]*deb http:\/\/download\.proxmox\.com\/debian\/pve $distribution pve-no-subscription/ s/^/# /' /etc/apt/sources.list
 		read -p "!! Looks like you upgraded your proxmox instance, it is recommanded to run \"apt modernize-sources\" !! execute? y = yes / ANYTHING = no: " -n 1 -r
 		if [[ $REPLY =~ ^[Yy]$ ]]; then
 			apt modernize-sources
