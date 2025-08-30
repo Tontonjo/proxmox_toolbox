@@ -43,7 +43,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=5.2.3
+version=5.3.0
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -100,6 +100,7 @@ version=5.2.3
 # V5.2.1: fixed detection of no subscription sources 
 # V5.2.2: fixed detection of fail2ban configuration, added some comments and Cosmetic changes
 # V5.2.3: Suggest to modernize sources if an upgrade is detected
+# V5.3.0: usefull dependencies: Suggest to enable non-free-firmware in sources configurations and install amd-64-microcode (suggested as per pve8to9)
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -213,11 +214,11 @@ fi
 	fi
 	if grep -q '^[[:space:]]*deb http://download.proxmox.com/debian/pve trixie pve-no-subscription' /etc/apt/sources.list; then
 		echo "-- Found active Proxmox no subscription repo, commenting it..."
-  		read -p "!! Looks like you upgraded your proxmox instance, it is recommanded to run \"apt modernize-sources\" !! execute? y = yes / ANYTHING = no: " -n 1 -r
+		sed -i '/^[[:space:]]*deb http:\/\/download\.proxmox\.com\/debian\/pve trixie pve-no-subscription/ s/^/# /' /etc/apt/sources.list
+		read -p "!! Looks like you upgraded your proxmox instance, it is recommanded to run \"apt modernize-sources\" !! execute? y = yes / ANYTHING = no: " -n 1 -r
 		if [[ $REPLY =~ ^[Yy]$ ]]; then
 			apt modernize-sources
         fi
-		sed -i '/^[[:space:]]*deb http:\/\/download\.proxmox\.com\/debian\/pve trixie pve-no-subscription/ s/^/# /' /etc/apt/sources.list
 	fi
 
 files=(
@@ -282,8 +283,11 @@ fi
 
 if grep -q '^[[:space:]]*deb http://download.proxmox.com/debian/pbs' /etc/apt/sources.list; then
     echo "-- Found active Proxmox Backup no-subscription repo in sources.list, commenting it..."
-    echo "!! Looks like you upgraded your PBS instance, you may want to run \"apt modernize-sources\" !! "
     sed -i '/^[[:space:]]*deb http:\/\/download\.proxmox\.com\/debian\/pbs/ s/^/# /' /etc/apt/sources.list
+	read -p "!! Looks like you upgraded your proxmox instance, it is recommanded to run \"apt modernize-sources\" !! execute? y = yes / ANYTHING = no: " -n 1 -r
+	if [[ $REPLY =~ ^[Yy]$ ]]; then
+		apt modernize-sources
+    fi
 fi
 
 # --- Suppression anciens fichiers list éventuels ---
@@ -419,7 +423,7 @@ main_menu(){
 		main_menu
 	   ;;
       3) clear;
-			read -p "- This will install thoses libraries if missing: ifupdown2 - git - sudo - libsasl2-modules - lshw - lm-sensors - Continue? y = yes / ANYTHING = no: " -n 1 -r
+			read -p "- This will install thoses libraries if missing: ifupdown2, git, sudo, libsasl2-modules, lshw, lm-sensors - Continue? y = yes / ANYTHING = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo " "
 				echo "- Updating sources"
@@ -430,41 +434,52 @@ main_menu(){
 					echo "- ifupdown2 already installed"
 				fi
 				if [ $(dpkg-query -W -f='${Status}' git 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y git;
+					apt-get install -y git
 				else
 					echo "- git already installed"
 				fi
 				if [ $(dpkg-query -W -f='${Status}' sudo 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y sudo;
+					apt-get install -y sudo
 				else
 					echo "- sudo already installed"
 				fi
 				if [ $(dpkg-query -W -f='${Status}' libsasl2-modules 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y libsasl2-modules;.
+					apt-get install -y libsasl2-modules
 				else
 					echo "- libsasl2-modules already installed"
 				fi
 				if [ $(dpkg-query -W -f='${Status}' lshw 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y lshw;.
+					apt-get install -y lshw
 				else
 					echo "- lshw already installed"
 				fi
-				if [ $(dpkg-query -W -f='${Status}' lm-sensors 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y lm-sensors;.
+				if [ $(dpkg-query -W -f='${Status}' 3 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+					apt-get install -y lm-sensors
 				else
 					echo "- lm-sensors already installed"
 				fi
     				if [ $(dpkg-query -W -f='${Status}' rsyslog 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-					apt-get install -y rsyslog;
+					apt-get install -y rsyslog
 				else
 					echo "- rsyslog already installed"
 				fi
+				read -p "- Enable non-free-firware sources and install amd64-microcode? y = yes / ANYTHING = no: " -n 1 -r
+				if [[ $REPLY =~ ^[Yy]$ ]]; then
+					if [[ -f /etc/apt/sources.list.d/debian.sources ]]; then
+						sed -i '0,/^Components: main contrib$/s//Components: main contrib non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+					elif [[ -f "/etc/apt/sources.list" ]]; then
+						sed -i '0,/main contrib/s/^\(.*main contrib\)\(.*\)$/\1 non-free-firmware\2/' /etc/apt/sources.list
+					fi
+					apt-get update
+					apt-get install amd64-microcode
+				fi
+				
 			wait_or_input
 			fi	
 		main_menu
       ;;
 	4) clear;
-		read -p "== Do you want to enable fail2ban? y = yes / anything = no: " -n 1 -r
+		read -p "== Do you want to enable fail2ban? y = yes / ANYTHING = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo " "
 				echo "- Updating sources"
