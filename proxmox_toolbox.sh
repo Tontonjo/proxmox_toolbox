@@ -43,7 +43,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=5.2.2
+version=5.2.3
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -99,6 +99,7 @@ version=5.2.2
 # V5.2.0: Corrected and enhanced No subscription message removal 
 # V5.2.1: fixed detection of no subscription sources 
 # V5.2.2: fixed detection of fail2ban configuration, added some comments and Cosmetic changes
+# V5.2.3: Suggest to modernize sources if an upgrade is detected
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
@@ -212,7 +213,10 @@ fi
 	fi
 	if grep -q '^[[:space:]]*deb http://download.proxmox.com/debian/pve trixie pve-no-subscription' /etc/apt/sources.list; then
 		echo "-- Found active Proxmox no subscription repo, commenting it..."
-		echo "!! Looks like you upgraded your proxmox instance, you may want to run \"apt modernize-sources\" !! "
+  		read -p "!! Looks like you upgraded your proxmox instance, it is recommanded to run \"apt modernize-sources\" !! execute? y = yes / ANYTHING = no: " -n 1 -r
+		if [[ $REPLY =~ ^[Yy]$ ]]; then
+			apt modernize-sources
+        fi
 		sed -i '/^[[:space:]]*deb http:\/\/download\.proxmox\.com\/debian\/pve trixie pve-no-subscription/ s/^/# /' /etc/apt/sources.list
 	fi
 
@@ -415,7 +419,7 @@ main_menu(){
 		main_menu
 	   ;;
       3) clear;
-			read -p "- This will install thoses libraries if missing: ifupdown2 - git - sudo - libsasl2-modules - lshw - lm-sensors - Continue? y = yes / anything = no: " -n 1 -r
+			read -p "- This will install thoses libraries if missing: ifupdown2 - git - sudo - libsasl2-modules - lshw - lm-sensors - Continue? y = yes / ANYTHING = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo " "
 				echo "- Updating sources"
