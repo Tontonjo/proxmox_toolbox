@@ -468,7 +468,7 @@ main_menu(){
 				echo
 				if [[ $REPLY =~ ^[Yy]$ ]]; then
 				    if [[ -f /etc/apt/sources.list.d/debian.sources ]]; then
-				        # Vérifie si "non-free-firmware" est déjà présent
+				        # Check if source is already configured
 				        if ! grep -q "non-free-firmware" /etc/apt/sources.list.d/debian.sources; then
 				            sed -i '0,/^Components: main contrib$/s//Components: main contrib non-free-firmware/' /etc/apt/sources.list.d/debian.sources
 				        fi
