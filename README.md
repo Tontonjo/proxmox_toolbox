@@ -38,6 +38,7 @@ You can watch a demonstration of the tool [in this playlist](https://www.youtube
 - - short: every sunday@22h - Long: every 1st of month @22h
 - Enable SNMP V2 or v3
 - Backup and restore Proxmox Virtual Environment and Backup Server configurations
+- - Easy recover from crash or failure: restore VM configurations, datastores and host configurations like network and PVE users
 - - Automatic remount of directories and zpools using previously existing configurations
 - - Please find more informations below  
 
