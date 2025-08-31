@@ -43,7 +43,7 @@
 # Cosmetic corrections
 
 # Proxmox_toolbox
-version=5.3.1
+version=5.3.2
 
 # V1.0: Initial Release
 # V1.1: correct detecition of subscription message removal
@@ -305,7 +305,7 @@ apt-get update -qq
 else
 	echo "- Configuring No-Subscription for Proxmox Backup Server $pbs_version"
   if grep -Fq "deb http://download.proxmox.com/debian/pbs" /etc/apt/sources.list; then
-    echo "-- PBS source already configured - Skipping"
+  	echo "-- PBS source already configured - Skipping"
   else
     echo "-- Adding PBS entry to sources.list"
     sed -i "\$adeb http://download.proxmox.com/debian/pbs $distribution pbs-no-subscription" /etc/apt/sources.list
@@ -361,13 +361,13 @@ echo "-- Backup done at $backupdir - please control and test it"
 # Arguments
 # Thoses are argument that directly trigger specific toolbox functions
 if  [[ $1 = "-u" ]]; then
-update
-exit
+	update
+	exit
 fi
 
 if  [[ $1 = "-b" ]]; then
-backup
-exit
+	backup
+	exit
 fi
 # End of arguments
 
@@ -459,7 +459,7 @@ main_menu(){
 				else
 					echo "- lm-sensors already installed"
 				fi
-    				if [ $(dpkg-query -W -f='${Status}' rsyslog 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+    			if [ $(dpkg-query -W -f='${Status}' rsyslog 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 					apt-get install -y rsyslog
 				else
 					echo "- rsyslog already installed"
@@ -523,8 +523,8 @@ main_menu(){
 				if ! grep -Fqs "systemd" /etc/fail2ban/jail.d/defaults-debian.conf; then
     				echo "- Backend missing in defaults-debian.conf"
     				echo -e "\nbackend = systemd" >> /etc/fail2ban/jail.d/defaults-debian.conf
-    				else
-				echo "- Backend already setted-up in defaults-debian.conf"
+    			else
+					echo "- Backend already setted-up in defaults-debian.conf"
 				fi
 #    				if [ -d "$pve_log_folder" ]; then
 #	    				if ! grep -Fqs "systemd" /etc/fail2ban/jail.d/proxmox-virtual-environement.conf; then
@@ -665,11 +665,11 @@ main_menu(){
 		lsblk | grep -qi swap
 		swapenabled=$?
 	   	if [ $swapenabled -eq 0 ]; then
-		echo ""
-		swapvalue=$(cat /proc/sys/vm/swappiness)
-		echo "- SWAP is actually set on $swapvalue"
-		echo "- Recommanded value: 1 - The lower the value - the less SWAP will be used - 0 to use SWAP only when out of memory"
-		read -p "- Do you want to edit swappiness value or disable SWAP? y = yes / ANYTHING = no: " -n 1 -r
+			echo ""
+			swapvalue=$(cat /proc/sys/vm/swappiness)
+			echo "- SWAP is actually set on $swapvalue"
+			echo "- Recommanded value: 1 - The lower the value - the less SWAP will be used - 0 to use SWAP only when out of memory"
+			read -p "- Do you want to edit swappiness value or disable SWAP? y = yes / ANYTHING = no: " -n 1 -r
 			if [[ $REPLY =~ ^[Yy]$ ]]; then
 				echo ""
 				echo "- What is the new swapiness value? 0 to 100 "
@@ -790,7 +790,7 @@ mail_menu(){
 			ALIASESBCK=/etc/aliases.BCK
 			if test -f "$ALIASESBCK"; then
 				echo "backup OK"
-				else
+			else
 				cp -n /etc/aliases /etc/aliases.BCK
 			fi
 			MAINCFBCK=/etc/postfix/main.cf.BCK
@@ -833,9 +833,9 @@ mail_menu(){
 					read 'smtpport'
 					read -p  "- Does the server require TLS? y = yes / ANYTHING = no: " -n 1 -r 
 					if [[ $REPLY =~ ^[Yy]$ ]]; then
-					vartls=yes
+						vartls=yes
 					else
-					vartls=no
+						vartls=no
 					fi
 					echo " "
 					echo "- What is the AUTHENTIFICATION USERNAME? (user@domain.tld or username): "
@@ -855,8 +855,7 @@ mail_menu(){
 				echo "- Working on it!"
 				echo " "
 				echo "- Setting Aliases"
-				if grep "root:" /etc/aliases
-					then
+				if grep "root:" /etc/aliases; then
 					echo "- Alias entry was found: editing for $rootaddressalias"
 					sed -i "s/^root:.*$/root: $rootaddressalias/" /etc/aliases
 				else
@@ -880,46 +879,40 @@ mail_menu(){
 				postconf smtp_use_tls=$vartls
 				
 				# Checking for password hash entry
-					if grep "smtp_sasl_password_maps" /etc/postfix/main.cf
-					then
+				if grep "smtp_sasl_password_maps" /etc/postfix/main.cf; then
 					echo "- Password hash already setted-up"
 				else
 					echo "- Adding password hash entry"
 					postconf smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd
 				fi
 				#checking for certificate
-				if grep "smtp_tls_CAfile" /etc/postfix/main.cf
-					then
+				if grep "smtp_tls_CAfile" /etc/postfix/main.cf; then
 					echo "- TLS CA File looks setted-up"
-					else
+				else
 					postconf smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt
 				fi
 				# Adding sasl security options
 				# eliminates default security options which are imcompatible with gmail
-				if grep "smtp_sasl_security_options" /etc/postfix/main.cf
-					then
+				if grep "smtp_sasl_security_options" /etc/postfix/main.cf; then
 					echo "- Google smtp_sasl_security_options setted-up"
-					else
+				else
 					postconf smtp_sasl_security_options=noanonymous
 				fi
-				if grep "smtp_sasl_auth_enable" /etc/postfix/main.cf
-					then
+				if grep "smtp_sasl_auth_enable" /etc/postfix/main.cf; then
 					echo "- Authentification already enabled"
-					else
+				else
 					postconf smtp_sasl_auth_enable=yes
 				fi 
-				if grep "sender_canonical_maps" /etc/postfix/main.cf
-					then
+				if grep "sender_canonical_maps" /etc/postfix/main.cf; then
 					echo "- Canonical entry already existing"
-					else
+				else
 					postconf sender_canonical_maps=hash:/etc/postfix/canonical
 				fi
-    				if grep "smtp_header_checks" /etc/postfix/main.cf
-					then
+    			if grep "smtp_header_checks" /etc/postfix/main.cf; then
 					echo "- smtp_header_checks entry already existing"
-					else
+				else
 					postconf -e 'smtp_header_checks = regexp:/etc/postfix/header_checks'
-     					echo "/^From:(.*)/ REPLACE From: $hostname <$senderaddress>" > /etc/postfix/header_checks
+	     			echo "/^From:(.*)/ REPLACE From: $hostname <$senderaddress>" > /etc/postfix/header_checks
 				fi
 				echo "- Encrypting password and canonical entry"
 				postmap /etc/postfix/sasl_passwd
@@ -1103,11 +1096,11 @@ backup_menu(){
 							source $mount >/dev/null 2>&1
 							echo "-- Checking if $mount is still present in system"
 							if find /dev/disk/by-uuid/ | grep -w $What; then
-							echo "-- Remountig using configuration $mount"
-							mkdir -p "$Where" 
-							echo "$What $Where $Type $Options 0 2" >> /etc/fstab 
+								echo "-- Remountig using configuration $mount"
+								mkdir -p "$Where" 
+								echo "$What $Where $Type $Options 0 2" >> /etc/fstab 
 							else
-							echo "-- The drive for $mount was not found and will not be mounted back"
+								echo "-- The drive for $mount was not found and will not be mounted back"
 							fi
 						done
 						mount -a
