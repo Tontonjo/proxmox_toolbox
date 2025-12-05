@@ -1037,7 +1037,7 @@ backup_menu(){
 			echo " "
 			echo -e "${MENU}**${NUMBER} 1)${MENU} Backup configuration ${NORMAL}"
 			echo -e "${MENU}**${NUMBER} 2)${MENU} Restore configuration ${NORMAL}"
-   			echo -e "${MENU}**${NUMBER} 3)${MENU} Restore a Self signed certificate ${NORMAL}"
+   			echo -e "${MENU}**${NUMBER} 3)${MENU} Regenerate a Self signed certificate for WEBUI ${NORMAL}"
 			echo -e "${MENU}**${NUMBER} 0)${MENU} Back ${NORMAL}"
 			echo " "
 			echo -e "${MENU}*********************************************${NORMAL}"
